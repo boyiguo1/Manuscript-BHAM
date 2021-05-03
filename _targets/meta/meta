@@ -1,0 +1,4 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|iteration|parent|children|seconds|warnings|error
+summary|stem||504e748dde9ca536|5b34bc41ec95d8c6|760118442||||0|rds|vector|||0.013||could not find function summ
+manu|stem|3e07be8d98fc9a7b|785e5cd2f5a2f927|4745aa592080ea1d|-985599464|Manuscript/SS_GAM.pdf*Manuscript/main.Rmd*Manuscript/SS_GAM_files|t18750.6887997685s|3fe9788a868b099a|183533|file|vector|||6.052|LaTeX Warning Unused global options    AMA,STIX1COL.|
+data|stem|fdbf849df1760424|4d28b3ae61066c9f|15669340fa0be499|1588979285||t18750.6760205225s|91d375b86ccd1383|454|rds|vector|||2.344||
