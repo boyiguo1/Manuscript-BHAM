@@ -25,61 +25,26 @@ output:
     keep_tex: TRUE
 ---
 
-# The Article Header Information
-
-YAML header:
-
-```
-output:
-  rticles::sim_article:
-    keep_tex: TRUE
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Configure the YAML header including the following elements:
+```{r child="01-Intro.Rmd"}
+```
 
-* `title`: Title
+```{r child="02-Method.Rmd"}
+```
 
-* `author`: List of author(s) containing `name` and `num`
+```{r child="03-Simulation.Rmd"}
+```
 
-* `address`: List containing `num` and `org` for defining `author` affiliations
+```{r child="04-Real_Data.Rmd"}
+```
 
-* `presentaddress`: Not sure what they mean with this
+```{r child="05-Discussion.Rmd"}
+```
 
-* `corres`: Author and address for correspondence
 
-* `authormark`: Short author list for header
-
-* `received`, `revised`, `accepted`: dates of submission, revision, and acceptance of the manuscript
-
-* `abstract`: Limited to 250 words
-
-* `keywords`: Up to 6 keywords
-
-* `bibliography`: BibTeX `.bib` file
-
-* `classoption`: options of the `WileyNJD-v2` class
-
-* `longtable`: set to `true` to include the `longtable` package, used by default from `pandoc` to convert markdown to \LaTeX code
-
-## Remarks
-
-1. In `authormark` use _et al._ if there are three or more authors.
-
-2. Note the use of `num` to link names and addresses.
-
-3. For submitting a double-spaced manuscript, add `doublespace` as an option to a `classoption` line in the YAML header: `classoption: doublespace`.
-
-4. Keywords are separated by semicolons.
-
-# The Body of the Article
-
-## Mathematics
-
-Use mathematics in Rmarkdown as usual.
-
-## Figures and Tables
-
-Figures are supported from R code:
 
 ```{r plot-ref, fig.cap = "Fancy Caption\\label{fig:plot}"}
 x = rnorm(10)
@@ -97,33 +62,6 @@ xt <- xtable(head(cars), caption = "A table", label = "tab:table")
 print(xt, comment = FALSE)
 ```
 
-Referenced via \ref{tab:table}. You can also use the YAML option `header-includes` to includes custom \LaTeX packages for tables (keep in mind that `pandoc` uses `longtables` by default, and it is hardcoded; some things may require including the package `longtable`). E.g., using `ctable`:
-```
-header-includes:
-- \usepackage{ctable}
-```
-Then, just write straight-up \LaTeX code and reference is as usual (`\ref{tab:ctable}`):
-```
-\ctable[cap = {Short caption},
-        caption = {A long, long, long, long, long caption for this table.},
-        label={tab:ctable},]
-        {cc}
-        {
-        \tnote[$\ast$]{Footnote 1}
-        \tnote[$\dagger$]{Other footnote}
-        \tnote[b]{Mistakes are possible.}
-        }{
-        \FL
-        COL 1\tmark[a] & COL 2\tmark[$\ast$]
-        \ML
-        6.92\tmark[$\dagger$] & 0.09781 \\
-        6.93\tmark[$\dagger$] & 0.09901 \\
-        97 & 2000
-        \LL
-}
-```
-
-It is also possible to set the `YAML` option `longtable: true` and use markdown tables (or the `knitr::kable` function): `knitr::kable(head(cars))` produces the same table as the `xtable` example presented before.
 
 ## Cross-referencing
 
@@ -143,6 +81,4 @@ Use the Rmarkdown equivalent of the \LaTeX citation system using `[@<name>]`. Ex
 To include all citation from the `.bib` file, add `\nocite{*}` before the end of the document.
 
 # Further information
-
-All \LaTeX enviroments supported by the main template are supported here as well; see the `.tex` sample file [here](http://onlinelibrary.wiley.com/journal/10.1002/(ISSN)1097-0258/homepage/la_tex_class_file.htm) for more details and example.
 
