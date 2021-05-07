@@ -1,12 +1,15 @@
 {
   "R": {
-    "Version": "4.0.5",
+    "Version": "4.0.3",
     "Repositories": [
       {
         "Name": "CRAN",
         "URL": "https://cran.rstudio.com"
       }
     ]
+  },
+  "Bioconductor": {
+    "Version": "3.12"
   },
   "Packages": {
     "BH": {
@@ -15,6 +18,25 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "e4c04affc2cac20c8fec18385cd14691"
+    },
+    "Biobase": {
+      "Package": "Biobase",
+      "Version": "2.50.0",
+      "Source": "Bioconductor",
+      "Hash": "f49586e579b712b7e55253aba0c9bc21"
+    },
+    "BiocGenerics": {
+      "Package": "BiocGenerics",
+      "Version": "0.36.1",
+      "Source": "Bioconductor",
+      "Hash": "f628c51eadc74ffd838b801cd22d589a"
+    },
+    "BiocManager": {
+      "Package": "BiocManager",
+      "Version": "1.30.13",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "92b47914e3afb2f4a533a03fe9ed0935"
     },
     "DBI": {
       "Package": "DBI",
@@ -57,6 +79,18 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "dbb5e436998a7eba5a9d682060533338"
+    },
+    "affy": {
+      "Package": "affy",
+      "Version": "1.68.0",
+      "Source": "Bioconductor",
+      "Hash": "1ca6c42192e20297d7d932c25ed9caab"
+    },
+    "affyio": {
+      "Package": "affyio",
+      "Version": "1.60.0",
+      "Source": "Bioconductor",
+      "Hash": "1c5d69af9526756efa3ee2fbcc08a5b1"
     },
     "askpass": {
       "Package": "askpass",
@@ -155,6 +189,12 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "e75525c55c70e5f4f78c9960a4b402e9"
+    },
+    "curatedBladderData": {
+      "Package": "curatedBladderData",
+      "Version": "1.26.0",
+      "Source": "Bioconductor",
+      "Hash": "d1473cbb8bffb73c42e206cc4900942f"
     },
     "curl": {
       "Package": "curl",
@@ -345,6 +385,13 @@
       "Repository": "CRAN",
       "Hash": "b2008df40fb297e3fef135c7e8eeec1a"
     },
+    "janitor": {
+      "Package": "janitor",
+      "Version": "2.1.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "6de84a8c67fb247e721166049c84695f"
+    },
     "jsonlite": {
       "Package": "jsonlite",
       "Version": "1.7.2",
@@ -456,6 +503,12 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "01f28d4278f15c76cddbea05899c5d6f"
+    },
+    "preprocessCore": {
+      "Package": "preprocessCore",
+      "Version": "1.52.1",
+      "Source": "Bioconductor",
+      "Hash": "d5c78cf1defde79ad72d44ac0e2276de"
     },
     "prettyunits": {
       "Package": "prettyunits",
@@ -590,6 +643,13 @@
       "Repository": "CRAN",
       "Hash": "3838071b66e0c566d55cc26bd6e27bf4"
     },
+    "snakecase": {
+      "Package": "snakecase",
+      "Version": "0.11.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "4079070fc210c7901c0832a3aeab894f"
+    },
     "stringi": {
       "Package": "stringi",
       "Version": "1.5.3",
@@ -722,6 +782,12 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "2826c5d9efb0a88f657c7a679c7106db"
+    },
+    "zlibbioc": {
+      "Package": "zlibbioc",
+      "Version": "1.36.0",
+      "Source": "Bioconductor",
+      "Hash": "effcbe90f6986ca6f81ce4d67db7238b"
     }
   }
 }
