@@ -4,11 +4,36 @@
 # BiocManager::install("curatedBladderData")
 
 library(curatedBladderData)
+library(tidyverse)
 
 
-data(package="curatedBladderData")
+dat_lst <- data(package="curatedBladderData")
 
-data("GSE32894_eset")
+#### Display event rate for all datasets in the package ####
+data_brief <- map_dfr(dat_lst$results[,"Item"], .f = function(dat_name){
+  
+  eval(rlang::expr(data(!!dat_name)))
+  
+  dat <- eval(rlang::parse_expr(dat_name))
+  
+  peno_dat <- pData(dat)
+  
+  
+  
+  # remove loaded data
+  eval(rlang::expr(rm(dat)))
+  eval(rlang::expr(rm(!!dat_name)), envir = globalenv())
+  
+  return(table(peno_dat$vital_status) %>% c %>% t %>%
+           data.frame(dataset = dat_name))
+})
+
+
+
+
+
+
+
 
 dat <- GSE32894_eset
 pheno_dat <- pData(dat) %>%
@@ -19,4 +44,4 @@ pheno_dat <- pData(dat) %>%
 summary(pheno_dat)
 
 
-# TODO: write a function that display the event rate "death rate" for all the datasets
+# TODO: write aa function that display the event rate "death rate" for all the datasets
