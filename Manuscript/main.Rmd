@@ -7,7 +7,7 @@ author:
   num: a
 address:
 - num: a
-  org: Department of Biostatistics, University of Alabama at Birmingham, Birmingham, CUSA
+  org: Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA
 # - num: b
   # org: Department of Applied Things, University B, City B, Country B
 corres: "*Corresponding author name, This is sample corresponding address. \\email{xxx@uab}"
@@ -24,6 +24,8 @@ output:
   rticles::sim_article:
     keep_tex: TRUE
 ---
+
+\newcommand{\bs}[1]{\boldsymbol{#1}}
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -68,17 +70,8 @@ print(xt, comment = FALSE)
 The use of the Rmarkdown equivalent of the \LaTeX cross-reference system
 for figures, tables, equations, etc., is encouraged (using `[@<name>]`, equivalent of `\ref{<name>}` and `\label{<name>}`). That works well for citations in Rmarkdown, not so well for figures and tables. In that case, it is possible to revert to standard \LaTeX syntax.
 
-## Double Spacing
+# References
+<div id="refs"></div>
 
-If you need to double space your document for submission please use the `doublespace` option in the header.
-
-# Bibliography
-
-Link a `.bib` document via the YAML header, and bibliography will be printed at the very end (as usual). The default bibliography style is provided by Wiley as in `WileyNJD-AMA.bst`, do not delete that file.
-
-Use the Rmarkdown equivalent of the \LaTeX citation system using `[@<name>]`. Example: [@Taylor1937], [@Knupp1999; @Kamm2000].
-
-To include all citation from the `.bib` file, add `\nocite{*}` before the end of the document.
-
-# Further information
+# Appendix
 

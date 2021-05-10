@@ -1,1 +1,15 @@
 # Introduction
+* What is the problem
+  * what is the GAM
+  * expanding GAM in to high-dimensional frame work
+  * Why this is important
+  * Why this is hard
+* Previous solutions
+  * What are the methods
+  * What are their problems
+  
+* Introduce the wiggliness matrix
+
+* Our method
+* The implication of our method
+* Structure of the rest of the paper
