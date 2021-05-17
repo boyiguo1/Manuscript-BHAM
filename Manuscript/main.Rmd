@@ -1,5 +1,5 @@
 ---
-title: A demonstration of the \LaTeX class file for Statistics in Medicine with Rmarkdown
+title: Spike-and-Slab Generalized Additive Models and Fast Algorithms for High-Dimensional Data
 author:
 - name: Boyi Guo*
   num: a
@@ -14,11 +14,11 @@ corres: "*Corresponding author name, This is sample corresponding address. \\ema
 presentaddress: This is sample for present address text this is sample for present address text
 authormark: Guo and Yi
 articletype: Research article
-received: 2017-01-01
-revised: 2017-02-01
-accepted: 2017-03-01
-abstract: "TODO: Change this accordingly; Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut elit odio. Donec fermentum tellus neque, vitae fringilla orci pretium vitae. Fusce maximus finibus facilisis. Donec ut ullamcorper turpis. Donec ut porta ipsum. Nullam cursus mauris a sapien ornare pulvinar. Aenean malesuada molestie erat quis mattis. Praesent scelerisque posuere faucibus. Praesent nunc nulla, ullamcorper ut ullamcorper sed, molestie ut est. Donec consequat libero nisi, non semper velit vulputate et. Quisque eleifend tincidunt ligula, bibendum finibus massa cursus eget. Curabitur aliquet vehicula quam non pulvinar. Aliquam facilisis tortor nec purus finibus, sit amet elementum eros sodales. Ut porta porttitor vestibulum. Integer molestie, leo ut maximus aliquam, velit dui iaculis nibh, eget hendrerit purus risus sit amet dolor. Sed sed tincidunt ex. Curabitur imperdiet egestas tellus in iaculis. Maecenas ante neque, pretium vel nisl at, lobortis lacinia neque. In gravida elit vel volutpat imperdiet. Sed ut nulla arcu. Proin blandit interdum ex sit amet laoreet. Phasellus efficitur, sem hendrerit mattis dapibus, nunc tellus ornare nisi, nec eleifend enim nibh ac ipsum. Aenean tincidunt nisl sit amet facilisis faucibus. Donec odio erat, bibendum eu imperdiet sed, gravida luctus turpis."
-keywords: Class file; \LaTeX; Statist. Med.; Rmarkdown;
+received: 2021-01-01
+revised: 2021-02-01
+accepted: 2021-03-01
+abstract: "Spike-and-slab priors have been extensively studied for variable selection, and recently been extended to function selection in generalized additive models (GAMs). Most of the previous works on fitting spike-and-slab GAM relies on Markov chain Monte Carlo (MCMC) algorithms to identify the promising subsets of functions. The computational burden of MCMC makes these models less feasible, especially in high-dimensional setting. Besides, most of the current spike-and-slab GAM consider an “all-in-all-out” approach for function selection, rendering less flexibility to answer if non-linear effects are necessary in the model. We propose Bayesian hierarchical generalized additive models for function selection and prediction. The proposed models employ spike-and-slab priors, mixture normal and mixture double exponential, for smooth and sparse solution. Two EM based algorithms, EM-IWLS and EM-Coordinate Descent, are developed for accelerated computation. Simulation studies and real data analysis demonstrated improved performance against the state-of-art models, mgcv and COSSO. The software implementation of the proposed methods is freely available via the R package BHAM."
+keywords: Spike-and-Slab Priors; High-Dimensional Data; Generalized Additive Models; EM-IWLS; EM-Coordinate Decent
 bibliography: bibfile.bib
 output: 
   rticles::sim_article:
@@ -71,7 +71,6 @@ The use of the Rmarkdown equivalent of the \LaTeX cross-reference system
 for figures, tables, equations, etc., is encouraged (using `[@<name>]`, equivalent of `\ref{<name>}` and `\label{<name>}`). That works well for citations in Rmarkdown, not so well for figures and tables. In that case, it is possible to revert to standard \LaTeX syntax.
 
 # References
-<div id="refs"></div>
 
 # Appendix
 

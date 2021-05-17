@@ -150,12 +150,10 @@ p(\bs \beta | \bs\gamma) &\propto \prod\limits_{j=1}^{p}\left[{S^0_j}^{-1/2}\exp
 \end{aligned}
 $$
 and 
-$$
-\begin{aligned}
-E(Q_1) &= \log p(\textbf{y}|\bs \beta, \phi) + \log p(\phi) + \sum\limits_{j=1}^p\left[E({S^0_j}^{-1}){\beta^0_j}^2+\sum\limits_{k=1}^{K_j}E(S^{-1}_{j})\beta_{jk}^2\right]%\\
-%E(Q_2) &= \sum\limits_{j=1}^{p}\sum\limits_{k=1}^{K_j} \left[ E(\gamma_{jk})\log \theta_j + (1-E(\gamma_{jk})) \log (1-\theta_j)\right] +  \sum\limits_{j=1}^{p}\log p(\theta_j)
-\end{aligned}
-$$
+\begin{align*}
+E(Q_1) &= \log p(\textbf{y}|\bs \beta, \phi) + \log p(\phi) + \sum\limits_{j=1}^{p} \left[E({S^0_j}^{-1}){\beta^0_j}^2+\sum\limits_{k=1}^{K_j}E(S^{-1}_{j})\beta_{jk}^2\right]\\
+E(Q_2) &= \sum\limits_{j=1}^{p}\sum\limits_{k=1}^{K_j} \left[ E(\gamma_{jk})\log \theta_j + (1-E(\gamma_{jk})) \log (1-\theta_j)\right] +  \sum\limits_{j=1}^{p}\log p(\theta_j)
+\end{align*}
 where $S_{j}^0 = (1-\gamma^{0}_{j}) s_0 + \gamma^{0}_{j} s_1$ and $S_{j} = (1-\gamma^{pen}_{j}) s_0 + \gamma^{pen}_{j} s_1$. To calculate two unknown quantities $E({S_j^0}^{-1})$ and $E(S^{-1}_j)$, the posterior probability $p^0_{j} \equiv p(\gamma^{0}_{j}=1|\Theta^{t-1})$ and $p_{j} \equiv p(\gamma^{pen}_{j}=1|\Theta^{t-1})$ are necessary, which can be derived via Bayes' theorem. The calculation for $p_j$ is slightly different from that of $p^0_j$, as $p_j$ depends on the value of $\beta_{jk}$ for $k=1, \dots, K_j$ and $p^0_j$ only depends on $\beta_j^0$. The calculation follows the equations below.
 
 $$
@@ -183,7 +181,7 @@ $$
     z_i &= \hat\eta_i - \frac{L^{'}((y_i|\hat\eta_i))}{L^{''}((y_i|\hat\eta_i))}& w_i &= - L^{''}((y_i|\hat\eta_i)),
     \end{aligned}
     $$
-    where $\eta_i = \sum\limits_{j=1}^p \hat f_j^{(t)}(x_{ij})$ is the estimated linear predictor using current estimated value of $\bs \beta$, $L^{'}$ and $L^{''}$ are the first derivative and second derivative of the log-likelihood function. The $l_2$ penalty, $ \sum\limits_{j=1}^p\left[E({S^0_j}^{-1}){\beta^0_j}^2+\sum\limits_{k=1}^{K_j}E(S^{-1}_{j})\beta_{jk}^2\right]$ can be seems as a multivariate normal distribution of mean $\textbf{0}$ and variance-covariance matrix $\Sigma(E({S^0}_1^{-1}), E(S_1^{-1}), \dots, E({S_p^0}^{-1}), E(S_p^{-1})$, conditioning on the value of $E({S^0_1}^{-1}), \dots E({S^0_p}^{-1})$. An augmentation step combines the normal approximation and multivariate normal for $\bs \beta$, similarly to Ridge regression model fitting. The estimates of $\bs \beta$ and $\phi$ can be quickly updated in the IRLS algorithm.
+    where $\eta_i = \sum\limits_{j=1}^p \hat f_j^{(t)}(x_{ij})$ is the estimated linear predictor using current estimated value of $\bs \beta$, $L^{'}$ and $L^{''}$ are the first derivative and second derivative of the log-likelihood function. The $l_2$ penalty, $\sum\limits_{j=1}^{p}\left[E({S^0_j}^{-1}){\beta^0_j}^2+\sum\limits_{k=1}^{K_j}E(S^{-1}_{j})\beta_{jk}^2\right]$ can be seems as a multivariate normal distribution of mean $\textbf{0}$ and variance-covariance matrix $\Sigma(E({S^0}_1^{-1}), E(S_1^{-1}), \dots, E({S_p^0}^{-1}), E(S_p^{-1})$, conditioning on the value of $E({S^0_1}^{-1}), \dots E({S^0_p}^{-1})$. An augmentation step combines the normal approximation and multivariate normal for $\bs \beta$, similarly to Ridge regression model fitting. The estimates of $\bs \beta$ and $\phi$ can be quickly updated in the IRLS algorithm.
     
     
 <!-- From Equation^[TODO: add equation number], we can see that the estimates of $\gamma_jk, S^{-1}_{jk}$ are larger for larger coefficients $\beta_{jk}$, leading to different shrinkage for different coefficients. Moreover, to note that, we have different shrinkage $S^{-1}_{jk}$for the coefficients $\beta_{jk}$ of the variable $x_j$, and hence, we can penalize the null space of the spline differently and allow local adaption. -->
