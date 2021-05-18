@@ -74,6 +74,11 @@ $$
 $$
  The beta distribution is a conjugate prior for the binomial distribution and hence provides some computation convenience. Specifically, we focus on a special case of beta distribution, uniform (0,1) for simplicity and convenience. To note, when the variable have large effects in any of the bases, the parameter $\theta_j$ will be estimated large, which in turn encourages the model to include the rest of bases, achieving the local adaption among spline bases. Hereafter, we refer the hierarchical spline GAM with the spike-and-slab mixture normal prior as the ssGAM-MN.
 
+```{r}
+include_graphics("Fig/SS_prior_flow_chart.png")
+```
+
+
  \  
 
 ### Mixture Double Exponential Prior
