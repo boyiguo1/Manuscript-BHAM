@@ -42,7 +42,7 @@ theta <- tmp$theta
 # Test Data
 test_tmp <- sim_Bai_logistic(n_test, p)
 test_dat <- test_tmp$dat %>% data.frame
-test_theta <- tmp$theta
+test_theta <- test_tmp$theta
 
 
 mgcv_df <- data.frame(
