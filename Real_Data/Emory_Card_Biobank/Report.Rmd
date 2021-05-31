@@ -1,0 +1,64 @@
+---
+title: "Emory Cardiovscular Biobank"
+author: "Boyi Guo"
+date: "5/31/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(targets)
+library(readr)
+library(here)
+library(gtsummary)
+library(tidyverse)
+
+train_dat <- targets::tar_read(RD_ECB_train_dat)
+valid_dat <- targets::tar_read(RD_ECB_valid_dat)
+```
+
+#Background
+
+Data was retrieved from <https://datadryad.org/stash/dataset/doi:10.5061/dryad.866t1g1mt> on May 31, 2021.
+
+For study design, please visit the article <https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0237579>
+
+## Data Introducetion
+
+* Two data sets: model development set (N=`r NROW(train_dat)`), validation set (N=`r NROW(valid_dat)`)
+
+
+* Variable Descriptions
+GENEID: subject IDs
+timetodeath3yr: time to death event or censoring at three years
+death3yr: death event at three years
+age: age in years
+male: male gender, 1=male, 0=female
+BlackRace: black race, 1=black, 0=non-black
+batch: batch of metabolomics profiling
+Strokehx: history of stroke, 1=yes, 0=no
+CABGhx: prior CABG, 1=yes, 0=no
+PVDhx: peripheral artery disease, 1=yes, 0=no
+eGFR_max120_lt60: estimated glomerular filtration rate less than 60 ml/min/1.73m2, 1=yes, 0=no
+curr_smoking: current smoking, 1=yes, 0=no
+HFhx: heart failure history, 1=yes, 0=no
+HTN: hypertension, 1=yes, 0=no
+DM: diabetes, 1=yes, 0=no
+mzXX_tXX: intensities of metabolic features
+
+### Covariate Summary
+```{r}
+list(first_set = train_dat,
+     second_set = valid_dat) %>% 
+  map(~select(.x, # Data
+              age, male, BlackRace,
+           Strokehx:DM, 
+           death3yr, timetodeath3yr) %>% 
+        gtsummary::tbl_summary()
+      ) %>% 
+tbl_merge()
+```
+
+
+# Primary Data Analysis of Metabolites
