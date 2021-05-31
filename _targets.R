@@ -14,8 +14,14 @@ tar_option_set(packages = c("dplyr", "tidyverse", "rticles", "gtsummary", "here"
 
 # End this file with a list of target objects.
 list(
-  # tar_target(data, data.frame(x = sample.int(100), y = sample.int(100))),
-  
+
+  #  Simulations Studies -----------------------------------------------------
+  #* Tuning Study ####
+  tar_render(sim_tuning_report,
+             "Simulation/tuning/tuning_study_report.Rmd",
+             output_dir = "Simulation/tuning/",
+             output_file = "sim_tuning_report.html"),
+    
   
   #  Real Data Analysis -----------------------------------------------------
   #* Emory Card Biobank ####
@@ -30,7 +36,9 @@ list(
   tar_target(RD_ECB_valid_dat,
              readr::read_csv(realdata_ECB_valid_path)), 
   tar_render(real_data_report_ECB,
-             "Real_Data/Emory_Card_Biobank/Report.Rmd"),
+             "Real_Data/Emory_Card_Biobank/Report.Rmd",
+             output_dir = "Real_Data/Emory_Card_Biobank/",
+             output_file = "ECB_report.html"),
   
   
   # Manuscript --------------------------------------------------------------
