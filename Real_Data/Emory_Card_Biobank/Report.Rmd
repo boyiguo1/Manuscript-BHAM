@@ -61,4 +61,58 @@ tbl_merge()
 ```
 
 
-# Primary Data Analysis of Metabolites
+## Primary Data Analysis of Metabolites
+```{r eval=F}
+train_dat %>% select(starts_with("mz")) %>% 
+  summarise_all(var)
+```
+
+
+# Predictive Model
+
+Outcome: `death3yr` (bin)
+Covariates: None
+Predictors: `starts_with("mz")`
+
+```{r}
+library(BHAM)
+library(BhGLM)
+
+mz_names <- train_dat %>% select(starts_with("mz")) %>% names
+
+
+test_mz_names <- valid_dat  %>% select(starts_with("mz")) %>% names
+  
+sm_df <- data.frame(
+  Var = mz_names,
+ Func = "s",
+ Args ="bs='cr', k=5"
+)
+
+sm_obj <- construct_smooth_data(sm_df, train_dat)
+
+dsn_mat <- sm_obj$data
+
+# The validation data doesn't overlap with training data
+# test_sm_dat <- make_predict_dat(sm_obj$Smooth, dat = valid_dat)
+
+mdl_defaul <- bmlasso(dsn_mat, train_dat$death3yr, family = "binomial")
+
+mdl_dflt <- bmlasso_spline(dsn_mat, train_dat$death3yr, family = "binomial",
+                           group = make_group(names(dsn_mat)))
+
+measure.bh(mdl_defaul)
+
+measure.bh(mdl_dflt)
+```
+
+## Validation
+```{r eval = F}
+
+measure.bh(mdl_defaul, new.x = test_sm_dat, new.y=valid_dat$death3yr)
+
+measure.bh(mdl_dflt)
+```
+
+
+
