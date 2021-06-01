@@ -74,41 +74,101 @@ Outcome: `death3yr` (bin)
 Covariates: None
 Predictors: `starts_with("mz")`
 
+```{r data_split}
+library(tidymodels)
+
+set.seed(1)
+
+data_split <- rsample::initial_split(train_dat, prop = 3/4)
+
+train_data <- training(data_split)
+test_data <- testing(data_split)
+```
+
+## Baseline: Linear Lasso Model
+
+```{r}
+library(glmnet)
+
+lasso_mdl_cv <- cv.glmnet(x = train_data %>% select(starts_with("mz")) %>% data.matrix,
+                    y = train_data %>% pull(death3yr), alpha = 1,
+                    family = "binomial", type.measure = "auc")
+
+lasso_mdl <- glmNet(x = train_data %>% select(starts_with("mz")) %>% data.matrix,
+                    y = train_data %>% pull(death3yr), alpha = 1,
+                    family = "binomial",lambda = lasso_mdl_cv$lambda.1se)
+
+# class(lasso_mdl) <- c("glmNet", class(lasso_mdl))
+measure.bh(lasso_mdl)
+# assess.glmnet(lasso_mdl$)
+
+measure.bh(lasso_mdl, new.x = test_data %>% select(starts_with("mz")) %>% data.matrix,
+           new.y = test_data %>% pull(death3yr))
+```
+
 ```{r}
 library(BHAM)
 library(BhGLM)
 
-mz_names <- train_dat %>% select(starts_with("mz")) %>% names
 
 
-test_mz_names <- valid_dat  %>% select(starts_with("mz")) %>% names
-  
+mz_names <- train_dat %>% select(starts_with("mz")) %>% names  
 sm_df <- data.frame(
   Var = mz_names,
  Func = "s",
  Args ="bs='cr', k=5"
 )
 
-sm_obj <- construct_smooth_data(sm_df, train_dat)
+sm_obj <- construct_smooth_data(sm_df, train_data)
 
 dsn_mat <- sm_obj$data
 
 # The validation data doesn't overlap with training data
 # test_sm_dat <- make_predict_dat(sm_obj$Smooth, dat = valid_dat)
 
-mdl_defaul <- bmlasso(dsn_mat, train_dat$death3yr, family = "binomial")
+mdl_defaul <- bmlasso(dsn_mat, train_data$death3yr, family = "binomial")
 
-mdl_dflt <- bmlasso_spline(dsn_mat, train_dat$death3yr, family = "binomial",
+mdl_dflt <- bmlasso_spline(dsn_mat, train_data$death3yr, family = "binomial",
                            group = make_group(names(dsn_mat)))
 
+# Training Data Performance
 measure.bh(mdl_defaul)
-
 measure.bh(mdl_dflt)
+
+
+test_sm_dat <- BHAM::make_predict_dat(sm_obj$Smooth, dat=test_data)
+
+# Testing Data Performance
+measure.bh(mdl_defaul, new.x = test_sm_dat, new.y=test_data$death3yr)
+measure.bh(mdl_dflt, new.x = test_sm_dat, new.y=test_data$death3yr)
 ```
 
+
+# Extremely Penalized Model
+```{r}
+
+mdl_pen_extreme <- bmlasso_spline(dsn_mat, train_data$death3yr, family = "binomial",
+                           group = make_group(names(dsn_mat)),
+                           ss = c(0.001, 0.5))
+
+# Training Data Performance
+measure.bh(mdl_pen_extreme)
+
+
+# Testing Data Performance
+measure.bh(mdl_pen_extreme, new.x = test_sm_dat, new.y=test_data$death3yr)
+```
+
+
+
+
 ## Validation
+
+The validation data set have mostly distinct feature from the training data set. Hence, the validation in the traditional sense does not exists.
+
 ```{r eval = F}
 
+test_mz_names <- valid_dat  %>% select(starts_with("mz")) %>% names
 measure.bh(mdl_defaul, new.x = test_sm_dat, new.y=valid_dat$death3yr)
 
 measure.bh(mdl_dflt)
