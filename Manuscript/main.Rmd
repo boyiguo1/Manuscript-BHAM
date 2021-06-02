@@ -31,21 +31,29 @@ output:
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 library(knitr)
+library(targets)
+library(here)
+
+tar_load(intro_path)
+tar_load(method_path)
+tar_load(sim_path)
+tar_load(real_data_path)
+tar_load(disc_path)
 ```
 
-```{r child="01-Intro.Rmd"}
+```{r child=here(intro_path)}
 ```
 
-```{r child="02-Method.Rmd"}
+```{r child=here(method_path)}
 ```
 
-```{r child="03-Simulation.Rmd"}
+```{r child=here(sim_path)}
 ```
 
-```{r child="04-Real_Data.Rmd"}
+```{r child=here(real_data_path)}
 ```
 
-```{r child="05-Discussion.Rmd"}
+```{r child=here(disc_path)}
 ```
 
 
