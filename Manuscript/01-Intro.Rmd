@@ -1,21 +1,5 @@
 # Introduction
 
-* What is the problem
-  * what is the GAM
-  * expanding GAM in to high-dimensional frame work
-  * Why this is important
-  * Why this is hard
-* Previous solutions
-  * What are the methods
-  * What are their problems
-  
-* Introduce the wiggliness matrix
-
-* Our method
-* The implication of our method
-* Fast
-* Structure of the rest of the paper
-
 Nonlinear effect modeling has long history. Early work of GAMs can date back to 1979 when @Cleveland1979 proposed local smoothing for bivariate analysis. Since then, many mathematical and statistical models has been proposed, see xxx^[TODO: insert an review citation]. With recent advancement of computing technology, many machine learning algorithms that is computationally intensive start to gainmuch popularity in outcome prediction when non-linear effects assumed. Such models generally have improved prediction accuracy over classic statistical models, but have a fatal flaw, lack of transparency and interpretability. The primary objective of biomedical studies is to understand the etiology of diseases, which requires not only the knowledge if a biomarker is predictive of the disease, but also how the biomarker cause the disease. "Black box" models could less likely to be helpful.
 
 As a balance between interpretability and model flexibility, semi-parametric and non-parametric regression models are studied. Among those, generalized additive model (GAM) proposed in the seminal work of @Hastie1987 gains the most popularity thanks to its flexibility and easiness to incorporate many different smoothing functions. A response variable, $Y$, that is assumed to follow some exponential family distribution $EF(\mu. \phi)$, can be expressed as the summation of smooth functions of a given $p$-dimensional vector of covariates $\bs x$, written as 

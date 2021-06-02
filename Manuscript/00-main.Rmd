@@ -58,7 +58,7 @@ tar_load(disc_path)
 
 
 
-```{r plot-ref, fig.cap = "Fancy Caption\\label{fig:plot}"}
+```{r plot-ref, fig.cap = "Fancy Caption\\label{fig:plot}", eval = F}
 x = rnorm(10)
 y = rnorm(10)
 plot(x, y)
@@ -68,7 +68,7 @@ plot(x, y)
 
 Analogously, use Rmarkdown to produce tables as usual:
 
-```{r, results = "asis"}
+```{r, results = "asis", eval = F}
 if (!require("xtable")) install.packages("xtable")
 xt <- xtable(head(cars), caption = "A table", label = "tab:table")
 print(xt, comment = FALSE)

@@ -65,12 +65,13 @@ list(
   tar_target(disc_path,
              "Manuscript/05-Discussion.Rmd",
              format = "file"),
-  tar_target(fig_path,
-             "Manuscript/Fig/",
-             format = "file"),
   
+  # tar_target(fig_path,
+  #            "Manuscript/Fig/",
+  #            format = "file"),
+  # 
   #* Assemble Manuscript ####
-  tar_render(manu, "Manuscript/main.Rmd", 
+  tar_render(manu, "Manuscript/00-main.Rmd", 
              # params = list(
              #   intro = intro_path,
              #   method = method_path,

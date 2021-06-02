@@ -65,43 +65,6 @@ Additive Models; EM-IWLS; EM-Coordinate Decent}
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
 
-\begin{itemize}
-\item
-  What is the problem
-
-  \begin{itemize}
-  \tightlist
-  \item
-    what is the GAM
-  \item
-    expanding GAM in to high-dimensional frame work
-  \item
-    Why this is important
-  \item
-    Why this is hard
-  \end{itemize}
-\item
-  Previous solutions
-
-  \begin{itemize}
-  \tightlist
-  \item
-    What are the methods
-  \item
-    What are their problems
-  \end{itemize}
-\item
-  Introduce the wiggliness matrix
-\item
-  Our method
-\item
-  The implication of our method
-\item
-  Fast
-\item
-  Structure of the rest of the paper
-\end{itemize}
-
 Nonlinear effect modeling has long history. Early work of GAMs can date
 back to 1979 when \citet{Cleveland1979} proposed local smoothing for
 bivariate analysis. Since then, many mathematical and statistical models
@@ -851,24 +814,23 @@ models for users to choose from.
 
 Remaining issue: 1. Degree of freedom has yet to closely studied. As an
 direct impact, the functional selection can be improved when effective
-degree of freedom are more carefully studied 2. Future exapansion, as we
-were analyzing the metabolites data, we observed that metabolites
-pathway infromation can be useful in the predictive and integrative
-model can be developed based on the proposed framework. As an naive
-solution, the selection indicator of linear effect of the spline terms
-of all metabolites on the same pathway can be set to share the same
-hyper prior such that the group selection can be modestly achieved.
-Meanwhile further advancedment of the methodology regarding to the
-integrative analysis can consider setting the hypor priors of the
-selection indivator of the non-linear components conditioning on the
-probability of inclusion of the linear effect. Such structure is more
-sensible analytically.
-
-\begin{figure}
-\centering
-\includegraphics{SS_GAM_files/figure-latex/plot-ref-1.pdf}
-\caption{Fancy Caption\label{fig:plot}}
-\end{figure}
+degree of freedom are more carefully studied 2. While the proposed model
+addresses a great deal of analytic problem, analyzing the time-to-event
+outcome remains unsolved. Our current effort resides on expanding. An
+naive approach could be convert an time-to-event outcome to a poisson
+outcome following xxx. Hence, the . However, it would be more efficient
+to , via penalized pseudo likelihood function, which is the current
+effort resides. 2. Future exapansion, as we were analyzing the
+metabolites data, we observed that metabolites pathway infromation can
+be useful in the predictive and integrative model can be developed based
+on the proposed framework. As an naive solution, the selection indicator
+of linear effect of the spline terms of all metabolites on the same
+pathway can be set to share the same hyper prior such that the group
+selection can be modestly achieved. Meanwhile further advancedment of
+the methodology regarding to the integrative analysis can consider
+setting the hypor priors of the selection indivator of the non-linear
+components conditioning on the probability of inclusion of the linear
+effect. Such structure is more sensible analytically.
 
 \ldots and can be referenced (Figure \ref{fig:plot}) by including the
 \texttt{\textbackslash{}\textbackslash{}label\{\}} tag in the
@@ -878,24 +840,6 @@ It is a quirky hack at the moment, see
 \href{https://github.com/yihui/knitr/issues/323}{here}.
 
 Analogously, use Rmarkdown to produce tables as usual:
-
-\begin{table}[ht]
-\centering
-\begin{tabular}{rrr}
-  \hline
- & speed & dist \\ 
-  \hline
-1 & 4.00 & 2.00 \\ 
-  2 & 4.00 & 10.00 \\ 
-  3 & 7.00 & 4.00 \\ 
-  4 & 7.00 & 22.00 \\ 
-  5 & 8.00 & 16.00 \\ 
-  6 & 9.00 & 10.00 \\ 
-   \hline
-\end{tabular}
-\caption{A table} 
-\label{tab:table}
-\end{table}
 
 \hypertarget{cross-referencing}{%
 \subsection{Cross-referencing}\label{cross-referencing}}
