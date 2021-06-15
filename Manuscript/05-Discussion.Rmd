@@ -4,3 +4,16 @@ Remaining issue:
 1. Degree of freedom has yet to closely studied. As an direct impact, the functional selection can be improved when effective degree of freedom are more carefully studied
 2. While the proposed model addresses a great deal of analytic problem, analyzing the time-to-event outcome remains unsolved. Our current effort resides on expanding. An naive approach could be convert an time-to-event outcome to a poisson outcome following xxx. Hence, the . However, it would be more efficient to , via penalized pseudo likelihood function, which is the current effort resides.
 2. Future exapansion, as we were analyzing the metabolites data, we observed that metabolites pathway infromation can be useful in the predictive and integrative model can be developed based on the proposed framework. As an naive solution, the selection indicator of linear effect of the spline terms of all metabolites on the same pathway can be set to share the same hyper prior such that the group selection can be modestly achieved. Meanwhile further advancedment of the methodology regarding to the integrative analysis can consider setting the hypor priors of the selection indivator of the non-linear components conditioning on the probability of inclusion of the linear effect. Such structure is more sensible analytically.
+
+## Discussion
+
+In this chapter, we propose the spike-and-slab generalized additive models for high-dimensional analysis.Two fast computing algorithms, EM-IRLS and EM-coordinate descent are developed for expedited model fitting. EM-IRLS provides uncertainty measures, while EM-coordinate descent algorithm are extremely fast for model fitting. In the simulation studies, we shows the proposed model outperforms the state of the art GAM model, `mgcv` in prediction and function inference. Moreover, due to the model selection nature of the spike-and-slab prior, the proposed model can identify predictors that have large effects on the outcome. In addition, the model can be used to answer the question if non-linear effect are necessary.
+
+In the manuscript, we describe the implementation of ssGAM-NM using EM-IRLS. Nevertheless, EM-IRLS are not limited to fitting ssGAM-NM. Other spike-and-slab prior can be fitted with EM-IRLS as well, e.g. mixture t-distribution, and mixture double exponential distributions. @Yi2012 demonstrated that t prior and double exponential prior can be seen hierarchical normal priors,
+$$
+\begin{aligned}
+\beta_i \sim N(0, \tau^2_i),\\
+\tau^2_i \sim Inv-\chi^2(v, s^2_j) \text{ or } \tau^2_i \sim Gamma(1, s^2/2)
+\end{aligned}
+$$
+with $\tau^2$ integrated out analytically. Hence, the EM-IRLS can be easily applied to those two additional mixture priors. One of the advantage of using mixture $t$ prior over mixture normal prior is that $t$ distributions with low degree of freedom, e.g. $v=1$, have heavier tail than the normal distribution, which is also a special case of $t$ distribution when $v=\infty$. The heavier tails help to obtain posteriors that concentrated around the true nonzero coefficients at optimal rates. [@Rockova2014a]

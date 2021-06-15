@@ -37,11 +37,11 @@ list(
   tar_target(RD_ECB_valid_dat,
              readr::read_csv(realdata_ECB_valid_path)), 
   #** Report ####
-  # tar_render(real_data_report_ECB,
-  #            "Real_Data/Emory_Card_Biobank/Report.Rmd",
-  #            output_dir = "Real_Data/Emory_Card_Biobank/",
-  #            output_file = "ECB_report.html"),
-  # 
+  tar_render(real_data_report_ECB,
+             "Real_Data/Emory_Card_Biobank/Report.Rmd",
+             output_dir = "Real_Data/Emory_Card_Biobank/",
+             output_file = "ECB_report.html"),
+
   
   # Manuscript --------------------------------------------------------------
 

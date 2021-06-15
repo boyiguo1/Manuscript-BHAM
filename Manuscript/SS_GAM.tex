@@ -803,8 +803,114 @@ package \texttt{glmnet}, which quickly fits the lasso model over a list
 of values of \(\lambda\) covering the entire range, giving a sequence of
 models for users to choose from.
 
-\hypertarget{simulation}{%
-\section{Simulation}\label{simulation}}
+\hypertarget{simulation-study}{%
+\subsection{Simulation Study}\label{simulation-study}}
+
+In this section, we compare the performance of the proposed models to 3
+other models: COSSO, adaptive COSSO ,mgcv. COSSO is xxx method. Adaptive
+COSSO is another method, mgcv is another method. To demonstrate the
+correctness and feasibility of the proposed SS-GAM, we follow the
+logistic regression simulation introduced in Bai (Work in Progress). We
+first generate \(n=500\) training data sample with number of predictors
+\(p=4, 10, 50, 200\) respectively, where the predictors
+\(X \sim MVN_{n\times p}(0, I_{P})\). We simulate the outcome data from
+three distributions, gaussian, poisson, and binomial with the identity
+link, logit link \(g(x) = \log(\frac{x}{1-x})\), and log link
+\(g(x) = log(x)\) functions to mimic the common use of generalized
+model. The outcome is simulated via the following function \[
+\mathbb{E}(Y) = g^{-1}(5 \sin(2\pi x_1) - 4 \cos(2\pi x_2 -0.5) + 6(x_3-0.5) - 5(x_4^2 -0.3))
+\] for gaussian and binomial outcome and shrinked effects
+
+\[
+\mathbb{E}(Y) = g^{-1}(\sin(2\pi x_1) - 2\cos(2\pi x_2 -0.5) + 0.4(x_3-0.5) - 2(x_4^2 -0.3))
+\] for stable poisson outcome. For the Gaussian outcome where dispersion
+are required, the dispersion parameter was set to 1. We follow the same
+data generating functions in Bai. In this data generating process, we
+have \(x_1, x_2, x_3, x_4\) as the active covariates, while the rest
+covariates are inactive \(f_j(x_j) = 0\) for \(j = 4, \dots, p\).
+Another set of independent sample of size
+\(n_{test}=1000\),(\(x_{new} ,y_{new}\)), are created following the same
+data generating process, serving as the testing data. For mgcv and
+proposed models where choice of spline function are customizable, we
+choose to cubic regression spline with 10 basis. In COSSO and adaptive
+COSSO where the choice of spline are pre-determined, we set to have 10
+bases. The corresponding number of parameter that we estimate with the
+model is 37, 82, 451 and 1801. We are run the simulation where the
+number of bases are increased to 25 deliberately. To evaluate the
+performance of the models, mean squared error, mean absolute error for
+gaussian model, AUC and misclassifcation rate are calculated for
+binomial model, and deviance are calculated for Poisson model, averaging
+across50 simulations. The results are tabulated in Table 1, 2, 3.
+
+\%are calculated to assess out-of-sample estimation accuracy,
+
+\%We also calculated the area under the curve (AUC) of the receiver
+operating characteristic curve for \(y_{new}\). We will also visually
+display the estimated smooth function with the smooth function of truth
+to compare if the models can infer the smooth function correctly,
+despite the prediction accuracy.
+
+\%When constructing the smooth function of each variables, we constructs
+the natural cubic spline with degree of freedom 25. In other words, the
+design matrix of each smooth function will have 26 columns. The total
+number of columns for \(p=4, 10, 50\) is \(105, 261, 1301\)
+respectively, where intercept is kept in the model when fitting. The
+\(p=50\) can mimic the high dimensional setting as the design matrix are
+in high-dimensional setting (\(p >> n\))
+
+\%We benchmark the performance of the proposed methods with the state of
+art GAM package \texttt{mgcv}{[}TODO: add citation{]}. In the future
+steps, we will compare our proposed model with other high dimensional
+GAM applications.
+
+~
+
+\hypertarget{simulation-results}{%
+\subsubsection{Simulation Results}\label{simulation-results}}
+
+Overall, the proposed priors outperforms the state-of-art GAM model
+\texttt{mgcv} when the dimensionality is low, median, and high. The
+proposed priors predicts better than \texttt{mgcv} and infers better of
+the underlying smooth function. Most importantly, \texttt{mgcv} is
+infeasible in the high dimensional setting, i.e.~when \(p=50\) where the
+number of parameters are greater than the sample size.
+
+\hypertarget{prediction-performace}{%
+\paragraph{Prediction Performace}\label{prediction-performace}}
+
+The prediction performance is tabulated in the table below for AUC and
+Supplementary tables for MSE and misclassification rate. In summary, the
+proposed Bayesian models outperforms the benchmark model \texttt{mgcv}
+regardless the choice of prior or fitting algorithm. The models with
+IRLS fitting algorithm give slightly better performance than the the
+model with cyclic coordinate descent algorithm. The advantage diminishes
+in the high dimensional setting (p=50). This is possible because the SS
+normal spline prior provides a more smooth solution, which would work
+well in a low to median dimension setting. However, in the high
+dimensional setting, there are not enough sparsity in the model, i.e.~SS
+normal prior will provides a more complex model than necessary. This is
+confirmed with the visualization in the following section.
+
+\hypertarget{visualization}{%
+\paragraph{Visualization}\label{visualization}}
+
+We plot the estimated smooth functions of the four active variables for
+the 100 simulation iterations, along with the `true' smooth function.
+Across different settings of predictors, the patterns look similar.
+First of all, in all the settings, \texttt{mgcv} tends to provide more
+extreme models, where in the graphs the smooth function have much higher
+bound than the true smooth function. Rarely the estimated smooth
+function from \texttt{mgcv} matches with the true smooth function. In
+comparison, the proposed method can interpolate the shape of the true
+smooth function. However, different priors and fitting algorithms have
+different advantages. For example, in Figure 1, we see that the SS
+normal distribution have problem with the tail of the smooth function,
+especially obvious in the estimations of the variable \emph{x4}.
+However, it would have less sparse solutions, which is more likely to
+accurately interpolate the smooth function especially when the shape is
+complicated (see variable \emph{x2}). On the contrary, the SS double
+exponential prior model encourages sparse solutions, which can sometime
+omit active predictors.
 
 \hypertarget{real-data-analysis}{%
 \section{Real Data Analysis}\label{real-data-analysis}}
@@ -831,6 +937,40 @@ the methodology regarding to the integrative analysis can consider
 setting the hypor priors of the selection indivator of the non-linear
 components conditioning on the probability of inclusion of the linear
 effect. Such structure is more sensible analytically.
+
+\hypertarget{discussion-1}{%
+\subsection{Discussion}\label{discussion-1}}
+
+In this chapter, we propose the spike-and-slab generalized additive
+models for high-dimensional analysis.Two fast computing algorithms,
+EM-IRLS and EM-coordinate descent are developed for expedited model
+fitting. EM-IRLS provides uncertainty measures, while EM-coordinate
+descent algorithm are extremely fast for model fitting. In the
+simulation studies, we shows the proposed model outperforms the state of
+the art GAM model, \texttt{mgcv} in prediction and function inference.
+Moreover, due to the model selection nature of the spike-and-slab prior,
+the proposed model can identify predictors that have large effects on
+the outcome. In addition, the model can be used to answer the question
+if non-linear effect are necessary.
+
+In the manuscript, we describe the implementation of ssGAM-NM using
+EM-IRLS. Nevertheless, EM-IRLS are not limited to fitting ssGAM-NM.
+Other spike-and-slab prior can be fitted with EM-IRLS as well,
+e.g.~mixture t-distribution, and mixture double exponential
+distributions. \citet{Yi2012} demonstrated that t prior and double
+exponential prior can be seen hierarchical normal priors, \[
+\begin{aligned}
+\beta_i \sim N(0, \tau^2_i),\\
+\tau^2_i \sim Inv-\chi^2(v, s^2_j) \text{ or } \tau^2_i \sim Gamma(1, s^2/2)
+\end{aligned}
+\] with \(\tau^2\) integrated out analytically. Hence, the EM-IRLS can
+be easily applied to those two additional mixture priors. One of the
+advantage of using mixture \(t\) prior over mixture normal prior is that
+\(t\) distributions with low degree of freedom, e.g.~\(v=1\), have
+heavier tail than the normal distribution, which is also a special case
+of \(t\) distribution when \(v=\infty\). The heavier tails help to
+obtain posteriors that concentrated around the true nonzero coefficients
+at optimal rates. \citep{Rockova2014a}
 
 \ldots and can be referenced (Figure \ref{fig:plot}) by including the
 \texttt{\textbackslash{}\textbackslash{}label\{\}} tag in the
