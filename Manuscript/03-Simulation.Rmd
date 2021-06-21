@@ -13,7 +13,24 @@ $$
 \mathbb{E}(Y) = g^{-1}(\sin(2\pi x_1) - 2\cos(2\pi x_2 -0.5) + 0.4(x_3-0.5) - 2(x_4^2 -0.3))
 $$
 for stable poisson outcome. For the Gaussian outcome where dispersion are required, the dispersion parameter was set to 1. We follow the same data generating functions in Bai. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active covariates, while the rest
-covariates are inactive $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$,($x_{new} ,y_{new}$), are created following the same data generating process, serving as the testing data. For mgcv and proposed models where choice of spline function are customizable, we choose to cubic regression spline with 10 basis. In COSSO and adaptive COSSO where the choice of spline are pre-determined, we set to have 10 bases. The corresponding number of parameter that we estimate with the model is 37, 82, 451 and 1801. We are run the simulation where the number of bases are increased to 25 deliberately. To evaluate the performance of the models, mean squared error, mean absolute error for gaussian model, AUC and misclassifcation rate are calculated for binomial model, and deviance are calculated for Poisson model, averaging across50 simulations. The results are tabulated in Table 1, 2, 3.
+covariates are inactive $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$,($x_{new} ,y_{new}$), are created following the same data generating process, serving as the testing data. For mgcv and proposed models where choice of spline function are customizable, we choose to cubic regression spline with 10 basis. In COSSO and adaptive COSSO where the choice of spline are pre-determined, we set to have 10 bases. The corresponding number of parameter that we estimate with the model is 37, 82, 451 and 1801. We also run the simulation where the number of bases are increased to 25 deliberately. To evaluate the performance of the models, mean squared error, mean absolute error for gaussian model, AUC and misclassifcation rate are calculated for binomial model, and deviance are calculated for Poisson model, averaging across 50 simulations. The results are tabulated in Table 1, 2, 3.
+
+```{r, fig.height=8}
+targets::tar_load(binom_plot)
+binom_plot
+```
+
+
+```{r, fig.height=8}
+targets::tar_load(gaussian_plot)
+gaussian_plot
+```
+
+
+```{r, fig.height=8}
+targets::tar_load(poisson_plot)
+poisson_plot
+```
 
 
 

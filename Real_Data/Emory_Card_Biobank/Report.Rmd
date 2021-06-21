@@ -14,9 +14,12 @@ library(here)
 library(gtsummary)
 library(tidyverse)
 library(BhGLM)
+library(BHAM)
 
- train_dat <- targets::tar_read(RD_ECB_train_dat)
+train_dat <- targets::tar_read(RD_ECB_train_dat)
 valid_dat <- targets::tar_read(RD_ECB_valid_dat)
+
+gam_scn_res <- targets::tar_read(train_gam_screen)
 ```
 
 #Background
@@ -49,7 +52,7 @@ DM: diabetes, 1=yes, 0=no
 mzXX_tXX: intensities of metabolic features
 
 ### Covariate Summary
-```{r}
+```{r eval = F}
 list(first_set = train_dat,
      second_set = valid_dat) %>% 
   map(~select(.x, # Data
@@ -70,7 +73,7 @@ train_dat %>% select(starts_with("mz")) %>%
 
 ## Screening
 ### Linear Effect Screening
-```{r}
+```{r eval = F}
 # feature_name <- 
 linear_screening_res <- train_dat %>% select(starts_with("mz")) %>% 
   names() %>% 
@@ -97,9 +100,10 @@ p.adj = p.adjust(linear_screening_res$p.value, "fdr")
 ```
 
 ### GAM Screening
-```{r}
+```{r eval = F}
 
 library(mgcv)
+library(broom)
 
 # feature_name <- 
 gam_screening_res <- train_dat %>% select(starts_with("mz")) %>% 
@@ -133,7 +137,7 @@ Outcome: `death3yr` (bin)
 Covariates: None
 Predictors: `starts_with("mz")`
 
-```{r data_split}
+```{r data_split, eval = F}
 library(tidymodels)
 
 set.seed(1)
@@ -146,8 +150,11 @@ test_data <- testing(data_split)
 
 ## Baseline: Linear Lasso Model
 
-```{r}
+```{r eval = F}
 library(glmnet)
+
+train_data <- train_dat %>% select(gam_scn_res %>% pull(var), death3yr)
+
 
 lasso_mdl_cv <- cv.glmnet(x = train_data %>% select(starts_with("mz")) %>% data.matrix,
                     y = train_data %>% pull(death3yr), alpha = 1,
@@ -157,23 +164,25 @@ lasso_mdl <- glmNet(x = train_data %>% select(starts_with("mz")) %>% data.matrix
                     y = train_data %>% pull(death3yr), alpha = 1,
                     family = "binomial",lambda = lasso_mdl_cv$lambda.min)
 
+lasso_cv_res <- cv.bh(lasso_mdl, ncv = 10)$measures
+
 # class(lasso_mdl) <- c("glmNet", class(lasso_mdl))
-measure.bh(lasso_mdl)
+# measure.bh(lasso_mdl)
 # assess.glmnet(lasso_mdl$)
 
-measure.bh(lasso_mdl, new.x = test_data %>% select(starts_with("mz")) %>% as.matrix,
-           new.y = test_data %>% pull(death3yr))
+# measure.bh(lasso_mdl, new.x = test_data %>% select(starts_with("mz")) %>% as.matrix,
+#            new.y = test_data %>% pull(death3yr))
 
 
 
 
-lasso_mdl <- glmnet(x = train_data %>% select(starts_with("mz")) %>% as.matrix,
-                    y = train_data %>% pull(death3yr), alpha = 1,
-                    family = "binomial",lambda = lasso_mdl_cv$lambda.min)
-
-assess.glmnet(lasso_mdl, newx = train_data %>% select(starts_with("mz")) %>% as.matrix, newy = train_data %>% pull(death3yr))
-
-assess.glmnet(lasso_mdl, newx = test_data %>% select(starts_with("mz")) %>% as.matrix, newy = test_data %>% pull(death3yr))
+# lasso_mdl <- glmnet(x = train_data %>% select(starts_with("mz")) %>% as.matrix,
+#                     y = train_data %>% pull(death3yr), alpha = 1,
+#                     family = "binomial",lambda = lasso_mdl_cv$lambda.min)
+# 
+# assess.glmnet(lasso_mdl, newx = train_data %>% select(starts_with("mz")) %>% as.matrix, newy = train_data %>% pull(death3yr))
+# 
+# assess.glmnet(lasso_mdl, newx = test_data %>% select(starts_with("mz")) %>% as.matrix, newy = test_data %>% pull(death3yr))
 
 ```
 
@@ -181,31 +190,34 @@ assess.glmnet(lasso_mdl, newx = test_data %>% select(starts_with("mz")) %>% as.m
 ```{r}
 library(glmnet)
 
-lasso_mdl_cv <- cv.glmnet(x = train_data %>% select(gam_scn_res %>% pull(var)) %>% data.matrix,
-                    y = train_data %>% pull(death3yr), alpha = 1,
+lasso_mdl_cv <- cv.glmnet(x = train_dat %>% select(gam_scn_res %>% pull(var)) %>% data.matrix,
+                    y = train_dat %>% pull(death3yr), alpha = 1,
                     family = "binomial", type.measure = "auc")
 
-lasso_mdl <- glmNet(x = train_data %>% select(gam_scn_res %>% pull(var)) %>% data.matrix,
-                    y = train_data %>% pull(death3yr), alpha = 1,
+lasso_mdl <- glmNet(x = train_dat %>% select(gam_scn_res %>% pull(var)) %>% data.matrix,
+                    y = train_dat %>% pull(death3yr), alpha = 1,
                     family = "binomial",lambda = lasso_mdl_cv$lambda.min)
+
+
+lasso_cv_res <- cv.bh(lasso_mdl, ncv = 10)$measures
 
 # class(lasso_mdl) <- c("glmNet", class(lasso_mdl))
-measure.bh(lasso_mdl)
+# measure.bh(lasso_mdl)
 # assess.glmnet(lasso_mdl$)
 
-measure.bh(lasso_mdl, new.x = test_data %>% select(gam_scn_res %>% pull(var)) %>% as.matrix,
-           new.y = test_data %>% pull(death3yr))
+# measure.bh(lasso_mdl, new.x = test_data %>% select(gam_scn_res %>% pull(var)) %>% as.matrix,
+#            new.y = test_data %>% pull(death3yr))
 
 
 
 
-lasso_mdl <- glmnet(x = train_data %>% select(starts_with("mz")) %>% as.matrix,
-                    y = train_data %>% pull(death3yr), alpha = 1,
-                    family = "binomial",lambda = lasso_mdl_cv$lambda.min)
-
-assess.glmnet(lasso_mdl, newx = train_data %>% select(starts_with("mz")) %>% as.matrix, newy = train_data %>% pull(death3yr))
-
-assess.glmnet(lasso_mdl, newx = test_data %>% select(starts_with("mz")) %>% as.matrix, newy = test_data %>% pull(death3yr))
+# lasso_mdl <- glmnet(x = train_data %>% select(starts_with("mz")) %>% as.matrix,
+#                     y = train_data %>% pull(death3yr), alpha = 1,
+#                     family = "binomial",lambda = lasso_mdl_cv$lambda.min)
+# 
+# assess.glmnet(lasso_mdl, newx = train_data %>% select(starts_with("mz")) %>% as.matrix, newy = train_data %>% pull(death3yr))
+# 
+# assess.glmnet(lasso_mdl, newx = test_data %>% select(starts_with("mz")) %>% as.matrix, newy = test_data %>% pull(death3yr))
 
 ```
 
@@ -213,38 +225,47 @@ assess.glmnet(lasso_mdl, newx = test_data %>% select(starts_with("mz")) %>% as.m
 ```{r}
 library(BHAM)
 
-
-
-
 mz_names <- train_dat %>% select(gam_scn_res %>% pull(var)) %>% names  
 sm_df <- data.frame(
   Var = mz_names,
  Func = "s",
- Args ="bs='cr', k=5"
+ Args ="bs='cr', k=10"
 )
 
-sm_obj <- construct_smooth_data(sm_df, train_data)
-
+sm_obj <- construct_smooth_data(sm_df, train_dat)
+```
+```{r}
 dsn_mat <- sm_obj$data
-
-# The validation data doesn't overlap with training data
-# test_sm_dat <- make_predict_dat(sm_obj$Smooth, dat = valid_dat)
-
-mdl_defaul <- bmlasso(dsn_mat, train_data$death3yr, family = "binomial", ss  = c(lasso_mdl$prior.scale, 0.5))
-
-mdl_dflt <- bmlasso_spline(dsn_mat, train_data$death3yr, family = "binomial",
-                           group = make_group(names(dsn_mat)),
-                           ss  = c(lasso_mdl$prior.scale, 0.5))
-
-# Training Data Performance
-cat("bmlasso model\n")
-measure.bh(mdl_defaul)
-cat("bmlasso_spline model\n")
-measure.bh(mdl_dflt)
-
 ```
 
 ```{r}
+# The validation data doesn't overlap with training data
+# test_sm_dat <- make_predict_dat(sm_obj$Smooth, dat = valid_dat)
+
+# mdl_defaul <- bmlasso(dsn_mat, train_data$death3yr, family = "binomial", ss  = c(, 0.5))
+
+bmlasso_mdl <- bmlasso(dsn_mat, train_dat$death3yr, family = "binomial",
+                           group = make_group(names(dsn_mat)))
+```
+
+```{r}
+spline_mdl <- bamlasso(dsn_mat, train_dat$death3yr, family = "binomial",
+                           group = make_group(names(dsn_mat)))
+
+
+# bmlasso_cv_res <- cv.bh(bmlasso_mdl, ncv = 10)$measures
+# spline_cv_res <- cv.bh(spline_mdl, ncv = 10)$measures
+
+
+# Training Data Performance
+# cat("bmlasso model\n")
+# measure.bh(mdl_defaul)
+# cat("bmlasso_spline model\n")
+# measure.bh(mdl_dflt)
+
+```
+
+```{r eval = F}
 test_sm_dat <- BHAM::make_predict_dat(sm_obj$Smooth, dat=test_data)
 
 # Testing Data Performance
@@ -258,16 +279,18 @@ measure.bh(mdl_dflt, new.x = test_sm_dat, new.y=test_data$death3yr)
 # Extremely Penalized Model
 ```{r}
 
-mdl_pen_extreme <- bmlasso_spline(dsn_mat, train_data$death3yr, family = "binomial",
+mdl_pen_extreme <- bamlasso(dsn_mat, train_dat$death3yr, family = "binomial",
                            group = make_group(names(dsn_mat)),
                            ss = c(0.001, 0.5))
 
+# spline_ext_cv_res <- cv.bh(mdl_pen_extreme, ncv = 10)
+
 # Training Data Performance
-measure.bh(mdl_pen_extreme)
+# measure.bh(mdl_pen_extreme)
 
 
 # Testing Data Performance
-measure.bh(mdl_pen_extreme, new.x = test_sm_dat, new.y=test_data$death3yr)
+# measure.bh(mdl_pen_extreme, new.x = test_sm_dat, new.y=test_data$death3yr)
 ```
 
 
