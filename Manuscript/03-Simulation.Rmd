@@ -1,4 +1,4 @@
-## Simulation Study
+# Simulation Study
 In this section, we compare the performance of the proposed models to 3 other models: COSSO, adaptive COSSO ,mgcv. COSSO is xxx method. Adaptive COSSO is another method, mgcv is another method. 
 To demonstrate the correctness and feasibility of the proposed SS-GAM,
 we follow the logistic regression simulation introduced in Bai (Work in
@@ -31,6 +31,9 @@ gaussian_plot
 targets::tar_load(poisson_plot)
 poisson_plot
 ```
+
+For the binomial outcome shown in Figure 1, we can see that the proposed models are consistently performed better than COSSO and adaptive COSSO. Mgcv slightly outperforms the proposed models in low dimension settings(p = 4, 10), but suffers from overfitting in medium dimension setting (p=50). In addition, in the high-dimension setting (p=200), mgcv could not make prediction due to the p > n problem. Among the proposed models, we see that there is modest difference between the models that shares the same indicator variable('_spline' models) and or not sharing indicator variable (modles), where the not sharing indicator variable models have slightly edge over indicator sharing model. Moreover, the mixture double exponential model and lasso model perform substaintially better in the medium and high settings. For the remaining two outcomes, the results shows similar trends, where mixture double exponential model and ss lasso model are recommended for use. 
+
 
 
 

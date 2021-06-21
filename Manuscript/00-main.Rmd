@@ -3,6 +3,12 @@ title: Spike-and-Slab Generalized Additive Models and Fast Algorithms for High-D
 author:
 - name: Boyi Guo*
   num: a
+- name: D. Leann Long
+  num: a
+- name: Byron C. Jaeger
+  num: a 
+- name: AKM Fazlur Rahman
+  num: a   
 - name: Nengjun Yi
   num: a
 address:
