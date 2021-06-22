@@ -3,12 +3,12 @@ title: Spike-and-Slab Generalized Additive Models and Fast Algorithms for High-D
 author:
 - name: Boyi Guo*
   num: a
-- name: D. Leann Long
-  num: a
 - name: Byron C. Jaeger
   num: a 
 - name: AKM Fazlur Rahman
   num: a   
+- name: D. Leann Long
+  num: a  
 - name: Nengjun Yi
   num: a
 address:
@@ -18,7 +18,7 @@ address:
   # org: Department of Applied Things, University B, City B, Country B
 corres: "*Corresponding author name, This is sample corresponding address. \\email{xxx@uab}"
 presentaddress: This is sample for present address text this is sample for present address text
-authormark: Guo and Yi
+authormark: Guo et al.
 articletype: Research article
 received: 2021-01-01
 revised: 2021-02-01
@@ -86,7 +86,4 @@ print(xt, comment = FALSE)
 The use of the Rmarkdown equivalent of the \LaTeX cross-reference system
 for figures, tables, equations, etc., is encouraged (using `[@<name>]`, equivalent of `\ref{<name>}` and `\label{<name>}`). That works well for citations in Rmarkdown, not so well for figures and tables. In that case, it is possible to revert to standard \LaTeX syntax.
 
-# References
-
-# Appendix
 

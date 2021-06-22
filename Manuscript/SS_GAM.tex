@@ -23,12 +23,12 @@
 for High-Dimensional Data}
 
 \author[a]{Boyi Guo*}
-\author[a]{D. Leann Long}
 \author[a]{Byron C. Jaeger}
 \author[a]{AKM Fazlur Rahman}
+\author[a]{D. Leann Long}
 \author[a]{Nengjun Yi}
 
-\authormark{Guo and Yi}
+\authormark{Guo et al.}
 
 \address[a]{Department of Biostatistics, University of Alabama at
 Birmingham, Birmingham, USA}
@@ -101,9 +101,46 @@ using a pseudo-weighted version of the backfitting algorithm
 increasing analytic demands for high-dimensional data analysis in
 biomedical studies.
 
-In many area of modern biomedical research, dealing with
-high-dimensional data, also known as \(p >> n\) problem, is common, for
-example sequencing data analysis, electric health record data analysis.
+Many applications of modern biomedical research, e.g.~sequencing data
+analysis, electric health record data analysis, require special
+treatment of high-dimensionality, commonly known as \(p >> n\) problem.
+There is extensive literature on high-dimensional linear models via
+penalized models or Bayesian hierarchical models, see
+\citet{Mallick2013}. These models assume sparsity among the predictors,
+i.e.~most predictors have small or no effects on the outcome. Further
+development focuses on addressing the grouping structure among the
+predictors, where AMs and GAMs can be considered special cases. Various
+penalties are imposed on the basis function coefficients:
+\citet{Ravikumar2009} extended the grouped lasso \citep{Yuan2006} to
+additive models; \citet{Huang2010} further developed adaptive grouped
+lasso for additive models; \citet{Wang2007} and \citet{Xue2009} applied
+grouped SCAD penalty \citep{Fan2001} to the additive models. Recent
+Bayesian hierarchical models are also used in the context of
+high-dimensional additive models. Various group spike-and-slab priors
+combining with computationally intensive MCMC algorithms
+\citep{Xu2015, Yang2020} are proposed where the application on AMs are
+by-products. \citet{Bai2020} was the first to apply group spike-and-slab
+lasso prior to AMs using a fast optimization algorithm, and further
+generalized the framework to GAMs in \citet{Bai2021}. Regardless of the
+nice statistical properties, a practical and pivotal question, if
+non-linear effects exist, yet to be addressed by these methods. In
+addition, a common criticism received by these methods is that the basis
+function coefficients tend to be overly penalized due to the sparsity
+assumption directly applied on the basis function coefficients.
+\citep{Scheipl2013}
+
+To address this problem.
+
+where majority of the efforts ware focusing on the
+
+{[}TODO a sentence of sparsity. What it means in a penalized model and
+Bayesian model{]} Directly apply to additive models, spline models
+specifically. Problem, oversmoothing of the spline function. An more
+appropriate treatment would be incorporating the smooth penalty of
+spline functions.{[}TODO: a sentence about smoothness penalty{]}
+
+What is the smooth penalty of spline function?
+
 Many statistical models have been proposed for such problem, for
 example, penalized models and Bayesian hierarchical models. However, up
 to this point, most efforts of methodology development focus on modeling
@@ -1011,9 +1048,6 @@ for figures, tables, equations, etc., is encouraged (using
 works well for citations in Rmarkdown, not so well for figures and
 tables. In that case, it is possible to revert to standard
 \LaTeX syntax.
-
-\hypertarget{references}{%
-\section{References}\label{references}}
 
 \bibliography{bibfile.bib}
 
