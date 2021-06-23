@@ -117,125 +117,95 @@ lasso for additive models; \citet{Wang2007} and \citet{Xue2009} applied
 grouped SCAD penalty \citep{Fan2001} to the additive models. Recent
 Bayesian hierarchical models are also used in the context of
 high-dimensional additive models. Various group spike-and-slab priors
-combining with computationally intensive MCMC algorithms
-\citep{Xu2015, Yang2020} are proposed where the application on AMs are
-by-products. \citet{Bai2020} was the first to apply group spike-and-slab
-lasso prior to AMs using a fast optimization algorithm, and further
-generalized the framework to GAMs in \citet{Bai2021}. Regardless of the
-nice statistical properties, a practical and pivotal question, if
-non-linear effects exist, yet to be addressed by these methods. In
-addition, a common criticism received by these methods is that the basis
-function coefficients tend to be overly penalized due to the sparsity
-assumption directly applied on the basis function coefficients.
-\citep{Scheipl2013}
+combining with computationally intensive Markov chain Monte Carlo (MCMC)
+algorithms \citep{Xu2015, Yang2020} are proposed where the application
+on AMs are by-products. \citet{Scheipl2012} proposed an ad hoc
+spike-and-slab structure prior, normal-mixture-of-inverse gamma,
+specifically for semi-parametric regression using MCMC. The
+normal-mixture-of-inverse gamma prior is mixture of t-distribution with
+an additional coefficients mixing vector, where the vector follows a
+mixture of two Gaussian distribution. \citet{Bai2020} was the first to
+apply group spike-and-slab lasso prior to AMs using a fast optimization
+algorithm, and further generalized the framework to GAMs in
+\citet{Bai2021}. Regardless of the nice statistical properties, a
+practical and pivotal question, if non-linear effects exist, yet to be
+addressed by these methods. Besides \citet{Schipel2012}, most proposed
+methods adapt an `all-in-all-out' strategy, i.e.~either including or
+excluding the variable completely, rendering no space for within group
+selection. In addition, a common criticism received by these methods is
+that the basis function coefficients tend to be overly penalized due to
+the sparsity assumption directly applied on the basis function
+coefficients.\citep{Scheipl2013} It would be of special interest to
+develop a fast yet flexible generalized additive model.
 
-To address this problem.
+To address these challenges, we propose a novel Bayesian hierarchical
+generalized additive model (BHAM) for high dimensional data analysis.
+Specifically, we impose a new bi-part spike-and-slab spline prior on the
+smooth functions to perform bilevel selection, where the linear and
+nonlinear spaces of smooth functions can be selected separately. The
+prior setup encourages a flexible solution, rending one of three
+possibilities: no effect, only linear effect, or nonlinear effect of a
+predictor. Additionally, two fast computing optimization based
+algorithms are developed for high and ultra-high dimension settings
+respectively. Meanwhile, to avoid the over-penalization of the basis
+function coefficients, smoothness penalties are incorporated in the
+model via re-parameterization. Smoothness penalties are commonly
+implemented in GAMs through smoothing and penalized regression splines.
+They are quadratic norm of the coefficients, and allow locally adaptive
+penalties on each smoothing function. For the most common case of cubic
+splines, the smoothness penalty conditioning on a smoothness penalty
+parameter \(\lambda_j\) is a function of the integration of second
+derivative of the spline function, expressed mathematically as \[
+  \text{pen}f_j(x) = \lambda_j \int f^{"}_j(x)dx = \lambda_j \boldsymbol{\beta}_j^T \boldsymbol{S}_j \boldsymbol{\beta}_j,
+\] where \(\boldsymbol{S}_j\) is a known penalty matrix, and
+\(\boldsymbol{\beta}_j\) are the basis function coefficients. Smoothness
+penalties are also previously used in the spike-and-slab GAM
+\citep{Scheipl2012} and the sparsity-smoothness penalty
+\citep{Meier2009}. Moreover, incorporating the smoothness penalty allows
+the separation of the linear space of the smooth function, also know as
+the null space, from the nonlinear space. \citet{Marra2011} introduced a
+re-parameterization of the basis function matrix based on the
+decomposition of the smoothness penalty matrix \(\boldsymbol{S}\). The
+re-parameterization allows different penalties imposed on the null and
+nonlinear spaces separately, and further allows the sparsity in linear
+space and smoothness in nonlinear effect interpolation. {[}TODO: a
+sentence that it decompose the prior to independent priors, provide
+obvious computational convenience.{]} The computational convenience
+improved the scalability of the model.
 
-where majority of the efforts ware focusing on the
-
-{[}TODO a sentence of sparsity. What it means in a penalized model and
-Bayesian model{]} Directly apply to additive models, spline models
-specifically. Problem, oversmoothing of the spline function. An more
-appropriate treatment would be incorporating the smooth penalty of
-spline functions.{[}TODO: a sentence about smoothness penalty{]}
-
-What is the smooth penalty of spline function?
-
-Many statistical models have been proposed for such problem, for
-example, penalized models and Bayesian hierarchical models. However, up
-to this point, most efforts of methodology development focus on modeling
-linear effect in high dimensional setting. It is still not clear what is
-the best practice on how to model non-linear effects in high-dimensional
-setting.
-
-Similar to expanding classic models to high-dimensional models,
-expanding the GAM framework for high-dimensional applications is not a
-trivial task. The difficulties mainly come in two-fold: grouping nature
-of the basis functions, and the balance between spline smoothness and
-variable sparsity. For GAM models, a smoothing function is consists of
-multiple basis functions. The basis functions of a variable is
-inherently related. The grouping structure should be properly taken care
-of for accurate estimation. Moreover, shrinkage is previously used
-solely for sparsity of the model in high dimensional regression models,
-or smoothness in GAMs. How to organically combine the two together
-remains as a troubling question.
-
-To the best of our knowledge, there are few GAM models proposed for high
-dimensional application. In common practice, model matrix of spline
-terms are generated using base functions of preference, and then feed to
-a penalized model. Without proper handle of the grouping nature of bases
-functions, the estimation of the smooth function is less accurate.
-\citet{Bai2020Spline} shows inferior performance of such practice
-compared to using an ad hoc high-dimensional additive model. Among the
-specialized high-dimensional spline methods, \citet{Ravikumar2009}
-extended the original backfitting algorithm \citep{Hastie1987} to
-accommodate the high-dimensional setting. The sparsity and smoothness
-was handled separately with a soft threshold. The authors also
-demonstrated its similarity to Group Lasso. \citet{Meier2009} proposed
-an a sparsity-smoothness penalty,
-
-\[
-J(f_j) = \lambda_1 \sqrt{||f_j||^2_n + \lambda_2 \int(f^{''}_j(x))^2dx},
-\] which can re-formulated as a group lasso problem as well. However,
-the model can not estimate the smoothness of the spline functions
-correctly, as the smoothness of all spline models are controlled by the
-lambda\_2. The inflexible of the model creates problems in prediction.
-
-From the Bayesian perspective, recent works that expands to the
-high-dimensional settings includes \citet{Scheipl2012} and
-\citet{Bai2020Spline}. \citet{Scheipl2012} proposed an new
-spike-and-slab structure prior, normal-mixture-of-inverse gamma for
-semi-parametric regression using MCMC. The normal-mixture-of-inverse
-gamma prior is mixture of t-distribution with an additional coefficients
-mixing vector, where the vector follows a mixture of two Gaussian
-distribution. \citet{Bai2020Spline} proposed an novel high dimensional
-Bayesian GAM using the spike-and-slab group lasso prior. An fast fitting
-EM-based algorithm is proposed. Asymptotic theory, such as posterior
-contraction rates and model selection consistency are proved. Even
-though, the algorithm is flexible to cover many non-Gaussian family in a
-high dimensional setting, the proposed method didn't address uncertainty
-quantification, i.e.~calculating credible intervals etc. However, most
-of these Bayesian GAMs still suffer a common problem, computation cost.
-These Bayesian GAMs uses MCMC to estimate the posterior distribution,
-which would create an intense computation load.
-
-In this article, we aim to address the challenges of non-linear signal
-modeling in high-dimensional application using Bayesian Hierarchical
-model. Specifically, we will propose a new Bayesian spike-and-slab prior
-for the generalized additive models and Cox spline models. The
-contribution of the proposed prior comes in two-fold: 1) it supports
-simultaneous variable selection and function selection; 2) it provides
-robust estimation and prediction for the coefficients and outcomes. As
-previously described, simultaneous variable selection and its functional
-form selection is not a trivial problem. Nevertheless, the Bayesian
-spike-and-slab prior is a perfect solution to the problem, as the latent
-binary indicator can be used to for variable selection and the spike and
-slab densities are used to adaptive adjust the smoothness of the spline
-function. Moreover, compared to currently available Bayesian spline
-models which mostly conduct a `all-in-all-out' strategy, i.e.~either
-including a non-linear form of a variable or excluding the variable
-completely, we offer a more flexible solution, rending one of three
-possibilities: no effect of a predictor, only linear effect of a
-predictor, or non-linear effect. This simplifies the process of
-determining what effect a predictor have on the outcome, without
-involving hypothesis testing where the degree of freedom for non-linear
-effect is complicated to estimate due to the shrinkage. Moreover, out
-model inherent the the robust estimation from Bayesian models. Lastly,
-The third aim of the dissertation work will focus on the software
-implementation of the proposed models and algorithms. We will implement
-the proposed models and algorithms in one of the most commonly used
-statistical computing environment R. Ancillary functions will be
-provided in assistance to model diagnostic, interpretation and graphing.
-The R implementation of the Bayesian hierarchical additive model is
-available via a freely available R package, BHAM at
-(\url{https://github.com/boyiguo1/BHAM}){[}\url{https://github.com/boyiguo1/BHAM}{]}.
+The proposed BHAM uses a spike-and-slab prior for function selections,
+but it substantially differs from previous spike-and-slab based GAMs,
+i.e.~the spike-and-slab GAM \citep{Scheipl2012} and the SB GAM
+\citep{Bai2021} in many ways. First of all, the proposed spike-and-slab
+spline prior is a spike-and-slab lasso type prior using independent
+mixture double exponential distribution, compared to spike-and-slab GAM.
+Spike-and-slab lasso priors provide computational convenience during
+model fitting through optimization algorithms, instead of computational
+intensive sampling algorithms. They make fitting high- and
+ultrahigh-dimensional model feasible without sacrificing performance in
+prediction and variable selection. Secondly, the optimization algorithms
+introduced in this article include EM-Coordinate Descent algorithm and
+EM-Iterative weighted least square algorithm for different utilities.
+The applications of the two aforementioned algorithm are fruitful in
+Bayesian hierarchical models in high-dimensional data analysis, see
+{[}TODO: add citations{]}. Even though SB-GAM with a group
+spike-and-slab lasso prior also uses EM-CD for model fitting, the
+proposed EM-IWLS provides uncertainty measures that could be further
+used for confidence bound calculation and hypothesis testing. EM-IWLS
+complements the lack of inference potential from EM-CD in a median and
+high data setting. Furthermore, the proposed model addresses the
+incapability of bilevel selection in SB-GAM. Lastly, the R
+implementation of the Bayesian hierarchical additive model is available
+publicly via BHAM at \url{https://github.com/boyiguo1/BHAM}, make
+transnational science more accessible.
 
 The rest of the paper are arranged as the followings: in Chapter 2 we
-demonstrate the Bayesian Hierarchical generalized additive model, where
-we provide the setup of the proposed model and two fast-fitting
-algorithms. In Chapter 3, we Application to real-world datasets
-demonstrates the usefulness of the proposed methodologies in Chpater 4.
-Conclusion and discussions are made in Chapter 5.
+demonstrate the Bayesian hierarchical generalized additive model, where
+we provide the setup of the proposed model and describe the two
+fast-fitting algorithms. In Chapter 3, we compare the proposed via monte
+carlo simulation. .Application to real-world datasets demonstrates the
+usefulness of the proposed methodologies in Chpater 4. Conclusion and
+discussions are made in Chapter 5.
 
 \hypertarget{spike-and-slab-additive-model}{%
 \section{Spike-and-slab Additive
