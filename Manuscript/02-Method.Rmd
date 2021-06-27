@@ -1,6 +1,22 @@
-# Spike-and-slab Additive Model
+# Bayesian Hierarchical Additive Models
 
-Following the notation in the previous section \ref{Notation}, suppose we have the model matrix $\bs X$ derived from spline functions of choice $h_j, j = 1, \dots, p.$ for the $p$ covariates that are modeled nonparametrically, the total dimension of $\bs X$ is $n \times \sum\limits_{j=1}^p k_j$. Column-wise centering and re-parameterization introduced in the GAM as random effect section[^5] are performed. The re-parameterization has two purposes. First of all the re-parameterization reshapes the columns to be linearly independent to each other, and hence, independent prior can be set to the coefficients. Secondly, the re-parameterization decomposes the model matrix $\bs X_j$ for the $j$th covariates to two sub-matrices representing the null space of the spline and penalized space of the spline,
+Following the GLM notation introduced in Section \label{introduction}, we have a generalized additive model 
+$$
+E(Y|\bs x) = g^{-1}(a + \sum\limits^p_{j=1}f_j(x_j)),
+$$
+with the smoothing function $f_j(x_j)$ of the variable $x_j, j = 1, \dots, p.$ The basis function matrix, i.e. the design matrix derived from the smoothing function $f_j(x_j)$, is denoted $\bs X_j$ for the variable $x_j$. The dimension of the design matrix depends on the choice of the smoothing function. For example, a cubic spline function with $k$ knots produces a $k+2$ elements column vector. Its corresponding smoothness penalty matrix is denoted as $\bs S_j$. In all, the GAMs can be formulated in a matrix form 
+$$
+E(Y|\bs x) = g^{-1}(a + \sum\limits^p_{j=1} \bs \beta_j^T \bs X_j),
+$$
+where $\bs \beta_j$ denotes the basis function coefficients for the $j$th variable, and the matrix transposing operation is denoted with a superscript $^t$. To note, the proposed model can include parametric forms of variables in the model, treating the parametric function as a special case of the smoothing function, e.g. $f_j(x_j) = x_j$ with the smoothness penalty matrix defined as $\bs S_j = \begin{bmatrix}0\end{bmatrix}$. 
+
+To encourage proper smoothness of the smoothing functions, we adopt the idea of the smoothing penalty from smoothing spline models. The basic idea is to set up a smoothing penalty, depending on the smoothness penalty matrix via Equation \ref{eq:smoothpen}, in the posterior density function, or least squared and likelihood function in the frequentist framework. However, direct integration of the smoothness penalty into the sparsity penalty is not obvious. Given that the smoothness penalty matrix is, @Marra2011 introduced a re-parameterization of the basis function matrix $\bs X$ based on the decomposition of the smoothness penalty matrix $\bs S$.
+
+
+
+
+
+ Column-wise centering and re-parameterization introduced in the GAM as random effect section[^5] are performed. The re-parameterization has two purposes. First of all the re-parameterization reshapes the columns to be linearly independent to each other, and hence, independent prior can be set to the coefficients. Secondly, the re-parameterization decomposes the model matrix $\bs X_j$ for the $j$th covariates to two sub-matrices representing the null space of the spline and penalized space of the spline,
 $$
 \bs X_j = \begin{bmatrix}
 \bs X_j^{0} & \bs X_j^{pen}
@@ -8,13 +24,12 @@ $$
 $$
 where $\bs X_j^{null}$ is the column space representing the null space of the spline model, and $\bs X_j^{pen}$ denotes the column spaces that need to be shrunk for smoothness of the spline. The purpose for this re-parameterization is to isolate the null space from the smoothing space, such that answering the question, if non-linear relationship is necessary, becomes easy by deciding if the corresponding coefficients of the $\bs X_j^{pen}$ are jointly zero. This strategy is widely used, previously mentioned in @Scheipl2012 and the references there in.^[Possibly select some to add here.] Hereafter, we denote the coefficients of the null space as $\bs \beta^{0}_j$ and the coefficients of the penalized space as $\bs \beta^{pen}_j$. The spline function for the $j$the covariate is 
 $$
-f_j(X) = f_j^0(X) + f_j^{pen}(X) = {\beta_j^0}^T X_j^0 + {\beta_j^{pen}}^T X_j^{pen},
-$$
-where the superscript $^t$ denotes matrix transpose. 
+f_j(X) = f_j^0(X) + f_j^{pen}(X) = {\beta_j^0}^T X_j^0 + {\beta_j^{pen}}^T X_j^{pen}.
+$$ 
 
-Without loss of generality, we assume that the model doesn't include the the parametric part of the model $\bs A$. The coefficients of $\bs A$ can be estimated easily in the proposed EM algorithms by local update conditioning on the temporary value of the spline coefficients.
 
-## Spike and Slab Prior
+
+## Spike and Slab Spline Prior
 
 For high-dimensional data analysis, a common Bayesian modeling approach is to impose a particular family of priors, the spike-and-slab (SS) priors on the coeffcient in a regression modelss. The term "spike-and-slab" was first coined in @Mitchell1988 describing the shape of the prior. It is a mixture distribution, comprised with a skinny spike density $f_{spike}(\cdot)$ for weak signals and a flat slab density $f_{slab}(\cdot)$ for large signals, mathematically
 $$

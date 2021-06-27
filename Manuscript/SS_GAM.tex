@@ -155,9 +155,10 @@ They are quadratic norm of the coefficients, and allow locally adaptive
 penalties on each smoothing function. For the most common case of cubic
 splines, the smoothness penalty conditioning on a smoothness penalty
 parameter \(\lambda_j\) is a function of the integration of second
-derivative of the spline function, expressed mathematically as \[
-  \text{pen}f_j(x) = \lambda_j \int f^{"}_j(x)dx = \lambda_j \boldsymbol{\beta}_j^T \boldsymbol{S}_j \boldsymbol{\beta}_j,
-\] where \(\boldsymbol{S}_j\) is a known penalty matrix, and
+derivative of the spline function, expressed mathematically as
+\begin{equation}\label{eq:smoothpen}
+  \text{pen}\left[f_j(x)\right] = \lambda_j \int f^{"}_j(x)dx = \lambda_j \boldsymbol{\beta}_j^T \boldsymbol{S}_j \boldsymbol{\beta}_j ,
+\end{equation} where \(\boldsymbol{S}_j\) is a known penalty matrix, and
 \(\boldsymbol{\beta}_j\) are the basis function coefficients. Smoothness
 penalties are also previously used in the spike-and-slab GAM
 \citep{Scheipl2012} and the sparsity-smoothness penalty
@@ -207,16 +208,44 @@ carlo simulation. .Application to real-world datasets demonstrates the
 usefulness of the proposed methodologies in Chpater 4. Conclusion and
 discussions are made in Chapter 5.
 
-\hypertarget{spike-and-slab-additive-model}{%
-\section{Spike-and-slab Additive
-Model}\label{spike-and-slab-additive-model}}
+\hypertarget{bayesian-hierarchical-additive-models}{%
+\section{Bayesian Hierarchical Additive
+Models}\label{bayesian-hierarchical-additive-models}}
 
-Following the notation in the previous section \ref{Notation}, suppose
-we have the model matrix \(\boldsymbol{X}\) derived from spline
-functions of choice \(h_j, j = 1, \dots, p.\) for the \(p\) covariates
-that are modeled nonparametrically, the total dimension of
-\(\boldsymbol{X}\) is \(n \times \sum\limits_{j=1}^p k_j\). Column-wise
-centering and re-parameterization introduced in the GAM as random effect
+Following the GLM notation introduced in Section \label{introduction},
+we have a generalized additive model \[
+E(Y|\boldsymbol{x}) = g^{-1}(a + \sum\limits^p_{j=1}f_j(x_j)),
+\] with the smoothing function \(f_j(x_j)\) of the variable
+\(x_j, j = 1, \dots, p.\) The basis function matrix, i.e.~the design
+matrix derived from the smoothing function \(f_j(x_j)\), is denoted
+\(\boldsymbol{X}_j\) for the variable \(x_j\). The dimension of the
+design matrix depends on the choice of the smoothing function. For
+example, a cubic spline function with \(k\) knots produces a \(k+2\)
+elements column vector. Its corresponding smoothness penalty matrix is
+denoted as \(\boldsymbol{S}_j\). In all, the GAMs can be formulated in a
+matrix form \[
+E(Y|\boldsymbol{x}) = g^{-1}(a + \sum\limits^p_{j=1} \boldsymbol{\beta}_j^T \boldsymbol{X}_j),
+\] where \(\boldsymbol{\beta}_j\) denotes the basis function
+coefficients for the \(j\)th variable, and the matrix transposing
+operation is denoted with a superscript \(^t\). To note, the proposed
+model can include parametric forms of variables in the model, treating
+the parametric function as a special case of the smoothing function,
+e.g.~\(f_j(x_j) = x_j\) with the smoothness penalty matrix defined as
+\(\boldsymbol{S}_j = \begin{bmatrix}0\end{bmatrix}\).
+
+To encourage proper smoothness of the smoothing functions, we adopt the
+idea of the smoothing penalty from smoothing spline models. The basic
+idea is that set up a smoothing penalty, depending on the smoothness
+penalty matrix via the penalty introduced in Eq \ref{eq:smoothpen} , in
+the posterior density function, or least squared and likelihood function
+in the frequentist framework. However, direct integration of the
+smoothness penalty with the sparsity penalty is not straightforward.
+
+have the model matrix \(\boldsymbol{X}\) derived from spline functions
+of choice \(h_j, j = 1, \dots, p.\) for the \(p\) covariates that are
+modeled nonparametrically, the total dimension of \(\boldsymbol{X}\) is
+\(n \times \sum\limits_{j=1}^p k_j\). Column-wise centering and
+re-parameterization introduced in the GAM as random effect
 section{[}\^{}5{]} are performed. The re-parameterization has two
 purposes. First of all the re-parameterization reshapes the columns to
 be linearly independent to each other, and hence, independent prior can
@@ -249,8 +278,9 @@ the parametric part of the model \(\boldsymbol{A}\). The coefficients of
 by local update conditioning on the temporary value of the spline
 coefficients.
 
-\hypertarget{spike-and-slab-prior}{%
-\subsection{Spike and Slab Prior}\label{spike-and-slab-prior}}
+\hypertarget{spike-and-slab-spline-prior}{%
+\subsection{Spike and Slab Spline
+Prior}\label{spike-and-slab-spline-prior}}
 
 For high-dimensional data analysis, a common Bayesian modeling approach
 is to impose a particular family of priors, the spike-and-slab (SS)
@@ -351,9 +381,9 @@ that this could improve the sacrificed robustness of the estimation
 process due to the MAP estimation used by the EM algorithms in
 comparison to the model averaging approach.
 
-\hypertarget{spike-and-slab-spline-prior}{%
+\hypertarget{spike-and-slab-spline-prior-1}{%
 \subsection{Spike and slab spline
-prior}\label{spike-and-slab-spline-prior}}
+prior}\label{spike-and-slab-spline-prior-1}}
 
 A generalized spline model can be formulated as \[
 y_i \sim EF(\mu_i, \phi), \quad g(\mu_i) = \sum\limits_{j=1}^p f_j(x_{ij}), \quad i = 1, \dots, n.
