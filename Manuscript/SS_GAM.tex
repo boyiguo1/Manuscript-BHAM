@@ -235,24 +235,28 @@ e.g.~\(f_j(x_j) = x_j\) with the smoothness penalty matrix defined as
 
 To encourage proper smoothness of the smoothing functions, we adopt the
 idea of the smoothing penalty from smoothing spline models. The basic
-idea is that set up a smoothing penalty, depending on the smoothness
-penalty matrix via the penalty introduced in Eq \ref{eq:smoothpen} , in
-the posterior density function, or least squared and likelihood function
-in the frequentist framework. However, direct integration of the
-smoothness penalty with the sparsity penalty is not straightforward.
+idea is to set up a smoothing penalty, depending on the smoothness
+penalty matrix via Equation \ref{eq:smoothpen}, in the posterior density
+function, or least squared and likelihood function in the penalized
+framework. However, direct integration of the smoothness penalty into
+the sparsity penalty is not obvious. Given that the smoothness penalty
+matrix is most often symmetric and positive semi-definite {[}\^{} we
+limit the discusstion to univariate smoothing function. However, the
+penalty matrix could possibly contain multiple matrices, e.g.~tensor
+product smoother.{]}, the smoothness penalty matrix can be integrated to
+the design matrix \(\boldsymbol{X}\) via re-parameterization.
+\citet{Marra2011} introduced a re-parameterization of the basis function
+matrix \(\boldsymbol{X}\) based on the decomposition of the smoothness
+penalty matrix \(\boldsymbol{S}\).
 
-have the model matrix \(\boldsymbol{X}\) derived from spline functions
-of choice \(h_j, j = 1, \dots, p.\) for the \(p\) covariates that are
-modeled nonparametrically, the total dimension of \(\boldsymbol{X}\) is
-\(n \times \sum\limits_{j=1}^p k_j\). Column-wise centering and
-re-parameterization introduced in the GAM as random effect
-section{[}\^{}5{]} are performed. The re-parameterization has two
-purposes. First of all the re-parameterization reshapes the columns to
-be linearly independent to each other, and hence, independent prior can
-be set to the coefficients. Secondly, the re-parameterization decomposes
-the model matrix \(\boldsymbol{X}_j\) for the \(j\)th covariates to two
-sub-matrices representing the null space of the spline and penalized
-space of the spline, \[
+Column-wise centering and re-parameterization introduced in the GAM as
+random effect section{[}\^{}5{]} are performed. The re-parameterization
+has two purposes. First of all the re-parameterization reshapes the
+columns to be linearly independent to each other, and hence, independent
+prior can be set to the coefficients. Secondly, the re-parameterization
+decomposes the model matrix \(\boldsymbol{X}_j\) for the \(j\)th
+covariates to two sub-matrices representing the null space of the spline
+and penalized space of the spline, \[
 \boldsymbol{X}_j = \begin{bmatrix}
 \boldsymbol{X}_j^{0} & \boldsymbol{X}_j^{pen}
 \end{bmatrix},
@@ -269,14 +273,8 @@ zero. This strategy is widely used, previously mentioned in
 null space as \(\boldsymbol{\beta}^{0}_j\) and the coefficients of the
 penalized space as \(\boldsymbol{\beta}^{pen}_j\). The spline function
 for the \(j\)the covariate is \[
-f_j(X) = f_j^0(X) + f_j^{pen}(X) = {\beta_j^0}^T X_j^0 + {\beta_j^{pen}}^T X_j^{pen},
-\] where the superscript \(^t\) denotes matrix transpose.
-
-Without loss of generality, we assume that the model doesn't include the
-the parametric part of the model \(\boldsymbol{A}\). The coefficients of
-\(\boldsymbol{A}\) can be estimated easily in the proposed EM algorithms
-by local update conditioning on the temporary value of the spline
-coefficients.
+f_j(X) = f_j^0(X) + f_j^{pen}(X) = {\beta_j^0}^T X_j^0 + {\beta_j^{pen}}^T X_j^{pen}.
+\]
 
 \hypertarget{spike-and-slab-spline-prior}{%
 \subsection{Spike and Slab Spline
