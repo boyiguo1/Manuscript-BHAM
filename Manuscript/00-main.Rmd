@@ -32,6 +32,8 @@ output:
 ---
 
 \newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\tp}{\text{pen}}
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
