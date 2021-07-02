@@ -23,7 +23,7 @@
 for High-Dimensional Data}
 
 \author[a]{Boyi Guo*}
-\author[a]{Byron C. Jaeger}
+\author[b]{Byron C. Jaeger}
 \author[a]{AKM Fazlur Rahman}
 \author[a]{D. Leann Long}
 \author[a]{Nengjun Yi}
@@ -32,6 +32,8 @@ for High-Dimensional Data}
 
 \address[a]{Department of Biostatistics, University of Alabama at
 Birmingham, Birmingham, USA}
+\address[b]{Department of Biostatistics and Data Science, Wake Forest
+University, Winston-Salem, USA}
 
 \corres{*Corresponding author name, This is sample corresponding
 address. \email{xxx@uab}}
@@ -91,9 +93,10 @@ flexibility and interpretability. Among those, generalized additive
 models (GAMs), proposed in the seminal work of \citet{Hastie1987}, grew
 to be one of the most utilized modeling tools. In a GAM, the response
 variable, \(Y\), which is assumed to follow some exponential family
-distribution \(EF(\mu. \phi)\), can be expressed as the summation of
-smooth functions, \(f_j, j = 1, \dots, p\), of a given \(p\)-dimensional
-vector of covariates \(\boldsymbol{x}\), written as \[
+distribution \(EF(\mu, \phi)\)\footnote{TODO: explain \(\phi\)}, can be
+expressed as the summation of smooth functions,
+\(f_j, j = 1, \dots, p\), of a given \(p\)-dimensional vector of
+covariates \(\boldsymbol{x}\), written as \[
 E(Y|\boldsymbol{x}) = g^{-1}(a + \sum\limits^p_{j=1}f_j(x_j)),
 \] where \(g^{-1}\) is the inverse function of a smooth monotonic link
 function. The smooth functions can take many forms and are estimated
@@ -214,25 +217,23 @@ discussions are made in Chapter 5.
 Models}\label{bayesian-hierarchical-additive-models}}
 
 Following the GLM notation introduced in Section \label{introduction},
-we have a generalized additive model \[
-E(Y|\boldsymbol{x}) = g^{-1}(a + \sum\limits^p_{j=1}f_j(x_j)),
-\] with the smoothing function \(f_j(x_j)\) of the variable
+we have a generalized additive model and its matrix form,
+\begin{equation}\label{eq:gam}
+E(Y|\boldsymbol{x}) = g^{-1}(a + \sum\limits^p_{j=1}f_j(x_j)) = g^{-1}(a + \sum\limits^p_{j=1} \boldsymbol{\beta}_j^T \boldsymbol{X}_j),
+\end{equation} with the smoothing function \(f_j(x_j)\) of the variable
 \(x_j, j = 1, \dots, p.\) The basis function matrix, i.e.~the design
 matrix derived from the smoothing function \(f_j(x_j)\), is denoted
 \(\boldsymbol{X}_j\) for the variable \(x_j\). The dimension of the
 design matrix depends on the choice of the smoothing function. For
 example, a cubic spline function with \(k\) knots produces a \(k+2\)
 elements column vector. Its corresponding smoothness penalty matrix is
-denoted as \(\boldsymbol{S}_j\). In all, the GAMs can be formulated in a
-matrix form \[
-E(Y|\boldsymbol{x}) = g^{-1}(a + \sum\limits^p_{j=1} \boldsymbol{\beta}_j^T \boldsymbol{X}_j),
-\] where \(\boldsymbol{\beta}_j\) denotes the basis function
-coefficients for the \(j\)th variable, and the matrix transposing
-operation is denoted with a superscript \(^t\). To note, the proposed
-model can include parametric forms of variables in the model, treating
-the parametric function as a special case of the smoothing function,
-e.g.~\(f_j(x_j) = x_j\) with the smoothness penalty matrix defined as
-\(\boldsymbol{S}_j = \begin{bmatrix}0\end{bmatrix}\).
+denoted as \(\boldsymbol{S}_j\). \(\boldsymbol{\beta}_j\) denotes the
+basis function coefficients for the \(j\)th variable, and the matrix
+transposing operation is denoted with a superscript \(^T\). To note, the
+proposed model can include parametric forms of variables in the model,
+treating the parametric function as a special case of the smoothing
+function, e.g.~\(f_j(x_j) = x_j\) with the smoothness penalty matrix
+defined as \(\boldsymbol{S}_j = \begin{bmatrix}0\end{bmatrix}\).
 
 To encourage proper smoothness of the smoothing functions, we adopt the
 idea of smoothing penalties from smoothing spline models. The basic idea
@@ -271,8 +272,11 @@ For notation convenience, we denote
 as the after re-parameterized basis function matrix for the \(j\)th
 variable hereafter. Similarly, the spline function can be expressed in
 the matrix form \[
-f_j(x_j) = f_j^0(x_j) + f_j^\text{pen}(x_j) = {\beta_j^0}^T \boldsymbol{X}_j^0 + {\beta_j^\text{pen}}^T \boldsymbol{X}_j^\text{pen},
-\]
+f_j(x_j) = f_j^0(x_j) + f_j^\text{pen}(x_j) = \boldsymbol{\beta_j^0}^T \boldsymbol{X}_j^0 + \boldsymbol{\beta_j^\text{pen}}^T \boldsymbol{X}_j^\text{pen},
+\] and the generalized additive model in Equation \ref{eq:gam} be
+\begin{equation}\label{eq:gam-repa}
+E(Y|\boldsymbol{x}) =  g^{-1}(a + \sum\limits^p_{j=1} \boldsymbol{\beta}_j^T \boldsymbol{X}_j) = g^{-1}\left[a + \sum\limits^p_{j=1} ({\beta_j^0}^T \boldsymbol{X}_j^0 + {\beta_j^\text{pen}}^T \boldsymbol{X}_j^\text{pen})\right].
+\end{equation}
 
 The re-parameterization sets up the foundation of the proposed model,
 which has three-fold benefits. First of all, as previously mentioned,
@@ -294,136 +298,137 @@ This step is also necessary for the proposed spike-and-slab spline
 prior. Conventionally, the spike-and-slab priors require scaling of
 predictors \footnote{TODO: insert a citation.}
 
-\hypertarget{spike-and-slab-spline-prior}{%
-\subsection{Spike and Slab Spline
-Prior}\label{spike-and-slab-spline-prior}}
+\hypertarget{spike-and-slab-smooth-priors}{%
+\subsection{Spike-and-Slab Smooth
+Priors}\label{spike-and-slab-smooth-priors}}
 
-For high-dimensional data analysis, a common Bayesian modeling approach
-is to impose a particular family of priors, the spike-and-slab (SS)
-priors on the coeffcient in a regression modelss. The term
-``spike-and-slab'' was first coined in \citet{Mitchell1988} describing
-the shape of the prior. It is a mixture distribution, comprised with a
-skinny spike density \(f_{spike}(\cdot)\) for weak signals and a flat
-slab density \(f_{slab}(\cdot)\) for large signals, mathematically \[
- \beta_i|\gamma_i \sim (1-\gamma_i)f_{spike}(\beta_i) + \gamma_if_{slab}(\beta_i).
-\]
+The family of spike-and-slab (SS) priors regression models dominates
+Bayesian high-dimensional analysis for its utility in outcome prediction
+and variable selection. We defer to \citet{Bai2021Review} for an
+in-depth introduction to spike-and-slab priors. To summary,
+spike-and-slab priors are a family of mixture distributions that
+comprises a skinny spike density \(f_{spike}(\cdot)\) for weak signals
+and a flat slab density \(f_{slab}(\cdot)\) for large signals,
+mathematically \[
+ \beta|\gamma \sim (1-\gamma)f_{spike}(\beta) + \gamma f_{slab}(\beta).
+\] The most distinct feature of the SS priors is that it is conditioned
+on a latent binary variable \(\gamma\) that indicates whether the
+variable \(x\) is included in the model. There are various
+spike-and-slab priors depending on the choice for the spike density
+\(f_{spike}(\cdot)\)\footnote{TODO: should I change to notation of \(f\)
+  to not confound with the smooth functions?} and the slab density
+\(f_{slab}(\cdot)\), for example \citet{George1993}; \citet{George1997};
+\citet{Chipman1996} for grouped variables; \citet{Brown1998} for
+multivariate outcomes; \citet{Ishwaran2005}; \citet{Clyde2004} and
+reference therein.
 
-The most distinct feature of the SS priors family is that it is
-conditioned on a latent binary variable \(\gamma_i\) that indicates
-whether the covariate \(x_i\) is included in the model. There are
-various spike-and-slab priors depending on the choice for the spike
-density \(f_{spike}(\cdot)\) and the slab density \(f_{slab}(\cdot)\),
-for example \citet{George1993}; \citet{George1997}; \citet{Chipman1996}
-for grouped variables; \citet{Brown1998} for multivariate outcomes;
-\citet{Ishwaran2005}; \citet{Clyde2004} and reference therein. Here we
-introduce the most popular spike-and-slab prior introduced in
-\citet{George1993}, as stochastic search variable selection (SSVS).
-Given a regression problem \[
-Y = \boldsymbol{X}\beta+\epsilon, 
-\] we can assume the prior distribution of the regression parameters
-\(\beta\) depends on a vector of binary variables
-\(\gamma=(\gamma_1, \dots \gamma_p)^\prime\) as follows: given
-\(\gamma_i\), \(\beta_i\) are independent distributed as a mixture
-priors \[
-\beta_i | \gamma_i \sim (1-\gamma_i)N(0, \sigma^2 v_0) + \gamma_iN(0,\sigma^2 v_1).
-\] The prior of \(\gamma\) is traditionally assumed to be identically
-independent Bernoulli distribution. Even the conjugate normal prior of
-\(\boldsymbol{\beta}\) provides analytic simplicity, there is no closed
-form solution for the posterior density of \(\boldsymbol{\gamma}\).
-\citet{George1993} described a Gibbs sampling algorithm to approximate
-the posterior distribution of \(\boldsymbol{\gamma}\) for variable
-selection. The same authors later compared SSVS with other Bayesian
-variable selection approaches, providing some empirical suggestions on
-the advantages and disadvantages of various formulations and estimation
-algorithms. \citep{George1997} Among the various problem SSVS addresses,
-high-dimensionality is not one of them, due to the intensive computation
-needs of MCMC algorithms. \citet{George1997} suggested MCMC algorithms
-works well for medium size of predictors (p=25), which is not feasible
-for high-dimensional data, where the number of predictors easily exceeds
-100.
+The major criticism of early spike-and-slab priors receives is being
+computationally prohibitive. \citep{Bai2021Review} Since then, many
+studies focus on alleviating the computational burden that sampling
+algorithms bear, which include EMVS \citep{Rockova2014a}, \footnote{TODO:
+  add more citation}. Particularly, the development of Spike-and-slab
+Lasso \citep{Rockova2018b, Rockova2018} substantially improves the
+scalability of SS models, setting up the theoretical foundation for
+generalized models in -omics data analysis \footnote{TODO: add Dr.~Yi's
+  papers}. The spike-and-slab lasso prior is composed of two double
+exponential distributions with mean 0 and different dispersion
+parameters, \(0 < s_0 < s_1\), mathematically,
+\begin{equation} \label{eq:ssl}
+\beta | \gamma \sim (1-\gamma)DE(0, s_0) + \gamma DE(0, s_1), 0 < s_0 < s_1.
+\end{equation} The SSL also mitigated the problem of EMVS where the weak
+signals are not shrink to zero, favored in high-dimensional data
+analysis. We noticed that \citet{Bai2021} introduces a spike-and-slab
+group prior in the GAM framework, where the densities of the spike and
+slab components take the group lasso density \citep{Xu2015}.
+\citet{Bai2021} takes an ``all-in-all-out'' strategy for function
+selection.
 
-To alleviate the computation burden, many methodology development
-studies focus on the maximum a posteriori (MAP) estimate
-\citep{Tipping2004}. EM-based algorithms are prevalent used to speed the
-computation. \citet{Rockova2014a} proposed an EM-based algorithm for a
-spike-and-slab Gaussian mixture prior, EMVS. The coefficient \(\beta_j\)
-independently follows a mixture normal distribution
-\(N(0, \sigma^2((1-\gamma_i)v_0 + \gamma_i v_1)\) for
-\(0 \leq v_0 < v_1\). The parameter \(\sigma^2\) follows a inverse gamma
-prior, \(IG(v/2, v\lambda /2)\). Like in the spike-and slab family, the
-latent binary variables \(\boldsymbol{\gamma}\) follows a Bernoulli
-prior with a hyper prior \(\theta\) follows a beta distribution, or
-simpler the uniform (0,1). In the E step, the latent variable are
-treated as the missing data, and calculate the posterior mean of
-\(\gamma\); in the M step, a ridge estimator was used to update the
-coefficients, and \(\sigma^2, \theta\) are updated accordingly. As the
-ridge regression creates small but nonzero coefficients, a further step
-is needed to select the variable: EMVS further suggests to threshold the
-inclusion probability for variable selection or generate regularization
-plot with different values of the spike scale parameter. EMVS is also
-compatible with structured prior when dealing with grouped variables.
-The group structure can be imposed on the prior of the latent binary
-variable \(\gamma\) via either logistic regression or markov random
-field.
+\hypertarget{spike-and-slab-lasso-prior}{%
+\subsubsection{Spike-and-Slab Lasso
+Prior}\label{spike-and-slab-lasso-prior}}
 
-The same authors \citep{Rockova2018b, Rockova2018} further extended the
-continuous spike-and-slab Gaussian prior to the spike-and-slab double
-exponential distribution, as known as spike-and-slab lasso (SSL). The
-authors also lay the theoretical discussion of comparing spike-and-slab
-from the penalty perspective and the Bayesian perspective. The SSL also
-mitigated the problem of EMVS that the weak signals are not shrink to
-zero. Yi and his group incorporated the SSL prior in the EM-IWLS
-algorithm and proposed another EM algorithm, EM-cyclic coordinate
-descent, based on the Lasso penalty SSL exhibit. Such application were
-used in generalized linear models\citep{Tang2017a}, cox models
-\citep{Tang2017} and their grouped
-counterparts\citep{Tang2018, Tang2019}. Both EM based algorithm provide
-deterministic solutions, which becomes a more popular property as
-reproducible research becomes more valued. However, while the EMVS are
-not able to provide inference of the coefficients easily, the EM-IWLS
-can easily extract the variance-covariance matrix due to the IWLS
-algorithm. \citet{Bai2020} provides an up-to-date summary of SSL methods
-and theoretical discussion.
-
-Given the proposed model specification, the estimation of the parameters
-can be easily achieved with MCMC algorithm. Nevertheless, considering
-the computational burden MCMC algorithms bear especially in
-high-dimensional analysis, we propose parsimonious solutions, stemming
-from previous EM-IWLS \citep{Rockova2014a}and EM-coordinate descent
-algorithms\citep{Tang2018, Tang2019}. The computational friendliness
-allows for fitting a model with different sets of initial values,
-mimicking the posterior sampling in the MCMC algorithms. We are hopeful
-that this could improve the sacrificed robustness of the estimation
-process due to the MAP estimation used by the EM algorithms in
-comparison to the model averaging approach.
-
-\hypertarget{spike-and-slab-spline-prior-1}{%
-\subsection{Spike and slab spline
-prior}\label{spike-and-slab-spline-prior-1}}
-
-A generalized spline model can be formulated as \[
-y_i \sim EF(\mu_i, \phi), \quad g(\mu_i) = \sum\limits_{j=1}^p f_j(x_{ij}), \quad i = 1, \dots, n.
-\] The link function of the mean can be expressed in a matrix form \[
-g(\mu_i) = \sum\limits_{j=1}^p\left[f_j^0(x_{ij}) + f_j^{pen}(x_{ij})\right] = \sum\limits_{j=1}^p\left[{\beta_j^0}^T X_{ij}^0 + {\beta_j^{pen}}^T X_{ij}^{pen}\right]
- = \beta^T X_i,
-\] where \[
+We introduce a novel prior for GAMs, particularly for high-dimensional
+nonlinear effect modeling with bi-level selection. The proposed prior
+extends from the spike-and-slab lasso prior described in Equation
+\ref{eq:ssl}. Given the reparameterized deign matrix
+\(\boldsymbol{X}_j = \begin{bmatrix} \boldsymbol{X}_j^0 : \boldsymbol{X}_j^\text{pen}\end{bmatrix}^T\)
+for the \(j\)th variable, we impose a two-part SSL prior to the
+coefficients \(\boldsymbol{\beta}_j\). Specifically, we impose
+independent group priors on the null space coefficients and on the
+penalized space coefficients respectively, \[
 \begin{aligned}
-  X_i = \begin{bmatrix}X^0_{i1}\\X^{pen}_{i1}\\\vdots \\X^0_{ip}\\X^{pen}_{ip}\end{bmatrix}
-& &
-  \beta = \begin{bmatrix}\beta^0_1\\\beta^{pen}_{1}\\\vdots \\\beta^0_{p}\\\beta^{pen}_{p}\end{bmatrix}
+  \beta^0_{j} |\gamma^0_{j},s_0,s_1 &\sim DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)\\
+  \beta^\text{pen}_{jk} | \gamma^\text{pen}_{j},s_0,s_1 &\sim DE(0,(1-\gamma^\text{pen}_{j}) s_0 + \gamma^\text{pen}_{j} s_1), 
+\end{aligned}
+\] where \(\gamma^0_{j}\in\{0,1\}\) and
+\(\gamma^\text{pen}_{j}\in \{0,1\}^{K_j}\) are latent indicator
+variables, indicating if the model includes the linear effect and the
+non-linear effect of the \(j\)th variable respectively. ; \(s_0\) and
+\(s_1\) are scale parameters, assuming \(0 < s_0 < s_1\) and given.
+These scale parameters \(s_0\) and \(s_1\) can be treated as tuning
+parameters and optimized via cross-validation. A discussion of how to
+choose the scale parameters comes in Section
+\ref{selecting-optimal-scale-values}. To note, this prior differs from
+previous group spike-and-slab lasso priors{[}TODO: add Dr.~Yi's
+citation{]}, where the \(\boldsymbol{\beta}^0_j\) and
+\(\boldsymbol{\beta}^\text{pen}_j\) shares the same indicator variables
+\(\gamma_j^0\), \(\gamma_j^\text{pen}\) respectively. It is possible to
+relax the assumption such that each coefficient \(\beta\) to have its
+own latent indicator \(\gamma\), but at the cost ofcomplicating the
+bi-level function selection. Conversely, it is possible to add a more
+restrictive assumption on the priors, assuming that one indicator
+variable decides the inclusion of both the linear effect and non-linear
+effect, i.e.~\(\gamma_j = \gamma^0_j = \gamma^{pen}_j\). This
+converges\footnote{Is ``becomes'' better?} to the SB-GAM
+\citep{Bai2021}.
+
+The reparameterization introduced in Section
+\ref{bayesian-hierarchical-additive-models} grants the validity of the
+proposed prior. First of all, the smooth function bases are linear
+dependent to each other based on the definitions, and ask for extra
+attention. The eigeondecomposition remedies the problem. Hence our prior
+can be set to be conditionally independent. Secondly, the eigenvalue
+scaling provides a panacea to allow unified scale parameters for all
+bases of all smoothing functions of variables, where scaling is mandate.
+
+The rest of the hierchical prior follows the traditional spike-and-slab
+lasso piror: we set up the hyper-prior of \(\boldsymbol{\gamma}\), to
+allow local adaption of the shrinkage, using a bernoulli distribution.
+The two indicators of the \(j\)th predictor, \(\gamma^{0}_j\) and
+\(\gamma^{pen}_j\), shares the same probability parameter, \[
+\begin{aligned}
+\gamma_{j}^{0} | \theta_j &\sim Bin(\gamma^{0}_{j}|1, \theta_j)\\
+\gamma_{j}^{pen} | \theta_j &\sim Bin(\gamma^{pen}_{j}|1, \theta_j).
 \end{aligned}
 \]
 
-\hfill\break
+This is to leverage the fact that the probability of selecting the bases
+of a smooth function should be similar, while allowing different penalty
+on the null space and penalty space of the spline function. The hyper
+prior of \(\gamma_{j}^{0}\) decides the sparsity of the model at the
+function selection level, while that of \(\gamma_{j}^{pen}\) decides the
+smoothness of the spline function at basis function level. Meanwhile, we
+specify that \(\gamma_{j}^0\) and \(\gamma_{j}^{pen}\) are independently
+distributed for analytic simplicity. We further specify the parameter
+\(\theta_j\) follows a beta distribution with given shape parameters
+\(a\) and \(b\), \[
+\theta_j \sim Beta(a, b).
+\] The beta distribution is a conjugate prior for the binomial
+distribution and hence provides some computation convenience. For
+simplicity, we focus on a special case of beta distribution, uniform
+(0,1). When the variable have large effects in any of the bases, the
+parameter \(\theta_j\) will be estimated large, which in turn encourages
+the model to include the rest of bases, achieving the local adaption
+among spline bases. Hereafter, we refer Bayesian hierarchical
+generalized additive models with the spike-and-slab lasso prior as the
+BHAM-SSL.
 
-\hypertarget{mixture-normal-prior}{%
-\subsubsection{Mixture-Normal Prior}\label{mixture-normal-prior}}
+\newpage
 
-Given the full deign matrix
-\(X = \begin{pmatrix} X_1 & X_2 & \dots & X_n \end{pmatrix}^T\), the
-likelihood function of the generalized model can be written as \[
-p(y|X\beta, \phi) = \prod\limits^n_{i=1}p(y_i|\beta^T X_i, \phi).
-\]
+\includegraphics{Fig/SS_prior_flow_chart.png}
+
+\hypertarget{other-priors}{%
+\subsubsection{Other Priors}\label{other-priors}}
 
 Considering the dependency of spline bases, the grouping nature of the
 bases should be taken care of. Naturally, the Bayesian hierarchical
@@ -512,14 +517,6 @@ of bases, achieving the local adaption among spline bases. Hereafter, we
 refer the hierarchical spline GAM with the spike-and-slab mixture normal
 prior as the ssGAM-MN.
 
-\includegraphics{Fig/SS_prior_flow_chart.png}
-
-~
-
-\hypertarget{mixture-double-exponential-prior}{%
-\subsubsection{Mixture Double Exponential
-Prior}\label{mixture-double-exponential-prior}}
-
 One of the critics received by the spike-and-slab mixture normal prior
 is that the tails of a normal distribution diminishes to zero too fast,
 which renders problem when estimating the large effects. In contrast,
@@ -527,29 +524,66 @@ distributions with heavier tails are preferred, for example \(t\)
 distribution with small degree of freedom and double exponential
 distribution. Specifically, double exponential prior is equivalent to
 the LASSO penalty in the frequentist models, providing a sparse
-solution. Meanwhile, the estimation algorithm of LASSO penalty are
-extremely efficient, greatly reducing the computation needs. Recent
-developments of spike-and-slab priors include spike-and-slab LASSO
-prior, i.e.~spike-and-slab mixture double exponential prior. We extend
-the spike-and-slab LASSO prior to high-dimensional GAMs, providing
-computationally efficiency and sparse solution to our proposed ssGAM-MN.
+solution.
 
-The set-up of ssGAM-LASSO model is similar to ssGAM-MN, except we
-replace the normal distribution with double exponential distribution.
-The prior distributions of the coefficients \(\beta^0_j, \beta^{pen}_j\)
-for the \(j\) predictor can be formulated as \[
-\begin{aligned}
-  \beta^0_{j} |\gamma^0_{j},s_0,s_1 &\sim DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)\\
-  \beta^{pen}_{jk} | \gamma^{pen}_{j},s_0,s_1 &\sim DE(0,(1-\gamma^{pen}_{j}) s_0 + \gamma^{pen}_{j} s_1).
-\end{aligned}
-\] The hyper-priors for \(\gamma^0_j, \gamma^{pen}_j, \theta_j\) are
-kept the same as specified in ssGAM-MN.
+\hypertarget{algorithms-for-fitting-bhams}{%
+\subsection{Algorithms for Fitting
+BHAMs}\label{algorithms-for-fitting-bhams}}
 
-\hfill\break
+To alleviate the computation burden, many methodology development
+studies focus on the maximum a posteriori (MAP) estimate
+\citep{Tipping2004}. EM-based algorithms are prevalent used to speed the
+computation. \citet{Rockova2014a} proposed an EM-based algorithm for a
+spike-and-slab Gaussian mixture prior, EMVS. The coefficient \(\beta_j\)
+independently follows a mixture normal distribution
+\(N(0, \sigma^2((1-\gamma_i)v_0 + \gamma_i v_1)\) for
+\(0 \leq v_0 < v_1\). The parameter \(\sigma^2\) follows a inverse gamma
+prior, \(IG(v/2, v\lambda /2)\). Like in the spike-and slab family, the
+latent binary variables \(\boldsymbol{\gamma}\) follows a Bernoulli
+prior with a hyper prior \(\theta\) follows a beta distribution, or
+simpler the uniform (0,1). In the E step, the latent variable are
+treated as the missing data, and calculate the posterior mean of
+\(\gamma\); in the M step, a ridge estimator was used to update the
+coefficients, and \(\sigma^2, \theta\) are updated accordingly. As the
+ridge regression creates small but nonzero coefficients, a further step
+is needed to select the variable: EMVS further suggests to threshold the
+inclusion probability for variable selection or generate regularization
+plot with different values of the spike scale parameter. EMVS is also
+compatible with structured prior when dealing with grouped variables.
+The group structure can be imposed on the prior of the latent binary
+variable \(\gamma\) via either logistic regression or markov random
+field.
 
-\hypertarget{alforithm-for-fitting-ssgams}{%
-\subsection{Alforithm for fitting
-ssGAMs}\label{alforithm-for-fitting-ssgams}}
+The same authors \citep{Rockova2018b, Rockova2018} further extended the
+continuous spike-and-slab Gaussian prior to the spike-and-slab double
+exponential distribution, as known as spike-and-slab lasso (SSL). The
+authors also lay the theoretical discussion of comparing spike-and-slab
+from the penalty perspective and the Bayesian perspective. The SSL also
+mitigated the problem of EMVS that the weak signals are not shrink to
+zero. Yi and his group incorporated the SSL prior in the EM-IWLS
+algorithm and proposed another EM algorithm, EM-cyclic coordinate
+descent, based on the Lasso penalty SSL exhibit. Such application were
+used in generalized linear models\citep{Tang2017a}, cox models
+\citep{Tang2017} and their grouped
+counterparts\citep{Tang2018, Tang2019}. Both EM based algorithm provide
+deterministic solutions, which becomes a more popular property as
+reproducible research becomes more valued. However, while the EMVS are
+not able to provide inference of the coefficients easily, the EM-IWLS
+can easily extract the variance-covariance matrix due to the IWLS
+algorithm. \citet{Bai2020} provides an up-to-date summary of SSL methods
+and theoretical discussion.
+
+Given the proposed model specification, the estimation of the parameters
+can be easily achieved with MCMC algorithm. Nevertheless, considering
+the computational burden MCMC algorithms bear especially in
+high-dimensional analysis, we propose parsimonious solutions, stemming
+from previous EM-IWLS \citep{Rockova2014a}and EM-coordinate descent
+algorithms\citep{Tang2018, Tang2019}. The computational friendliness
+allows for fitting a model with different sets of initial values,
+mimicking the posterior sampling in the MCMC algorithms. We are hopeful
+that this could improve the sacrificed robustness of the estimation
+process due to the MAP estimation used by the EM algorithms in
+comparison to the model averaging approach.
 
 Parsimonious computation is always encouraged in high-dimension data
 analysis. Normally, Bayesian methodology loses its advantages over
@@ -573,8 +607,6 @@ algorithm. Instead of simulating the posterior distribution via MCMC, we
 iteratively estimate the MAP. Compared to the EM-IRLS algorithm, the
 EM-coordinate descent provides an expedited model fitting process at the
 cost of model uncertainty.
-
-\hfill\break
 
 \hypertarget{em-algorithms}{%
 \subsubsection{EM algorithms}\label{em-algorithms}}
@@ -1010,6 +1042,15 @@ setting the hypor priors of the selection indivator of the non-linear
 components conditioning on the probability of inclusion of the linear
 effect. Such structure is more sensible analytically.
 
+Meanwhile, we specify that \(\gamma_{j}^0\) and \(\gamma_{j}^{pen}\) are
+independently distributed for analytic simplicity. However, this set-up
+could possibility result in a situation that is not theoretically
+possible: the non-linear component is selected, but the linear component
+is not. This can be addressed analytically by forcing to include the
+linear component when non-linear component is included. Another possible
+solution is to impose an dependent structure of \(\gamma_{j}^{pen}\) on
+\(\gamma_{j^{0}}\), i.e.~\(\gamma_j^{pen}|\gamma_{j}^{0}, \theta_j\).
+
 \hypertarget{discussion-1}{%
 \subsection{Discussion}\label{discussion-1}}
 
@@ -1024,6 +1065,19 @@ Moreover, due to the model selection nature of the spike-and-slab prior,
 the proposed model can identify predictors that have large effects on
 the outcome. In addition, the model can be used to answer the question
 if non-linear effect are necessary.
+
+The ``all-in-all-out'' set-up was criticized for its inability to
+answering an important research question, if the effects are non-linear
+or not. On the other hand, the model can be much more flexible by
+allowing each dimension of the penalized space to have an independent
+indicator, i.e.~\(\gamma^{pen}_{jk}\) of \(\beta^{pen}_{jk}\) for
+\(k = 1\dots, K_j\). This prior set-up generalized to the group
+spike-and-slab. The additional flexibility doesn't not necessarily grand
+the model neither theoretical justification nor analytic simplicity. The
+spline penalty assumes a common smooth shrinkage \(\lambda_j\) applied
+to all coefficients of the penalized space, which contradicts to the
+model setup. Besides, having multiple indicator variables complicates
+the decision of if non-linear effects are necessary.
 
 In the manuscript, we describe the implementation of ssGAM-NM using
 EM-IRLS. Nevertheless, EM-IRLS are not limited to fitting ssGAM-NM.

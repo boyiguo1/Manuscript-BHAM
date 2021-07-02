@@ -4,7 +4,7 @@ author:
 - name: Boyi Guo*
   num: a
 - name: Byron C. Jaeger
-  num: a 
+  num: b 
 - name: AKM Fazlur Rahman
   num: a   
 - name: D. Leann Long
@@ -14,8 +14,8 @@ author:
 address:
 - num: a
   org: Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA
-# - num: b
-  # org: Department of Applied Things, University B, City B, Country B
+- num: b
+  org: Department of Biostatistics and Data Science, Wake Forest University, Winston-Salem, USA
 corres: "*Corresponding author name, This is sample corresponding address. \\email{xxx@uab}"
 presentaddress: This is sample for present address text this is sample for present address text
 authormark: Guo et al.
