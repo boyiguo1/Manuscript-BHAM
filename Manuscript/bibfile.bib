@@ -25,6 +25,18 @@ volume = {74},
 year = {1979}
 }
 
+@article{Breiman2001,
+  title={Statistical modeling: The two cultures (with comments and a rejoinder by the author)},
+  author={Breiman, Leo},
+  journal={Statistical science},
+  volume={16},
+  number={3},
+  pages={199--231},
+  year={2001},
+  publisher={Institute of Mathematical Statistics}
+}
+
+
 @article{Hastie1987,
 abstract = {Generalized additive models have the form $\eta$(x) = $\alpha$ + $\sigma$ fj(xj), where $\eta$ might be the regression function in a multiple regression or the logistic transformation of the posterior probability Pr(y = 1 x) in a logistic regression. In fact, these models generalize the whole family of generalized linear models $\eta$(x) = $\beta$′x, where $\eta$(x) = g($\mu$(x)) is some transformation of the regression function. We use the local scoring algorithm to estimate the functions fj(xj) nonparametrically, using a scatterplot smoother as a building block. We demonstrate the models in two different analyses: a nonparametric analysis of covariance and a logistic regression. The procedure can be used as a diagnostic tool for identifying parametric transformations of the covariates in a standard linear analysis. A variety of inferential tools have been developed to aid the analyst in assessing the relevance and significance of the estimated functions: these include confidence curves, degrees of freedom estimates, and approximate hypothesis tests. The local scoring algorithm is analogous to the iterative reweighted least squares algorithm for solving likelihood and nonlinear regression equations. At each iteration, an adjusted dependent variable is formed and an additive regression model is fit using the backfitting algorithm. The backfitting algorithm cycles through the variables and estimates each coordinated function by smoothing the partial residuals. {\textcopyright} 1976 Taylor {\&} Francis Group, LLC.},
 author = {Hastie, Trevor and Tibshirani, Robert},
@@ -39,6 +51,8 @@ title = {{Generalized additive models: Some applications}},
 volume = {82},
 year = {1987}
 }
+
+
 
 
 @article{Breiman1985,
@@ -210,6 +224,17 @@ title = {{Spike-and-slab priors for function selection in structured additive re
 volume = {107},
 year = {2012}
 }
+
+@article{Fan2009,
+  title={Ultrahigh dimensional feature selection: beyond the linear model},
+  author={Fan, Jianqing and Samworth, Richard and Wu, Yichao},
+  journal={The Journal of Machine Learning Research},
+  volume={10},
+  pages={2013--2038},
+  year={2009},
+  publisher={JMLR. org}
+}
+
 
 @article{Meier2009,
 abstract = {We propose a new sparsity-smoothness penalty for high-dimensional generalized additive models. The combination of sparsity and smoothness is crucial for mathematical theory as well as performance for finite-sample data. We present a computationally efficient algorithm, with provable numerical convergence properties, for optimizing the penalized likelihood. Furthermore, we provide oracle results which yield asymptotic optimality of our estimator for high dimensional but sparse additive models. Finally, an adaptive version of our sparsity-smoothness penalized approach yields large additional performance gains. {\textcopyright} Institute of Mathematical Statistics, 2009.},
@@ -394,6 +419,27 @@ url = {https://projecteuclid.org/euclid.aos/1519268435},
 volume = {46},
 year = {2018}
 }
+
+@article{Yi2012,
+abstract = {Genetic and other scientific studies routinely generate very many predictor variables, which can be naturally grouped, with predictors in the same groups being highly correlated. It is desirable to incorporate the hierarchical structure of the predictor variables into generalized linear models for simultaneous variable selection and coefficient estimation. We propose two prior distributions: hierarchical Cauchy and double-exponential distributions, on coefficients in generalized linear models. The hierarchical priors include both variable-specific and group-specific tuning parameters, thereby not only adopting different shrinkage for different coefficients and different groups but also providing a way to pool the information within groups. We fit generalized linear models with the proposed hierarchical priors by incorporating flexible expectation-maximization (EM) algorithms into the standard iteratively weighted least squares as implemented in the general statistical package R. The methods are illustrated with data from an experiment to identify genetic polymorphisms for survival of mice following infection with Listeria monocytogenes. The performance of the proposed procedures is further assessed via simulation studies. The methods are implemented in a freely available R package BhGLM (http://www.ssg.uab.edu/bhglm/). {\textcopyright} 2012 De Gruyter. All rights reserved.},
+annote = {To incorporate the grouping structure, another level of prior was imposed on $s^2$ and $s$ respectively. For the hierarchical t prior, $s^2$ follows another gamma distribution Gamma($a, b_{k[j]}$, where $a$ is an arbitrary constant (for example, 0.5), and $b_{k[j]}$ is a unknown random variable with density $p(\log(b_k))\propto 1$. The subscription $k[j]$ denotes the variable $j$ belongs to the $k$th group. For the hierarchical double exponential prior, $s$ follows the same gamma distribution Gamma($a, b_{k[j]}$. The hypor-prior imposing on $s$ instead of $s^2$ is to facilitate computation. The hierarchical prior of $\beta_j$ can be simplified as $t_v(0,s_j^2)$ and $DE(0, s_j)$. Hence, we have $s_j^2$ and $s_j$, respectively, controls the shrinkage of individual variables while the hyper-parameter $b_{k[j]}$ balances the shrinkage of individual variables within a group.
+
+While the hierarchical prior seems complicated, it provides a flexible and parsimonious solutaion. While there is rarely closed form solutaion to hierarchy model, most of the solution is derived from Monte Carlo Markov Chain which is infamously computation intensive, especially when the number of variables are large. The EM-IWLS provides an parsimonious alternative. Following the EM algorithm, $\tau^2$, $s_j$ and $b_{k[j]}$ are treatming as missing data. In the E step, the posterior mean of the "missing" parameters are calculated; in the M step, IWLS algorithm was used to update the coefficients conditioning on the posterior means.},
+author = {Yi, Nengjun and Ma, Shuangge},
+doi = {10.1515/1544-6115.1803},
+file = {:C\:/Users/boyiguo1/AppData/Local/Mendeley Ltd./Mendeley Desktop/Downloaded/Yi, Ma - 2012 - Hierarchical Shrinkage Priors and Model Fitting for High-dimensional Generalized Linear Models.pdf:pdf},
+issn = {1544-6115},
+journal = {Statistical Applications in Genetics and Molecular Biology},
+keywords = {Adaptive lasso,Bayesian inference,Generalized linear model,Genetic polymorphisms,Grouped variables,Hierarchical model,High-dimensional data,Shrinkage prior},
+month = {jan},
+number = {6},
+pmid = {23192052},
+title = {{Hierarchical Shrinkage Priors and Model Fitting for High-dimensional Generalized Linear Models}},
+url = {https://www.degruyter.com/view/j/sagmb.2012.11.issue-6/1544-6115.1803/1544-6115.1803.xml},
+volume = {11},
+year = {2012}
+}
+
 
 @article{Tang2017,
 abstract = {{\textcopyright} 2017 The Author. Motivation: Large-scale molecular profiling data have offered extraordinary opportunities to improve survival prediction of cancers and other diseases and to detect disease associated genes. However, there are considerable challenges in analyzing large-scale molecular data. Results: We propose new Bayesian hierarchical Cox proportional hazards models, called the spikeand- slab lasso Cox, for predicting survival outcomes and detecting associated genes. We also develop an efficient algorithm to fit the proposed models by incorporating Expectation-Maximization steps into the extremely fast cyclic coordinate descent algorithm. The performance of the proposed method is assessed via extensive simulations and compared with the lasso Cox regression. We demonstrate the proposed procedure on two cancer datasets with censored survival outcomes and thousands of molecular features. Our analyses suggest that the proposed procedure can generate powerful prognostic models for predicting cancer survival and can detect associated genes. Availability and implementation: The methods have been implemented in a freely available R package BhGLM (http://www.ssg.uab.edu/bhglm/).},
