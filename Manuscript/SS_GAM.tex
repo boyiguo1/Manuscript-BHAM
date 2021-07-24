@@ -492,19 +492,20 @@ Alternative to the sampling algorithms for fitting Bayesian models,
 optimization algorithms focus on the maximum a posteriori (MAP)
 estimates and speed up the process at the cost of uncertainty measures.
 The earliest work for fitting spike-and-slab models using optimization
-algorithm is EMVS \citep{Rockova2014a}. \citet{Rockova2014a} proposed an
-expectation-maximization (EM) based algorithm to fit models that use
-continuous mixture normal priors. In the E step, the latent variables
-\(\gamma\) are treated as the missing data, and calculate the posterior
-mean of the density function; in the M step, a ridge estimator was used
-to update the coefficients, and \(\sigma^2, \theta\) are updated
-accordingly. The same authors \citep{Rockova2018b, Rockova2018} further
-combined the EM algorithm with coordinate descent (CD) algorithm for
-fitting SSL models. Yi and his group incorporated the SSL prior in the
-EM-Iterative Weighted Least Square(IWLS) algorithm and proposed another
-EM algorithm, EM-cyclic coordinate descent, based on the Lasso penalty
-SSL exhibit. Such applications were used in generalized linear
-models\citep{Tang2017a}, cox models \citep{Tang2017} and their grouped
+algorithm is EMVS \citep{Rockova2014a}. Ro\{\v{c}\}kov\{'\{a\}\} and
+George\citep{Rockova2014a} proposed an expectation-maximization (EM)
+based algorithm to fit models that use continuous mixture normal priors.
+In the E step, the latent variables \(\gamma\) are treated as the
+missing data, and calculate the posterior mean of the density function;
+in the M step, a ridge estimator was used to update the coefficients,
+and \(\sigma^2, \theta\) are updated accordingly. The same authors
+\citep{Rockova2018b, Rockova2018} further combined the EM algorithm with
+coordinate descent (CD) algorithm for fitting SSL models. Yi and his
+group incorporated the SSL prior in the EM-Iterative Weighted Least
+Square(IWLS) algorithm and proposed another EM algorithm, EM-cyclic
+coordinate descent, based on the Lasso penalty SSL exhibit. Such
+applications were used in generalized linear models\citep{Tang2017a},
+cox models \citep{Tang2017} and their grouped
 counterparts\citep{Tang2018, Tang2019}. Both EM based algorithms provide
 deterministic solutions, which becomes a more popular property as
 reproducible results. Bai et al. \citep{Bai2020} provides an up-to-date
@@ -766,13 +767,42 @@ models for users to choose from.
 \hypertarget{simulation-study}{%
 \section{Simulation Study}\label{simulation-study}}
 
-In this section, we compare the performance of the proposed models to 3
-other models: COSSO, adaptive COSSO ,mgcv. COSSO is xxx method. Adaptive
-COSSO is another method, mgcv is another method. To demonstrate the
-correctness and feasibility of the proposed SS-GAM, we follow the
-logistic regression simulation introduced in Bai (Work in Progress). We
-first generate \(n=500\) training data sample with number of predictors
-\(p=4, 10, 50, 200\) respectively, where the predictors
+In this section, we compare the performance of the proposed models to
+four alternative models: component selection and smoothing operator
+(COSSO) \citep{Zhang2006GAM}, adaptive COSSO \citep{Storlie2011},
+generalized additive models with automatic smoothing \citep{Wood2011},
+SB-GAM \citep{Bai2021}. COSSO is one of the earliest smoothing spline
+models that consider sparsity-smoothness penalty. Adaptive COSSO
+improved upon COSSO by using adaptive weight for penalties such that the
+penalty of each functional component are different for extra
+flexibility. Generalized additive models with automatic smoothing,
+hereafter \textit{mgcv}, is one of the most popular models for
+non-linear effect interpolation and prediction. SB-GAM is the first
+spike-and-slab lasso GAM. We implemented COSSO and adaptive COSSO with R
+package \texttt{cosso} \citep{cosso} 2.1-1, generalized additive models
+with automatic smoothing with R package \texttt{mgcv} 1.8-31, SB-GAM
+with R package \text{sparseGAM} 1.0. All computation was conducted on a
+high-performance 64-bit Linux platform with 48 cores of 2.70GHz
+eight-core Intel Xeon E5-2680 processors and 24G of RAM per core and R
+3.6.2 \citep{R}.
+
+Other related methods for high-dimensional GAMs also exist, notably the
+methods of sparse additive models by Ravikumar et al.
+\citep{Ravikumar2009}, stochastic search term selection for GAM
+\citep{Scheipl2012}. However, we exclude these methods from current
+simulation study because of demonstrated inferior predictive performance
+compared to mgcv and scalability issues with increasing number of
+predictors. \citep{Scheipl2013}
+
+\hypertarget{monte-carlo-simulation-study}{%
+\subsection{Monte Carlo Simulation
+Study}\label{monte-carlo-simulation-study}}
+
+xxx method. Adaptive COSSO is another method, mgcv is another method. To
+demonstrate the correctness and feasibility of the proposed SS-GAM, we
+follow the logistic regression simulation introduced in Bai (Work in
+Progress). We first generate \(n=500\) training data sample with number
+of predictors \(p=4, 10, 50, 200\) respectively, where the predictors
 \(X \sim MVN_{n\times p}(0, I_{P})\). We simulate the outcome data from
 three distributions, gaussian, poisson, and binomial with the identity
 link, logit link \(g(x) = \log(\frac{x}{1-x})\), and log link
