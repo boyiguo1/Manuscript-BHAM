@@ -3,6 +3,8 @@
 
 % Pandoc citation processing
 
+\usepackage{tikz}
+\usepackage{pgfplots}
 
 \articletype{Research article}
 
@@ -65,6 +67,7 @@ Additive Models; EM-IWLS; EM-Coordinate Decent}
 
 \maketitle
 
+\usetikzlibrary{shapes.geometric, arrows, positioning, calc, matrix, backgrounds, fit}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 \newcommand{\tp}{\text{pen}}
 
@@ -435,9 +438,66 @@ parameter \(\theta_j\) will be estimated large, which in turn encourages
 the model to include the rest of bases, achieving the local adaption
 among spline bases. Hereafter, we refer Bayesian hierarchical
 generalized additive models with the spike-and-slab lasso prior as the
-BHAM-SSL.
+BHAM-SSL. \textbackslash{}
 
-\includegraphics{Fig/SS_prior_flow_chart.png}
+\begin{tikzpicture} [
+staticCompo/.style = {rectangle, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
+outCome/.style={ellipse, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
+mymatrix/.style={matrix of nodes, nodes=outCome, row sep=1em},
+PriorBoarder/.style={rectangle, minimum width=5cm, minimum height=10cm, text centered, fill=lightgray!30},
+background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
+] 
+
+\matrix (linearPrior) [matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
+&\node (linearTheta) [outCome] { $\theta_j^{0}\sim Beta(a, b)$ };\\
+&\node (linearGamma) [outCome] { $\gamma_j^0 \sim Bin(1, \theta_j^0) $ };\\
+&\node (linearBeta) [outCome] { $\beta_j^0 \sim DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
+};
+
+\matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
+\node (penTheta) [outCome] { $\theta_{j}^\text{pen}\sim Beta(a, b)$ };\\
+\node (penGamma) [outCome] { $\gamma_{j}^\text{pen}\sim Bin(1, \theta_j^\text{pen})$ };\\
+\node (penBeta) [outCome] { $\beta_{jk}^\text{pen}\sim  DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
+};
+
+\node (ab)[staticCompo] at ($(linearTheta)!0.5!(penTheta)$) {$(a, b)$};
+%\node (PenaltyPrior) [PriorBoarder,  right = 1cm of ab] {part 2};
+\node (s) [staticCompo]  at ($(linearBeta)!0.5!(penBeta)$)  {($s_0, s_1$)};
+
+\node (Beta) [staticCompo, below = 1cm of s] {$\boldsymbol{\beta }= (\beta^0_1, \boldsymbol{\beta}^\text{pen}_1, \dots,\beta^0_j, \boldsymbol{\beta}^\text{pen}_j , \dots,\beta^0_p, \boldsymbol{\beta}^\text{pen}_p) $};
+\node (Y) [outCome, below = 1cm of Beta] {$y_i \sim Expo. Fam. (g(\eta_i))$};
+
+%Lines
+
+\draw[->] (linearTheta) -- (linearGamma);
+\draw[->] (penTheta) -- (penGamma);
+\draw[->] (linearGamma) -- (linearBeta) ;
+\draw[->] (penGamma) -- (penBeta);
+\draw[->] (ab) -- (linearTheta);
+\draw[->] (ab) -- (penTheta);
+\draw[->] (s) -- (linearBeta) ;
+\draw[->] (s) -- (penBeta);
+\draw[->] (linearBeta) -- (Beta);
+\draw[->] (penBeta) -- (Beta);
+\draw[->] (Beta) --  (Y);
+
+
+% Now that the diagram has been drawn, background rectangles
+% can be fitted to its elements. This requires the TikZ
+% libraries "fit" and "background".
+% Control input and measurement are labeled. These labels have
+% not been translated to English as "Measurement" instead of
+% "Messung" would not look good due to it being too long a word.
+\begin{pgfonlayer}{background}
+    \node [background,
+                fit=(linearTheta) (linearBeta),
+                label=above:Null Space:] {};
+    \node [background,
+                 fit=(penTheta) (penBeta),
+                label=above:Penalized Space:] {};
+
+\end{pgfonlayer}
+\end{tikzpicture}
 
 \hypertarget{other-priors}{%
 \subsubsection{Other Priors}\label{other-priors}}
@@ -779,12 +839,20 @@ flexibility. Generalized additive models with automatic smoothing,
 hereafter \textit{mgcv}, is one of the most popular models for
 non-linear effect interpolation and prediction. SB-GAM is the first
 spike-and-slab lasso GAM. We implemented COSSO and adaptive COSSO with R
-package \texttt{cosso} \citep{cosso} 2.1-1, generalized additive models
-with automatic smoothing with R package \texttt{mgcv} 1.8-31, SB-GAM
-with R package \text{sparseGAM} 1.0. All computation was conducted on a
-high-performance 64-bit Linux platform with 48 cores of 2.70GHz
-eight-core Intel Xeon E5-2680 processors and 24G of RAM per core and R
-3.6.2 \citep{R}.
+package \texttt{cosso 2.1-1}, generalized additive models with automatic
+smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R package
+\text{sparseGAM 1.0}. COSSO models and SB-GAM do not provide flexibility
+to define smoothing functions, and hence used the default choices. Both
+mgcv and proposed models allow customized smoothing functions and we
+chose the cubic regression spline. We controlled the dimensionality of
+each smoothing function, 10 bases, for all different choices of
+smoothing functions. 5-fold cross-validation were used for COSSO models,
+SB-GAM and the proposed models for tuning parameter selection based on
+the default selection criteria. 20 default candidates were examined for
+SB-GAM and the proposed models which allow user-specification of tuning
+candidates. All computation was conducted on a high-performance 64-bit
+Linux platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680
+processors and 24G of RAM per core and R 3.6.2 \citep{R}.
 
 Other related methods for high-dimensional GAMs also exist, notably the
 methods of sparse additive models by Ravikumar et al.
@@ -798,39 +866,36 @@ predictors. \citep{Scheipl2013}
 \subsection{Monte Carlo Simulation
 Study}\label{monte-carlo-simulation-study}}
 
-xxx method. Adaptive COSSO is another method, mgcv is another method. To
-demonstrate the correctness and feasibility of the proposed SS-GAM, we
-follow the logistic regression simulation introduced in Bai (Work in
-Progress). We first generate \(n=500\) training data sample with number
-of predictors \(p=4, 10, 50, 200\) respectively, where the predictors
-\(X \sim MVN_{n\times p}(0, I_{P})\). We simulate the outcome data from
-three distributions, gaussian, poisson, and binomial with the identity
-link, logit link \(g(x) = \log(\frac{x}{1-x})\), and log link
-\(g(x) = log(x)\) functions to mimic the common use of generalized
-model. The outcome is simulated via the following function \[
+We follow the data generating process described in Bai \citep{Bai2021}.
+We first generated \(n=500\) training data points with
+\(p=4, 10, 50, 200\) predictors respectively, where the predictors \(X\)
+are simulated from a multivariate normal distribution
+\(\text{MVN}_{n\times p}(0, I_{P})\). We then simulated the outcome
+\(y\) from three distribution distributions, gaussian, binomial, and
+poisson with the identity link, logit link
+\(g(x) = \log(\frac{x}{1-x})\), and log link \(g(x) = log(x)\). The mean
+of each outcome were simulated via the following function \[
 \mathbb{E}(Y) = g^{-1}(5 \sin(2\pi x_1) - 4 \cos(2\pi x_2 -0.5) + 6(x_3-0.5) - 5(x_4^2 -0.3))
-\] for gaussian and binomial outcome and shrinked effects
+\] for gaussian and binomial outcomes and shrinked effects
 
 \[
 \mathbb{E}(Y) = g^{-1}(\sin(2\pi x_1) - 2\cos(2\pi x_2 -0.5) + 0.4(x_3-0.5) - 2(x_4^2 -0.3))
-\] for stable poisson outcome. For the Gaussian outcome where dispersion
-are required, the dispersion parameter was set to 1. We follow the same
-data generating functions in Bai. In this data generating process, we
-have \(x_1, x_2, x_3, x_4\) as the active covariates, while the rest
-covariates are inactive \(f_j(x_j) = 0\) for \(j = 4, \dots, p\).
-Another set of independent sample of size
-\(n_{test}=1000\),(\(x_{new} ,y_{new}\)), are created following the same
-data generating process, serving as the testing data. For mgcv and
-proposed models where choice of spline function are customizable, we
-choose to cubic regression spline with 10 basis. In COSSO and adaptive
-COSSO where the choice of spline are pre-determined, we set to have 10
-bases. The corresponding number of parameter that we estimate with the
-model is 37, 82, 451 and 1801. We also run the simulation where the
-number of bases are increased to 25 deliberately. To evaluate the
-performance of the models, mean squared error, mean absolute error for
-gaussian model, AUC and misclassifcation rate are calculated for
-binomial model, and deviance are calculated for Poisson model, averaging
-across 50 simulations. The results are tabulated in Table 1, 2, 3.
+\] for poisson outcomes. Gaussian outcomes required specification of
+dispersion, where we set the dispersion parameter to be 1. In this data
+generating process, we have \(x_1, x_2, x_3, x_4\) as the active
+covariates, while the rest covariates are inactive,
+i.e.~\(f_j(x_j) = 0\) for \(j = 4, \dots, p\). Another set of
+independent sample of size \(n_{test}=1000\),(\(x_{new} ,y_{new}\)), are
+created following the same data generating process, serving as the
+testing data. The dimensionality of the smooth functions are controlled
+as k=10. Hence, the corresponding number of coefficient parameters to be
+estimated is 37, 82, 451 and 1801.
+
+To evaluate the performance of the models, mean squared error, mean
+absolute error for gaussian model, AUC and misclassifcation rate are
+calculated for binomial model, and deviance are calculated for Poisson
+model, averaging across 50 simulations. The results are tabulated in
+Table 1, 2, 3.
 
 \includegraphics{SS_GAM_files/figure-latex/unnamed-chunk-8-1.pdf}
 

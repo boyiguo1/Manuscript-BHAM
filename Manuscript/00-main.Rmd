@@ -29,11 +29,14 @@ bibliography: bibfile.bib
 output: 
   rticles::sim_article:
     keep_tex: TRUE
+header-includes: 
+  - \usepackage{tikz}
+  - \usepackage{pgfplots}
 ---
 
 
-\usepackage{tikz}
-\usetikzlibrary{shapes.geometric, arrows, positioning, calc}
+<!-- \usepackage{tikz} -->
+\usetikzlibrary{shapes.geometric, arrows, positioning, calc, matrix, backgrounds, fit}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 \newcommand{\tp}{\text{pen}}
 

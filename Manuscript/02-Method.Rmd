@@ -59,12 +59,72 @@ This is to leverage the fact that the probability of selecting the bases of a sm
 $$
 \theta_j \sim Beta(a, b).
 $$
-The beta distribution is a conjugate prior for the binomial distribution and hence provides some computation convenience. For simplicity, we focus on a special case of beta distribution, uniform (0,1). When the variable have large effects in any of the bases, the parameter $\theta_j$ will be estimated large, which in turn encourages the model to include the rest of bases, achieving the local adaption among spline bases. Hereafter, we refer Bayesian hierarchical generalized additive models with the spike-and-slab lasso prior as the BHAM-SSL.
+The beta distribution is a conjugate prior for the binomial distribution and hence provides some computation convenience. For simplicity, we focus on a special case of beta distribution, uniform (0,1). When the variable have large effects in any of the bases, the parameter $\theta_j$ will be estimated large, which in turn encourages the model to include the rest of bases, achieving the local adaption among spline bases. Hereafter, we refer Bayesian hierarchical generalized additive models with the spike-and-slab lasso prior as the BHAM-SSL. \\
 
-```{r fig.height=4, fig.width=6}
+```{r fig.height=4, fig.width=6, eval = F}
 # TODO: Refactor the graph to a latex flowchart
 include_graphics("Fig/SS_prior_flow_chart.png")
 ```
+
+\begin{tikzpicture} [
+staticCompo/.style = {rectangle, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
+outCome/.style={ellipse, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
+mymatrix/.style={matrix of nodes, nodes=outCome, row sep=1em},
+PriorBoarder/.style={rectangle, minimum width=5cm, minimum height=10cm, text centered, fill=lightgray!30},
+background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
+] 
+
+\matrix (linearPrior) [matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
+&\node (linearTheta) [outCome] { $\theta_j^{0}\sim Beta(a, b)$ };\\
+&\node (linearGamma) [outCome] { $\gamma_j^0 \sim Bin(1, \theta_j^0) $ };\\
+&\node (linearBeta) [outCome] { $\beta_j^0 \sim DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
+};
+
+\matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
+\node (penTheta) [outCome] { $\theta_{j}^\tp\sim Beta(a, b)$ };\\
+\node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j^\tp)$ };\\
+\node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
+};
+
+\node (ab)[staticCompo] at ($(linearTheta)!0.5!(penTheta)$) {$(a, b)$};
+%\node (PenaltyPrior) [PriorBoarder,  right = 1cm of ab] {part 2};
+\node (s) [staticCompo]  at ($(linearBeta)!0.5!(penBeta)$)  {($s_0, s_1$)};
+
+\node (Beta) [staticCompo, below = 1cm of s] {$\bs \beta = (\beta^0_1, \bs \beta^\tp_1, \dots,\beta^0_j, \bs \beta^\tp_j , \dots,\beta^0_p, \bs \beta^\tp_p) $};
+\node (Y) [outCome, below = 1cm of Beta] {$y_i \sim Expo. Fam. (g(\eta_i))$};
+
+%Lines
+
+\draw[->] (linearTheta) -- (linearGamma);
+\draw[->] (penTheta) -- (penGamma);
+\draw[->] (linearGamma) -- (linearBeta) ;
+\draw[->] (penGamma) -- (penBeta);
+\draw[->] (ab) -- (linearTheta);
+\draw[->] (ab) -- (penTheta);
+\draw[->] (s) -- (linearBeta) ;
+\draw[->] (s) -- (penBeta);
+\draw[->] (linearBeta) -- (Beta);
+\draw[->] (penBeta) -- (Beta);
+\draw[->] (Beta) --  (Y);
+
+
+% Now that the diagram has been drawn, background rectangles
+% can be fitted to its elements. This requires the TikZ
+% libraries "fit" and "background".
+% Control input and measurement are labeled. These labels have
+% not been translated to English as "Measurement" instead of
+% "Messung" would not look good due to it being too long a word.
+\begin{pgfonlayer}{background}
+    \node [background,
+                fit=(linearTheta) (linearBeta),
+                label=above:Null Space:] {};
+    \node [background,
+                 fit=(penTheta) (penBeta),
+                label=above:Penalized Space:] {};
+
+\end{pgfonlayer}
+\end{tikzpicture}
+
 
 ### Other Priors
 
