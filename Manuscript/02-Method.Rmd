@@ -61,11 +61,6 @@ $$
 $$
 The beta distribution is a conjugate prior for the binomial distribution and hence provides some computation convenience. For simplicity, we focus on a special case of beta distribution, uniform (0,1). When the variable have large effects in any of the bases, the parameter $\theta_j$ will be estimated large, which in turn encourages the model to include the rest of bases, achieving the local adaption among spline bases. Hereafter, we refer Bayesian hierarchical generalized additive models with the spike-and-slab lasso prior as the BHAM-SSL. \\
 
-```{r fig.height=4, fig.width=6, eval = F}
-# TODO: Refactor the graph to a latex flowchart
-include_graphics("Fig/SS_prior_flow_chart.png")
-```
-
 \begin{tikzpicture} [
 staticCompo/.style = {rectangle, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
 outCome/.style={ellipse, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=blue!30},

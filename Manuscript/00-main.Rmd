@@ -78,9 +78,9 @@ y = rnorm(10)
 plot(x, y)
 ```
 
-...and can be referenced (Figure \ref{fig:plot}) by including the `\\label{}` tag in the `fig.cap` attribute of the R chunk: `fig.cap = "Fancy Caption\\label{fig:plot}"`. It is a quirky hack at the moment, see [here](https://github.com/yihui/knitr/issues/323).
+<!-- ...and can be referenced (Figure \ref{fig:plot}) by including the `\\label{}` tag in the `fig.cap` attribute of the R chunk: `fig.cap = "Fancy Caption\\label{fig:plot}"`. It is a quirky hack at the moment, see [here](https://github.com/yihui/knitr/issues/323). -->
 
-Analogously, use Rmarkdown to produce tables as usual:
+<!-- Analogously, use Rmarkdown to produce tables as usual: -->
 
 ```{r, results = "asis", eval = F}
 if (!require("xtable")) install.packages("xtable")
