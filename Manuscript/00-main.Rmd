@@ -1,0 +1,95 @@
+---
+title: Spike-and-Slab Generalized Additive Models and Fast Algorithms for High-Dimensional Data
+author:
+- name: Boyi Guo*
+  num: a
+- name: Byron C. Jaeger
+  num: b 
+- name: AKM Fazlur Rahman
+  num: a   
+- name: D. Leann Long
+  num: a  
+- name: Nengjun Yi
+  num: a
+address:
+- num: a
+  org: Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA
+- num: b
+  org: Department of Biostatistics and Data Science, Wake Forest University, Winston-Salem, USA
+corres: "*Corresponding author name, This is sample corresponding address. \\email{xxx@uab}"
+presentaddress: This is sample for present address text this is sample for present address text
+authormark: Guo et al.
+articletype: Research article
+received: 2021-01-01
+revised: 2021-02-01
+accepted: 2021-03-01
+abstract: "Spike-and-slab priors have been extensively studied for variable selection, and recently been extended to function selection in generalized additive models (GAMs). Most of the previous works on fitting spike-and-slab GAM relies on Markov chain Monte Carlo (MCMC) algorithms to identify the promising subsets of functions. The computational burden of MCMC makes these models less feasible, especially in high-dimensional setting. Besides, most of the current spike-and-slab GAM consider an “all-in-all-out” approach for function selection, rendering less flexibility to answer if non-linear effects are necessary in the model. We propose Bayesian hierarchical generalized additive models for function selection and prediction. The proposed models employ spike-and-slab priors, mixture normal and mixture double exponential, for smooth and sparse solution. Two EM based algorithms, EM-IWLS and EM-Coordinate Descent, are developed for accelerated computation. Simulation studies and real data analysis demonstrated improved performance against the state-of-art models, mgcv and COSSO. The software implementation of the proposed methods is freely available via the R package BHAM."
+keywords: Spike-and-Slab Priors; High-Dimensional Data; Generalized Additive Models; EM-IWLS; EM-Coordinate Decent
+bibliography: bibfile.bib
+output: 
+  rticles::sim_article:
+    keep_tex: TRUE
+header-includes: 
+  - \usepackage{tikz}
+  - \usepackage{pgfplots}
+---
+
+
+<!-- \usepackage{tikz} -->
+\usetikzlibrary{shapes.geometric, arrows, positioning, calc, matrix, backgrounds, fit}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\tp}{\text{pen}}
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+
+library(knitr)
+library(targets)
+library(here)
+library(xtable)
+
+tar_load(intro_path)
+tar_load(method_path)
+tar_load(sim_path)
+tar_load(real_data_path)
+tar_load(disc_path)
+
+tar_load(tab_binom)
+tar_load(tab_gaus)
+```
+
+```{r child=here(intro_path)}
+```
+
+```{r child=here(method_path)}
+```
+
+```{r child=here(sim_path)}
+```
+
+```{r child=here(real_data_path)}
+```
+
+```{r child=here(disc_path)}
+```
+
+
+
+```{r plot-ref, fig.cap = "Fancy Caption\\label{fig:plot}", eval = F}
+x = rnorm(10)
+y = rnorm(10)
+plot(x, y)
+```
+
+<!-- ...and can be referenced (Figure \ref{fig:plot}) by including the `\\label{}` tag in the `fig.cap` attribute of the R chunk: `fig.cap = "Fancy Caption\\label{fig:plot}"`. It is a quirky hack at the moment, see [here](https://github.com/yihui/knitr/issues/323). -->
+
+<!-- Analogously, use Rmarkdown to produce tables as usual: -->
+
+```{r, results = "asis", eval = F}
+if (!require("xtable")) install.packages("xtable")
+xt <- xtable(head(cars), caption = "A table", label = "tab:table")
+print(xt, comment = FALSE)
+```
+
+
