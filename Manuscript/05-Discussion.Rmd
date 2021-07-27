@@ -1,4 +1,24 @@
 # Discussion
+In the paper, we described a novel generalized additive model using Bayesian hierarchical priors, particularly the proposed spike-and-slab spline prior for bi-level functional selection. Meanwhile, we introduced two optimization based algorithms for model fitting. The algorithms can be easily scale up to address high-dimensional data analysis in a computational efficient manner, but also provide naive inferential supports for many commonly used hierarchical priors in the analyses that the sparse assumption is weak or not necessary. Via simulations, we demonstrated that the proposed model provides as good, if not better, prediction performance compared to some state-of-the-art non-linear modeling devices. Compared another newly developed high-dimensional Bayesian GAM that emphasize computational efficiency [@Bai2021], the proposed model provides flexibility to address bi-level functional selection and inferential support while maintaining the same level of prediction accuracy.
+
+For transnational science purpose, the 
+
+
+Compare to previous Bayesian GAMs, the proposed model greatly increases the scalability to be applied in high-dimensioanl data analyses, while addressing the bi-level selection problem [@Bai2021].
+
+the implementation of ssGAM-NM using EM-IRLS. Nevertheless, EM-IRLS are not limited to fitting ssGAM-NM. Other spike-and-slab prior can be fitted with EM-IRLS as well, e.g. mixture t-distribution, and mixture double exponential distributions. @Yi2012 demonstrated that t prior and double exponential prior can be seen hierarchical normal priors,
+$$
+\begin{aligned}
+\beta_i \sim N(0, \tau^2_i),\\
+\tau^2_i \sim Inv-\chi^2(v, s^2_j) \text{ or } \tau^2_i \sim Gamma(1, s^2/2)
+\end{aligned}
+$$
+with $\tau^2$ integrated out analytically. Hence, the EM-IRLS can be easily applied to those two additional mixture priors. One of the advantage of using mixture $t$ prior over mixture normal prior is that $t$ distributions with low degree of freedom, e.g. $v=1$, have heavier tail than the normal distribution, which is also a special case of $t$ distribution when $v=\infty$. The heavier tails help to obtain posteriors that concentrated around the true nonzero coefficients at optimal rates. [@Rockova2014a]
+
+
+In this chapter, we propose the spike-and-slab generalized additive models for high-dimensional analysis.Two fast computing algorithms, EM-IRLS and EM-coordinate descent are developed for expedited model fitting. EM-IRLS provides uncertainty measures, while EM-coordinate descent algorithm are extremely fast for model fitting. In the simulation studies, we shows the proposed model outperforms the state of the art GAM model, `mgcv` in prediction and function inference. Moreover, due to the model selection nature of the spike-and-slab prior, the proposed model can identify predictors that have large effects on the outcome. In addition, the model can be used to answer the question if non-linear effect are necessary.
+
+
 
 Remaining issue:
 1. Degree of freedom has yet to closely studied. As an direct impact, the functional selection can be improved when effective degree of freedom are more carefully studied
@@ -11,18 +31,11 @@ Meanwhile, we specify that $\gamma_{j}^0$ and $\gamma_{j}^{pen}$ are independent
 
 ## Discussion
 
-In this chapter, we propose the spike-and-slab generalized additive models for high-dimensional analysis.Two fast computing algorithms, EM-IRLS and EM-coordinate descent are developed for expedited model fitting. EM-IRLS provides uncertainty measures, while EM-coordinate descent algorithm are extremely fast for model fitting. In the simulation studies, we shows the proposed model outperforms the state of the art GAM model, `mgcv` in prediction and function inference. Moreover, due to the model selection nature of the spike-and-slab prior, the proposed model can identify predictors that have large effects on the outcome. In addition, the model can be used to answer the question if non-linear effect are necessary.
+
 
   <!-- Such prior set-ups ignore the null space of the smooth function, and entirely removes the variable out of the function. The "all-in-all-out" assumption makes differentiate linear and non-linear effect harder. In contrasts, our prior set up provides a more flexible solution, as the penalty for smoothness is locally adapative for the bases and hence retain the the null space if necessary.  -->
 
 The "all-in-all-out" set-up was criticized for its inability to answering an important research question, if the effects are non-linear or not. On the other hand, the model can be much more flexible by allowing each dimension of the penalized space to have an independent indicator, i.e. $\gamma^{pen}_{jk}$ of $\beta^{pen}_{jk}$ for $k = 1\dots, K_j$. This prior set-up generalized to the group spike-and-slab. The additional flexibility doesn't not necessarily grand the model neither theoretical justification nor analytic simplicity. The spline penalty assumes a common smooth shrinkage $\lambda_j$ applied to all coefficients of the penalized space, which contradicts to the model setup. Besides, having multiple indicator variables complicates the decision of if non-linear effects are necessary.
 
 
-In the manuscript, we describe the implementation of ssGAM-NM using EM-IRLS. Nevertheless, EM-IRLS are not limited to fitting ssGAM-NM. Other spike-and-slab prior can be fitted with EM-IRLS as well, e.g. mixture t-distribution, and mixture double exponential distributions. @Yi2012 demonstrated that t prior and double exponential prior can be seen hierarchical normal priors,
-$$
-\begin{aligned}
-\beta_i \sim N(0, \tau^2_i),\\
-\tau^2_i \sim Inv-\chi^2(v, s^2_j) \text{ or } \tau^2_i \sim Gamma(1, s^2/2)
-\end{aligned}
-$$
-with $\tau^2$ integrated out analytically. Hence, the EM-IRLS can be easily applied to those two additional mixture priors. One of the advantage of using mixture $t$ prior over mixture normal prior is that $t$ distributions with low degree of freedom, e.g. $v=1$, have heavier tail than the normal distribution, which is also a special case of $t$ distribution when $v=\infty$. The heavier tails help to obtain posteriors that concentrated around the true nonzero coefficients at optimal rates. [@Rockova2014a]
+

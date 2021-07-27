@@ -89,9 +89,3 @@ print(xt, comment = FALSE)
 ```
 
 
-## Cross-referencing
-
-The use of the Rmarkdown equivalent of the \LaTeX cross-reference system
-for figures, tables, equations, etc., is encouraged (using `[@<name>]`, equivalent of `\ref{<name>}` and `\label{<name>}`). That works well for citations in Rmarkdown, not so well for figures and tables. In that case, it is possible to revert to standard \LaTeX syntax.
-
-
