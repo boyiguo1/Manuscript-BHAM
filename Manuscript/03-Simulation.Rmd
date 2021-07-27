@@ -18,6 +18,12 @@ $$
 for  poisson outcomes. Gaussian outcomes required specification of dispersion, where we set the dispersion parameter to be 1. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active covariates, while the rest covariates are inactive, i.e. $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$,($x_{new} ,y_{new}$), are created following the same data generating process, serving as the testing data. The dimensionality of the smooth functions are controlled as k=10. Hence, the corresponding number of coefficient parameters to be estimated is 37, 82, 451 and 1801. 
 <!-- We also run the simulation where the number of bases are increased to 25 deliberately. -->
 
+```{r, results = "asis"}
+tab_binom %>% 
+  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure over for binomial outcome over 50 iterations", label = "tab:bin_auc") %>% 
+  print(comment = FALSE)
+```
+
 
 To evaluate the performance of the models, mean squared error, mean absolute error for gaussian model, AUC and misclassifcation rate are calculated for binomial model, and deviance are calculated for Poisson model, averaging across 50 simulations. The results are tabulated in Table 1, 2, 3.
 

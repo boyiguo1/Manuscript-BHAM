@@ -1,56 +1,59 @@
-library(targets)
-library(tarchetypes)
+## Load your packages, e.g. library(targets).
+source("./packages.R")
 
-source("R/functions.R")
+## Load your R files
+lapply(list.files("./R", full.names = TRUE, recursive = TRUE), source)
 
-# This is an example _targets.R file. Every
-# {targets} pipeline needs one.
-# Use tar_script() to create _targets.R and tar_edit()
-# to open it again for editing.
-# Then, run tar_make() to run the pipeline
-# and tar_read(summary) to view the results.
-
-options(tidyverse.quiet = TRUE)
-# Set target-specific options such as packages.
-tar_option_set(packages = c("dplyr", "tidyverse", "rticles", "gtsummary", "here",
-                            "mgcv", "broom", "unglue", "knitr",
-                            "ggpubr"))
-
-# End this file with a list of target objects.
-list(
-  
+## tar_plan supports drake-style targets and also tar_target()
+tar_plan(
   #  Simulations Studies -----------------------------------------------------
   #* Main Study ####
-  #* 
-  #* 
-  tar_target(success_rate,
-             create_success_rate_table("Simulation/Main/Data/main_k=10/")),
   
-  tar_target(binom_plot,
-             make_sim_main_plots(
-               success_rate,
-               "binomial",
-               list("test.deviance", "test.auc", "test.misclassification"))
-             ),
-
-  tar_target(gaussian_plot,
-             make_sim_main_plots(
-               success_rate,
-               "gaussian",
-               list("test.R2", "test.mse", "test.mae"))),
-
-  tar_target(poisson_plot,
-             make_sim_main_plots(
-               success_rate,
-               "poisson",
-               list("test.deviance", "test.mse", "test.mae"))
-             ),
+  tar_files(sim_main_path,
+            list.files("./Simulation/main", recursive = T, full.names = T)),
   
-  #* Tuning Study ####
-  tar_render(sim_tuning_report,
-             "Simulation/tuning/tuning_study_report.Rmd",
-             output_dir = "Simulation/tuning/",
-             output_file = "sim_tuning_report.html"),
+  success_rate = create_success_rate_table(sim_main_path),
+  
+  tab_binom = make_sim_main_table(success_rate,
+                                  dist = "binomial",
+                                  measures = "auc"),
+  
+  tab_gaus = make_sim_main_table(success_rate,
+                                 dist = "gaussian",
+                                 measures = "R2"),
+  
+  tab_pois = make_sim_main_table(success_rate,
+                                 dist = "poisson",
+                                 measures = "mse"),
+  
+  
+  
+  # 
+  # tar_target(binom_plot,
+  #            make_sim_main_plots(
+  #              success_rate,
+  #              "binomial",
+  #              list("test.deviance", "test.auc", "test.misclassification"))
+  #            ),
+  # 
+  # tar_target(gaussian_plot,
+  #            make_sim_main_plots(
+  #              success_rate,
+  #              "gaussian",
+  #              list("test.R2", "test.mse", "test.mae"))),
+  # 
+  # tar_target(poisson_plot,
+  #            make_sim_main_plots(
+  #              success_rate,
+  #              "poisson",
+  #              list("test.deviance", "test.mse", "test.mae"))
+  #            ),
+  # 
+  # #* Tuning Study ####
+  # tar_render(sim_tuning_report,
+  #            "Simulation/tuning/tuning_study_report.Rmd",
+  #            output_dir = "Simulation/tuning/",
+  #            output_file = "sim_tuning_report.html"),
   
   
   #  Real Data Analysis -----------------------------------------------------
@@ -114,5 +117,5 @@ list(
              #   RD = real_data_path,
              #   disc = disc_path),
              output_file = "SS_GAM.pdf")
-  
+
 )
