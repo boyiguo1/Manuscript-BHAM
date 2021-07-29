@@ -16,6 +16,9 @@ library(unglue)
 library(knitr)
 library(ggpubr)
 library(xtable)
+library(janitor)
 
 
 conflict_prefer("filter", "dplyr")
+conflict_prefer("mutate", "dplyr")
+conflict_prefer("select", "dplyr") 
