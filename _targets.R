@@ -28,6 +28,7 @@ tar_plan(
   
   
   
+  
   # 
   # tar_target(binom_plot,
   #            make_sim_main_plots(
@@ -57,28 +58,50 @@ tar_plan(
   
   
   #  Real Data Analysis -----------------------------------------------------
-  #* Emory Card Biobank ####
-  #** Load Data ####
-  tar_target(realdata_ECB_train_path,
-             "Real_Data/Emory_Card_Biobank/Data/Analysis_data_first_cohort.csv",
-             format = "file"),
-  tar_target(realdata_ECB_valid_path,
-             "Real_Data/Emory_Card_Biobank/Data/Analysis_data_second_cohort.csv",
-             format = "file"),
-  tar_target(RD_ECB_train_dat,
-             readr::read_csv(realdata_ECB_train_path)),
-  tar_target(RD_ECB_valid_dat,
-             readr::read_csv(realdata_ECB_valid_path)), 
+  # #* Emory Card Biobank ####
+  # #** Load Data ####
+  # tar_target(realdata_ECB_train_path,
+  #            "Real_Data/Emory_Card_Biobank/Data/Analysis_data_first_cohort.csv",
+  #            format = "file"),
+  # tar_target(realdata_ECB_valid_path,
+  #            "Real_Data/Emory_Card_Biobank/Data/Analysis_data_second_cohort.csv",
+  #            format = "file"),
+  # tar_target(RD_ECB_train_dat,
+  #            readr::read_csv(realdata_ECB_train_path)),
+  # tar_target(RD_ECB_valid_dat,
+  #            readr::read_csv(realdata_ECB_valid_path)), 
+  # 
+  # #** GAM Screening ####
+  # tar_target(train_gam_screen,
+  #            gam_screen(RD_ECB_train_dat)),
+  # 
+  # #** Report ####
+  # tar_render(real_data_report_ECB,
+  #            "Real_Data/Emory_Card_Biobank/Report.Rmd",
+  #            output_dir = "Real_Data/Emory_Card_Biobank/",
+  #            output_file = "ECB_report.html"),
   
-  #** GAM Screening ####
-  tar_target(train_gam_screen,
-             gam_screen(RD_ECB_train_dat)),
+
+# Dataset 2 ---------------------------------------------------------------
+
+  tar_target(metabolomics_path,
+           "./Real_Data/Adult_Obesity_Nontargeted_Metabolomics_Data.csv",
+           format = "file"),
+
+  meta_dat_raw = readr::read_csv(metabolomics_path),
+  meta_dat = meta_dat_raw %>% 
+  clean_meta_dat(),
+
+  tar_target(cov_path,
+           "./Real_Data/Copy of Adult_Obesity_Nontargeted_Metabolomics_Sample_Metadata.csv",
+           format = "file"),
+
+  cov_dat_raw = readr::read_csv(cov_path),
   
-  #** Report ####
-  tar_render(real_data_report_ECB,
-             "Real_Data/Emory_Card_Biobank/Report.Rmd",
-             output_dir = "Real_Data/Emory_Card_Biobank/",
-             output_file = "ECB_report.html"),
+  cov_dat = cov_dat_raw %>% 
+  clean_cov_dat(),
+
+  
   
   
   # Manuscript --------------------------------------------------------------
