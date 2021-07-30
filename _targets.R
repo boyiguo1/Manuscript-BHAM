@@ -81,29 +81,64 @@ tar_plan(
   #            output_dir = "Real_Data/Emory_Card_Biobank/",
   #            output_file = "ECB_report.html"),
   
-
-# Dataset 2 ---------------------------------------------------------------
-
+  
+  # Dataset 2 ---------------------------------------------------------------
+  
+  # * Data Prep -------------------------------------------------------------
+  
   tar_target(metabolomics_path,
-           "./Real_Data/Adult_Obesity_Nontargeted_Metabolomics_Data.csv",
-           format = "file"),
-
-  meta_dat_raw = readr::read_csv(metabolomics_path),
-  meta_dat = meta_dat_raw %>% 
-  clean_meta_dat(),
-
+             "./Real_Data/Adult_Obesity_Nontargeted_Metabolomics_Data.csv",
+             format = "file"),
+  
+  mb_dat_raw = readr::read_csv(metabolomics_path),
+  mb_dat = mb_dat_raw %>% 
+    clean_meta_dat(),
+  
   tar_target(cov_path,
-           "./Real_Data/Copy of Adult_Obesity_Nontargeted_Metabolomics_Sample_Metadata.csv",
-           format = "file"),
-
+             "./Real_Data/Copy of Adult_Obesity_Nontargeted_Metabolomics_Sample_Metadata.csv",
+             format = "file"),
+  
   cov_dat_raw = readr::read_csv(cov_path),
   
   cov_dat = cov_dat_raw %>% 
-  clean_cov_dat(),
+    clean_cov_dat(),
+  
+  
+  ful_dat_raw = left_join(cov_dat, mb_dat),
+  
+  ful_dat = ful_dat_raw %>% 
+    filter(complete.cases(.)),
+  
+  # * Analysis --------------------------------------------------------------
+
+# ** Table 1 --------------------------------------------------------------
 
   
+  tbl_one = ful_dat %>% 
+    tbl_summary(by = Study,
+                include = starts_with("cov_")) %>% 
+    add_overall(),
   
+# ** bgam --------------------------------------------------------------
+
+  bgam_mdl = make_bgam_mdl(ful_dat),
   
+  bgam_dml_tun = tune.bgam(bgam_mdl, nfolds = 5, s0 = seq(0.005, 0.1, 0.01)),
+  
+  cv_bai_mdl = cv.SBGAM(y = ful_dat$out_HOMA_PC, X = ful_dat %>% select(starts_with("mb_")) %>% as.matrix,  df=5, family = "gaussian", a = 1, b = 1,
+                       max.iter=100, tol = 1e-6),
+
+
+  bai_mdl = SBGAM(ful_dat$out_HOMA_PC, X = ful_dat %>% select(starts_with("mb_")) %>% as.matrix, df=5, family = "gaussian" ,
+                 lambda0 = cv_bai_mdl$lambda0.min, a = 1, b = 1,
+                 max.iter=100, tol = 1e-6, print.iter=FALSE),
+
+
+# bai_train_msr <- make_null_res(fam_fun$family)
+# bai_test_msr <- measure.glm(test_dat$y, bai_mdl$mu.pred, family = fam_fun$family) 
+
+
+
   # Manuscript --------------------------------------------------------------
   
   #* Section Paths ####
@@ -140,5 +175,5 @@ tar_plan(
              #   RD = real_data_path,
              #   disc = disc_path),
              output_file = "SS_GAM.pdf")
-
+  
 )
