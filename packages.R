@@ -19,6 +19,10 @@ library(xtable)
 library(janitor)
 
 
+library(BHAM)
+library(BhGLM)
+library(sparseGAM)
+
 conflict_prefer("filter", "dplyr")
 conflict_prefer("mutate", "dplyr")
 conflict_prefer("select", "dplyr") 
