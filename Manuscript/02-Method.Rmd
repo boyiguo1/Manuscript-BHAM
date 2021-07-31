@@ -59,8 +59,10 @@ This is to leverage the fact that the probability of selecting the bases of a sm
 $$
 \theta_j \sim Beta(a, b).
 $$
-The beta distribution is a conjugate prior for the binomial distribution and hence provides some computation convenience. For simplicity, we focus on a special case of beta distribution, uniform (0,1). When the variable have large effects in any of the bases, the parameter $\theta_j$ will be estimated large, which in turn encourages the model to include the rest of bases, achieving the local adaption among spline bases. Hereafter, we refer Bayesian hierarchical generalized additive models with the spike-and-slab lasso prior as the BHAM-SSL. \\
+The beta distribution is a conjugate prior for the binomial distribution and hence provides some computation convenience. For simplicity, we focus on a special case of beta distribution, uniform (0,1). When the variable have large effects in any of the bases, the parameter $\theta_j$ will be estimated large, which in turn encourages the model to include the rest of bases, achieving the local adaption among spline bases. Hereafter, we refer Bayesian hierarchical generalized additive models with the spike-and-slab lasso prior as the BHAM-SSL, and visually presented in Figure \ref{fig:SSprior}. \\
 
+\begin{figure}
+\centering
 \begin{tikzpicture} [
 staticCompo/.style = {rectangle, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
 outCome/.style={ellipse, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
@@ -120,11 +122,14 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \end{pgfonlayer}
 \end{tikzpicture}
 
+\caption{Directed acyclic grpah of BHAM-SSL model with parameter expansion. Elliposes are stochastic mnodes, rectangles and are deterministic nodes. }
+\label{fig:SSprior}
+\end{figure}
 
 ### Other Priors
 
 With the re-parameterization step of the basis function matrix $X$, it is possible to generalized the SSL prior to other priors, for example normal priors for ridge-type regularization and mixture normal prior for spike-and-slab
-regularization. These priors would work better in low and medium dimensional settings where the sparse assumption is not necessary. Here we focus on the mixture normal prior as a demonstration of applying continous spike-and-slab prior in additive models. ^[TODO: enter a sentence introducing EMVS and spike-and-slab mixture normal prior]. 
+regularization. These priors would work better in low and medium dimensional settings where the sparse assumption is not necessary. Here we focus on the mixture normal prior as a demonstration of applying continuous spike-and-slab prior in additive models. ^[TODO: enter a sentence introducing EMVS and spike-and-slab mixture normal prior]. 
 
 A spike-and-slab mixture normal prior in additive models can be expressed as 
 $$
