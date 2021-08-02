@@ -438,8 +438,11 @@ parameter \(\theta_j\) will be estimated large, which in turn encourages
 the model to include the rest of bases, achieving the local adaption
 among spline bases. Hereafter, we refer Bayesian hierarchical
 generalized additive models with the spike-and-slab lasso prior as the
-BHAM-SSL. \textbackslash{}
+BHAM-SSL, and visually presented in Figure \ref{fig:SSprior}.
+\textbackslash{}
 
+\begin{figure}
+\centering
 \begin{tikzpicture} [
 staticCompo/.style = {rectangle, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
 outCome/.style={ellipse, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
@@ -499,6 +502,10 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \end{pgfonlayer}
 \end{tikzpicture}
 
+\caption{Directed acyclic grpah of BHAM-SSL model with parameter expansion. Elliposes are stochastic mnodes, rectangles and are deterministic nodes. }
+\label{fig:SSprior}
+\end{figure}
+
 \hypertarget{other-priors}{%
 \subsubsection{Other Priors}\label{other-priors}}
 
@@ -508,7 +515,7 @@ normal priors for ridge-type regularization and mixture normal prior for
 spike-and-slab regularization. These priors would work better in low and
 medium dimensional settings where the sparse assumption is not
 necessary. Here we focus on the mixture normal prior as a demonstration
-of applying continous spike-and-slab prior in additive models.
+of applying continuous spike-and-slab prior in additive models.
 \footnote{TODO: enter a sentence introducing EMVS and spike-and-slab
   mixture normal prior}.
 
@@ -897,6 +904,22 @@ estimated is 37, 82, 451 and 1801.
   \hline
  & p & bglm\_spline\_de & blasso\_spline & cosso & acosso & mgcv & SB\_GAM \\ 
   \hline
+1 & 4.00 & 0.90 (0.01) & 0.90 (0.01) & 0.73 (0.09) & 0.71 (0.13) & 0.90 (0.01) & 0.82 (0.04) \\ 
+  2 & 10.00 & 0.90 (0.01) & 0.88 (0.01) & 0.67 (0.16) & 0.76 (0.04) & 0.90 (0.01) & 0.82 (0.04) \\ 
+  3 & 50.00 & 0.88 (0.01) & 0.81 (0.05) & 0.43 (0.19) & 0.54 (0.19) & 0.86 (0.02) & 0.81 (0.07) \\ 
+  4 & 200.00 & 0.73 (0.10) & 0.60 (0.08) & 0.39 (0.17) & 0.45 (0.19) & NaN (NA) & 0.81 (0.05) \\ 
+   \hline
+\end{tabular}
+\caption{The average and standard deviation of the out-of-sample area under the curve measure over for binomial outcome over 50 iterations} 
+\label{tab:gaus}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\begin{tabular}{rrllllll}
+  \hline
+ & p & bglm\_spline\_de & blasso\_spline & cosso & acosso & mgcv & SB\_GAM \\ 
+  \hline
 1 & 4.00 & 0.94 (0.01) & 0.89 (0.04) & 0.90 (0.02) & 0.90 (0.02) & 0.94 (0.01) & 0.93 (0.01) \\ 
   2 & 10.00 & 0.93 (0.01) & 0.87 (0.03) & 0.87 (0.03) & 0.85 (0.03) & 0.92 (0.04) & 0.92 (0.01) \\ 
   3 & 50.00 & 0.92 (0.01) & 0.87 (0.02) & 0.83 (0.02) & 0.83 (0.02) & 0.76 (0.04) & 0.92 (0.01) \\ 
@@ -907,17 +930,17 @@ estimated is 37, 82, 451 and 1801.
 \label{tab:bin_auc}
 \end{table}
 
-To evaluate the performance of the models, mean squared error, mean
-absolute error for gaussian model, AUC and misclassifcation rate are
-calculated for binomial model, and deviance are calculated for Poisson
+To evaluate the predictive performance of the models, \(R^2\) for
+Gaussian model, area under the curve (AUC) are calculated for binomial
 model, averaging across 50 simulations. The results are tabulated in
-Table 1, 2, 3.
-
-\includegraphics{SS_GAM_files/figure-latex/unnamed-chunk-8-1.pdf}
+Table \ref{tab:gaus}, \ref{tab:bin_auc}.\footnote{is it better to
+  provide a box plot or a table.}
 
 \includegraphics{SS_GAM_files/figure-latex/unnamed-chunk-9-1.pdf}
 
 \includegraphics{SS_GAM_files/figure-latex/unnamed-chunk-10-1.pdf}
+
+\includegraphics{SS_GAM_files/figure-latex/unnamed-chunk-11-1.pdf}
 
 For the binomial outcome shown in Figure 1, we can see that the proposed
 models are consistently performed better than COSSO and adaptive COSSO.
