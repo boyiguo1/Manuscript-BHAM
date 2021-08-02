@@ -19,13 +19,18 @@ for  poisson outcomes. Gaussian outcomes required specification of dispersion, w
 <!-- We also run the simulation where the number of bases are increased to 25 deliberately. -->
 
 ```{r, results = "asis"}
-tab_binom %>% 
-  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure over for binomial outcome over 50 iterations", label = "tab:bin_auc") %>% 
+tab_gaus %>% 
+  xtable(caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations", label = "tab:gaus") %>% 
   print(comment = FALSE)
 ```
 
+```{r, results = "asis"}
+tab_binom %>% 
+  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure for binomial outcomes over 50 iterations", label = "tab:bin_auc") %>% 
+  print(comment = FALSE)
+```
 
-To evaluate the performance of the models, mean squared error, mean absolute error for gaussian model, AUC and misclassifcation rate are calculated for binomial model, and deviance are calculated for Poisson model, averaging across 50 simulations. The results are tabulated in Table 1, 2, 3.
+To evaluate the  predictive performance of the models, the statistics caluclated based on the testing dataset, $R^2$ for Gaussian model, area under the curve (AUC) for binomial model,  are calculated <!--and deviance are calculated for Poisson model,--> averaging across 50 simulations. The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.^[is it better to provide a box plot or a table.]
 
 ```{r, fig.height=8}
 targets::tar_load(binom_plot)
@@ -44,17 +49,17 @@ targets::tar_load(poisson_plot)
 poisson_plot
 ```
 
-For the binomial outcome shown in Figure 1, we can see that the proposed models are consistently performed better than COSSO and adaptive COSSO. Mgcv slightly outperforms the proposed models in low dimension settings(p = 4, 10), but suffers from overfitting in medium dimension setting (p=50). In addition, in the high-dimension setting (p=200), mgcv could not make prediction due to the p > n problem. Among the proposed models, we see that there is modest difference between the models that shares the same indicator variable('_spline' models) and or not sharing indicator variable (modles), where the not sharing indicator variable models have slightly edge over indicator sharing model. Moreover, the mixture double exponential model and lasso model perform substaintially better in the medium and high settings. For the remaining two outcomes, the results shows similar trends, where mixture double exponential model and ss lasso model are recommended for use. 
+The predictive performances have a consistent pattern across the three distributions of outcomes. Across all the scenarios, COSSO and adaptive COSSO have the least favourable performance among the applicable methods examined. To note, mgcv doesn't support high-dimensional analysis when the number of coefficients are greater than the sample size. mgcv predicts well when $p$ is small or moderate (p = 4, 10), and deteriorate when the number of predictors increase. Among the three fast-computing Bayesian hierarchical models, the proposed models, bglm_spline_de and blasso_spline ^[need to change the name] predicts better than SB-GAM when the dimension of are small, moderate, and high. However, in the hyper high dimensional case, SB-GAM has better performance. Among the proposed methods, bglm_spline_de performs consistently better than blasso_spline.
 
 
 
 
 
-%are calculated to assess out-of-sample estimation accuracy,
+<!-- %are calculated to assess out-of-sample estimation accuracy, -->
 
-%We also calculated the area under the curve (AUC) of the receiver operating characteristic curve for $y_{new}$. We will also visually display the estimated smooth function with the smooth function of truth to compare if the models can infer the smooth function correctly, despite the prediction accuracy.
+<!-- We also calculated the area under the curve (AUC) of the receiver operating characteristic curve for $y_{new}$. We will also visually display the estimated smooth function with the smooth function of truth to compare if the models can infer the smooth function correctly, despite the prediction accuracy. -->
 
-%When constructing the smooth function of each variables, we constructs the natural cubic spline with degree of freedom 25. In other words, the design matrix of each smooth function will have 26 columns. The total number of columns for $p=4, 10, 50$ is $105, 261, 1301$ respectively, where intercept is kept in the model when fitting. The $p=50$ can mimic the high dimensional setting as the design matrix are in high-dimensional setting ($p >> n$)
+
 
 <!-- The accuracy of variable selection is measured using Matthews correlation coefficient (MCC), -->
 <!-- $$ -->
@@ -62,18 +67,17 @@ For the binomial outcome shown in Figure 1, we can see that the proposed models 
 <!-- $$ -->
 <!-- where TP, TN, FP, and FN are true positives, true negatives, false positives, and false negatives, respectively. -->
 
-%We benchmark the performance of the proposed methods with the state of art GAM package `mgcv`[TODO: add citation]. In the future steps, we will compare our proposed model with other high dimensional GAM applications.
 
  \  
 
 ### Simulation Results
 
-Overall, the proposed priors outperforms the state-of-art GAM model `mgcv` when the dimensionality is low, median, and high. The proposed priors predicts better than `mgcv` and infers better of the underlying smooth function. Most importantly, `mgcv` is infeasible in the high dimensional setting, i.e. when $p=50$ where the number of parameters are greater than the sample size. 
+<!-- Overall, the proposed priors outperforms the state-of-art GAM model `mgcv` when the dimensionality is low, median, and high. The proposed priors predicts better than `mgcv` and infers better of the underlying smooth function. Most importantly, `mgcv` is infeasible in the high dimensional setting, i.e. when $p=50$ where the number of parameters are greater than the sample size.  -->
 
 
-#### Prediction Performace
+<!-- #### Prediction Performace -->
 
-The prediction performance is tabulated in the table below for AUC and Supplementary tables for MSE and misclassification rate. In summary, the proposed Bayesian models outperforms the benchmark model `mgcv` regardless the choice of prior or fitting algorithm. The models with IRLS fitting algorithm give slightly better performance than the the model with cyclic coordinate descent algorithm. The advantage diminishes in the high dimensional setting (p=50). This is possible because the SS normal spline prior provides a more smooth solution, which would work well in a low to median dimension setting. However, in the high dimensional setting, there are not enough sparsity in the model, i.e. SS normal prior will provides a more complex model than necessary. This is confirmed with the visualization in the following section. 
+<!-- The prediction performance is tabulated in the table below for AUC and Supplementary tables for MSE and misclassification rate. In summary, the proposed Bayesian models outperforms the benchmark model `mgcv` regardless the choice of prior or fitting algorithm. The models with IRLS fitting algorithm give slightly better performance than the the model with cyclic coordinate descent algorithm. The advantage diminishes in the high dimensional setting (p=50). This is possible because the SS normal spline prior provides a more smooth solution, which would work well in a low to median dimension setting. However, in the high dimensional setting, there are not enough sparsity in the model, i.e. SS normal prior will provides a more complex model than necessary. This is confirmed with the visualization in the following section.  -->
 
 ```{r tab.id="sim_GAM_AUC", eval=F}
 glm_spline_pred_dat <-readr::read_rds("Simulation_Result/predict_res.rds")
@@ -107,6 +111,6 @@ glm_spline_pred_dat$mse %>%
               autonum = run_autonum(seq_id = "tab", bkm="sim_GAM_MSE", pre_label = "Table "))
 ```
 
-#### Visualization
-We plot the estimated smooth functions of the four active variables for the 100 simulation iterations, along with the 'true' smooth function. Across different settings of predictors, the patterns look similar. First of all, in all the settings, `mgcv` tends to provide more  extreme models, where in the graphs the smooth function have much higher bound than the true smooth function. Rarely the estimated smooth function from `mgcv` matches with the true smooth function. In comparison, the proposed method can interpolate the shape of the true smooth function. However, different priors and fitting algorithms have different advantages. For example, in Figure 1, we see that the SS normal distribution have problem with the tail of the smooth function, especially obvious in the estimations of the variable _x4_. However, it would have less sparse solutions, which is more likely to accurately interpolate the smooth function especially when the shape is complicated (see variable _x2_). On the contrary, the SS double exponential prior model encourages sparse solutions, which can sometime omit active predictors.
+<!-- #### Visualization -->
+<!-- We plot the estimated smooth functions of the four active variables for the 100 simulation iterations, along with the 'true' smooth function. Across different settings of predictors, the patterns look similar. First of all, in all the settings, `mgcv` tends to provide more  extreme models, where in the graphs the smooth function have much higher bound than the true smooth function. Rarely the estimated smooth function from `mgcv` matches with the true smooth function. In comparison, the proposed method can interpolate the shape of the true smooth function. However, different priors and fitting algorithms have different advantages. For example, in Figure 1, we see that the SS normal distribution have problem with the tail of the smooth function, especially obvious in the estimations of the variable _x4_. However, it would have less sparse solutions, which is more likely to accurately interpolate the smooth function especially when the shape is complicated (see variable _x2_). On the contrary, the SS double exponential prior model encourages sparse solutions, which can sometime omit active predictors. -->
 

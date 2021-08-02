@@ -121,17 +121,34 @@ tar_plan(
   
 # ** bgam --------------------------------------------------------------
 
+  base_mdl = lm(out_HOMA_PC~cov_Age + cov_Sex + cov_Race + cov_Triglycerides_Baseline + cov_Weight_PC,
+                data = ful_dat),
+# mean(base_mdl$residuals^2)
+
+  # data.frame(ful_dat$out_HOMA_PC, bgam_mdl$y, bgam_mdl$linear.predictors, base_mdl$fitted.values) %>% head()
+
   bgam_mdl = make_bgam_mdl(ful_dat),
-  
+  # mean((bgam_mdl$y - bgam_mdl$linear.predictors)^2),  
+
+
   bgam_dml_tun = tune.bgam(bgam_mdl, nfolds = 5, s0 = seq(0.005, 0.1, 0.01)),
   
-  cv_bai_mdl = cv.SBGAM(y = ful_dat$out_HOMA_PC, X = ful_dat %>% select(starts_with("mb_")) %>% as.matrix,  df=5, family = "gaussian", a = 1, b = 1,
-                       max.iter=100, tol = 1e-6),
+  # bgam_mdl = make_bgam_mdl(ful_dat),
+  
 
 
-  bai_mdl = SBGAM(ful_dat$out_HOMA_PC, X = ful_dat %>% select(starts_with("mb_")) %>% as.matrix, df=5, family = "gaussian" ,
-                 lambda0 = cv_bai_mdl$lambda0.min, a = 1, b = 1,
-                 max.iter=100, tol = 1e-6, print.iter=FALSE),
+  # cv_bai_mdl = cv.SBGAM(y = ful_dat$out_HOMA_PC, X = ful_dat %>% select(starts_with("mb_")) %>% as.matrix,  df=5, family = "gaussian", a = 1, b = 1,
+  #                      max.iter=100, tol = 1e-6),
+
+
+  # bai_mdl = SBGAM(ful_dat$out_HOMA_PC, X = ful_dat %>% select(starts_with("mb_")) %>% as.matrix, df=5, family = "gaussian" ,
+  #                lambda0 = cv_bai_mdl$lambda0.min, a = 1, b = 1,
+  #                max.iter=100, tol = 1e-6, print.iter=FALSE),
+  # 
+  # cv_bai_mdl_final = cv.SBGAM(y = ful_dat$out_HOMA_PC, X = ful_dat %>% select(starts_with("mb_")) %>% as.matrix, 
+  #                             df=5, family = "gaussian", a = 1, b = 1,
+  #                             lambda0 = cv_bai_mdl$lambda0.min,
+  #                     max.iter=100, tol = 1e-6),
 
 
 # bai_train_msr <- make_null_res(fam_fun$family)
