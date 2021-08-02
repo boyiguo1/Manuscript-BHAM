@@ -5,6 +5,13 @@
 
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{colortbl}
+\usepackage{hhline}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
 
 \articletype{Research article}
 
@@ -910,7 +917,7 @@ estimated is 37, 82, 451 and 1801.
   4 & 200.00 & 0.73 (0.10) & 0.60 (0.08) & 0.39 (0.17) & 0.45 (0.19) & NaN (NA) & 0.81 (0.05) \\ 
    \hline
 \end{tabular}
-\caption{The average and standard deviation of the out-of-sample area under the curve measure over for binomial outcome over 50 iterations} 
+\caption{The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations} 
 \label{tab:gaus}
 \end{table}
 
@@ -926,15 +933,16 @@ estimated is 37, 82, 451 and 1801.
   4 & 200.00 & 0.88 (0.01) & 0.86 (0.02) & 0.81 (0.06) & 0.81 (0.08) & NaN (NA) & 0.92 (0.01) \\ 
    \hline
 \end{tabular}
-\caption{The average and standard deviation of the out-of-sample area under the curve measure over for binomial outcome over 50 iterations} 
+\caption{The average and standard deviation of the out-of-sample area under the curve measure for binomial outcomes over 50 iterations} 
 \label{tab:bin_auc}
 \end{table}
 
-To evaluate the predictive performance of the models, \(R^2\) for
-Gaussian model, area under the curve (AUC) are calculated for binomial
-model, averaging across 50 simulations. The results are tabulated in
-Table \ref{tab:gaus}, \ref{tab:bin_auc}.\footnote{is it better to
-  provide a box plot or a table.}
+To evaluate the predictive performance of the models, the statistics
+caluclated based on the testing dataset, \(R^2\) for Gaussian model,
+area under the curve (AUC) for binomial model, are calculated averaging
+across 50 simulations. The results are tabulated in Table
+\ref{tab:gaus}, \ref{tab:bin_auc}.\footnote{is it better to provide a
+  box plot or a table.}
 
 \includegraphics{SS_GAM_files/figure-latex/unnamed-chunk-9-1.pdf}
 
@@ -942,93 +950,136 @@ Table \ref{tab:gaus}, \ref{tab:bin_auc}.\footnote{is it better to
 
 \includegraphics{SS_GAM_files/figure-latex/unnamed-chunk-11-1.pdf}
 
-For the binomial outcome shown in Figure 1, we can see that the proposed
-models are consistently performed better than COSSO and adaptive COSSO.
-Mgcv slightly outperforms the proposed models in low dimension
-settings(p = 4, 10), but suffers from overfitting in medium dimension
-setting (p=50). In addition, in the high-dimension setting (p=200), mgcv
-could not make prediction due to the p \textgreater{} n problem. Among
-the proposed models, we see that there is modest difference between the
-models that shares the same indicator variable('\_spline' models) and or
-not sharing indicator variable (modles), where the not sharing indicator
-variable models have slightly edge over indicator sharing model.
-Moreover, the mixture double exponential model and lasso model perform
-substaintially better in the medium and high settings. For the remaining
-two outcomes, the results shows similar trends, where mixture double
-exponential model and ss lasso model are recommended for use.
-
-\%are calculated to assess out-of-sample estimation accuracy,
-
-\%We also calculated the area under the curve (AUC) of the receiver
-operating characteristic curve for \(y_{new}\). We will also visually
-display the estimated smooth function with the smooth function of truth
-to compare if the models can infer the smooth function correctly,
-despite the prediction accuracy.
-
-\%When constructing the smooth function of each variables, we constructs
-the natural cubic spline with degree of freedom 25. In other words, the
-design matrix of each smooth function will have 26 columns. The total
-number of columns for \(p=4, 10, 50\) is \(105, 261, 1301\)
-respectively, where intercept is kept in the model when fitting. The
-\(p=50\) can mimic the high dimensional setting as the design matrix are
-in high-dimensional setting (\(p >> n\))
-
-\%We benchmark the performance of the proposed methods with the state of
-art GAM package \texttt{mgcv}{[}TODO: add citation{]}. In the future
-steps, we will compare our proposed model with other high dimensional
-GAM applications.
+The predictive performances have a consistent pattern across the three
+distributions of outcomes. Across all the scenarios, COSSO and adaptive
+COSSO have the least favourable performance among the applicable methods
+examined. To note, mgcv doesn't support high-dimensional analysis when
+the number of coefficients are greater than the sample size. mgcv
+predicts well when \(p\) is small or moderate (p = 4, 10), and
+deteriorate when the number of predictors increase. Among the three
+fast-computing Bayesian hierarchical models, the proposed models,
+bglm\_spline\_de and blasso\_spline \footnote{need to change the name}
+predicts better than SB-GAM when the dimension of are small, moderate,
+and high. However, in the hyper high dimensional case, SB-GAM has better
+performance. Among the proposed methods, bglm\_spline\_de performs
+consistently better than blasso\_spline.
 
 ~
 
 \hypertarget{simulation-results}{%
 \subsubsection{Simulation Results}\label{simulation-results}}
 
-Overall, the proposed priors outperforms the state-of-art GAM model
-\texttt{mgcv} when the dimensionality is low, median, and high. The
-proposed priors predicts better than \texttt{mgcv} and infers better of
-the underlying smooth function. Most importantly, \texttt{mgcv} is
-infeasible in the high dimensional setting, i.e.~when \(p=50\) where the
-number of parameters are greater than the sample size.
+\hypertarget{metabolomics-data-analysis}{%
+\section{Metabolomics Data Analysis}\label{metabolomics-data-analysis}}
 
-\hypertarget{prediction-performace}{%
-\paragraph{Prediction Performace}\label{prediction-performace}}
+We use the proposed models BHAM-SSL to analyze metabolomics data from a
+recently published study \footnote{TODO: add
+  citation:\url{https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0240764}}
+on the association between metabolic biomarkers and weight loss. The
+data contained 765 metaboliltes in baseline plasma collected from three
+separate studies, profiled using liquid chromatography mass
+spectrometry. Quality control and natural log transformation were
+performed during metabolites data preparation. The outcome of interest
+was percent change in insulin resistance, and hence modeled using a
+Gaussian model adjusting for covariates including age, sex, race,
+baseline clinical triglycerides, and percent change in weight over the
+follow-up time period. 731 individuals were included in the initial
+studies, and reduced to 315 after removing missing values. The
+descriptive statistics were tabulated in Table \ref{tab:tbl_one}.
 
-The prediction performance is tabulated in the table below for AUC and
-Supplementary tables for MSE and misclassification rate. In summary, the
-proposed Bayesian models outperforms the benchmark model \texttt{mgcv}
-regardless the choice of prior or fitting algorithm. The models with
-IRLS fitting algorithm give slightly better performance than the the
-model with cyclic coordinate descent algorithm. The advantage diminishes
-in the high dimensional setting (p=50). This is possible because the SS
-normal spline prior provides a more smooth solution, which would work
-well in a low to median dimension setting. However, in the high
-dimensional setting, there are not enough sparsity in the model, i.e.~SS
-normal prior will provides a more complex model than necessary. This is
-confirmed with the visualization in the following section.
+\providecommand{\docline}[3]{\noalign{\global\setlength{\arrayrulewidth}{#1}}\arrayrulecolor[HTML]{#2}\cline{#3}}
 
-\hypertarget{visualization}{%
-\paragraph{Visualization}\label{visualization}}
+\setlength{\tabcolsep}{2pt}
 
-We plot the estimated smooth functions of the four active variables for
-the 100 simulation iterations, along with the `true' smooth function.
-Across different settings of predictors, the patterns look similar.
-First of all, in all the settings, \texttt{mgcv} tends to provide more
-extreme models, where in the graphs the smooth function have much higher
-bound than the true smooth function. Rarely the estimated smooth
-function from \texttt{mgcv} matches with the true smooth function. In
-comparison, the proposed method can interpolate the shape of the true
-smooth function. However, different priors and fitting algorithms have
-different advantages. For example, in Figure 1, we see that the SS
-normal distribution have problem with the tail of the smooth function,
-especially obvious in the estimations of the variable \emph{x4}.
-However, it would have less sparse solutions, which is more likely to
-accurately interpolate the smooth function especially when the shape is
-complicated (see variable \emph{x2}). On the contrary, the SS double
-exponential prior model encourages sparse solutions, which can sometime
-omit active predictors.
+\renewcommand*{\arraystretch}{1.5}
 
-\hypertarget{real-data-analysis}{%
-\section{Real Data Analysis}\label{real-data-analysis}}
+\begin{longtable}[c]{|p{2.14in}|p{1.44in}|p{1.56in}|p{1.75in}|p{1.39in}}
+
+\caption{The descriptive statistics of the sample in the metabolomics data analysis stratified by studies\label{tab:tbl_one}}\\
+
+\hhline{>{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}-}
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Characteristic}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Overall,\ N\ =\ 315}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{CBD,\ N\ =\ 17}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{STRRIDEPD,\ N\ =\ 56}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{WLM,\ N\ =\ 242}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} \\
+
+\noalign{\global\setlength{\arrayrulewidth}{1pt}}\arrayrulecolor[HTML]{000000}\cline{1-5}
+
+\endfirsthead
+
+\hhline{>{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{000000}\global\arrayrulewidth=1pt}-}
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Characteristic}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Overall,\ N\ =\ 315}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{CBD,\ N\ =\ 17}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{STRRIDEPD,\ N\ =\ 56}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{WLM,\ N\ =\ 242}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} \\
+
+\noalign{\global\setlength{\arrayrulewidth}{1pt}}\arrayrulecolor[HTML]{000000}\cline{1-5}\endhead
+
+
+
+\multicolumn{5}{!{\color[HTML]{FFFFFF}\vrule width 0pt}>{\raggedright}p{\dimexpr 8.28in+8\tabcolsep+4\arrayrulewidth}!{\color[HTML]{FFFFFF}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Median\ (IQR);\ n\ (\%)}}\fontsize{11}{11}\selectfont{\textsuperscript{\textcolor[HTML]{000000}{1}}}} \\
+
+\endfoot
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{cov\_Age}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{56\ (51,\ 62)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{39\ (34,\ 47)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{60\ (55,\ 66)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{56\ (51,\ 62)}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{cov\_Sex}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{F}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{188\ (60\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{14\ (82\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{33\ (59\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{141\ (58\%)}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{M}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{127\ (40\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3\ (18\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{23\ (41\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{101\ (42\%)}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{cov\_Race}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{AA}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{109\ (35\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{8\ (47\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{9\ (16\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{92\ (38\%)}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{EA}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{203\ (64\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{9\ (53\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{45\ (80\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{149\ (62\%)}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{O}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3\ (1.0\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{0\ (0\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{2\ (3.6\%)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{1\ (0.4\%)}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{cov\_Triglycerides\_Baseline}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{106\ (76,\ 154)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{118\ (91,\ 170)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{104\ (75,\ 150)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{106\ (76,\ 154)}}} \\
+
+
+
+
+
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 2.14in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{cov\_Weight\_PC}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.44in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{-7.6\ (-10.9,\ -5.6)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.56in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{-29.9\ (-37.0,\ -25.1)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{-3.1\ (-5.7,\ -0.6)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 1.39in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{-7.8\ (-10.8,\ -6.2)}}} \\
+
+\noalign{\global\setlength{\arrayrulewidth}{1pt}}\arrayrulecolor[HTML]{000000}\cline{1-5}
+
+
+
+\end{longtable}
 
 \hypertarget{discussion}{%
 \section{Discussion}\label{discussion}}

@@ -57,6 +57,9 @@ tar_load(disc_path)
 
 tar_load(tab_binom)
 tar_load(tab_gaus)
+
+tar_load(ful_dat)
+tar_load(tbl_one)
 ```
 
 ```{r child=here(intro_path)}

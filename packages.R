@@ -17,6 +17,7 @@ library(knitr)
 library(ggpubr)
 library(xtable)
 library(janitor)
+library(flextable)
 
 
 library(BHAM)
