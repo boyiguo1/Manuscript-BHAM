@@ -69,35 +69,29 @@ outCome/.style={ellipse, minimum width=3cm, minimum height=1cm,text centered, dr
 mymatrix/.style={matrix of nodes, nodes=outCome, row sep=1em},
 PriorBoarder/.style={rectangle, minimum width=5cm, minimum height=10cm, text centered, fill=lightgray!30},
 background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
-] 
+]
 
 \matrix (linearPrior) [matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-&\node (linearTheta) [outCome] { $\theta_j^{0}\sim Beta(a, b)$ };\\
-&\node (linearGamma) [outCome] { $\gamma_j^0 \sim Bin(1, \theta_j^0) $ };\\
-&\node (linearBeta) [outCome] { $\beta_j^0 \sim DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
+  \node (linearGamma) [outCome] { $\gamma_j^0 \sim Bin(1, \theta_j^0) $ };\\
+  \node (linearBeta) [outCome] { $\beta_j^0 \sim DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
 };
-
 \matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-\node (penTheta) [outCome] { $\theta_{j}^\tp\sim Beta(a, b)$ };\\
-\node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j^\tp)$ };\\
-\node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
+  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j^\tp)$ };\\
+  \node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
 };
 
-\node (ab)[staticCompo] at ($(linearTheta)!0.5!(penTheta)$) {$(a, b)$};
-%\node (PenaltyPrior) [PriorBoarder,  right = 1cm of ab] {part 2};
-\node (s) [staticCompo]  at ($(linearBeta)!0.5!(penBeta)$)  {($s_0, s_1$)};
 
+\node (s) [staticCompo]  at ($(linearBeta)!0.5!(penBeta)$)  {($s_0, s_1$)};
 \node (Beta) [staticCompo, below = 1cm of s] {$\bs \beta = (\beta^0_1, \bs \beta^\tp_1, \dots,\beta^0_j, \bs \beta^\tp_j , \dots,\beta^0_p, \bs \beta^\tp_p) $};
+\node (Theta)[outCome, above = 2cm of s] {$\theta_{j} \sim Beta(a, b)$};
+\node (ab)[staticCompo, above = 0.5cm of Theta] {$(a, b)$};
 \node (Y) [outCome, below = 1cm of Beta] {$y_i \sim Expo. Fam. (g(\eta_i))$};
 
-%Lines
-
-\draw[->] (linearTheta) -- (linearGamma);
-\draw[->] (penTheta) -- (penGamma);
+\draw[->] (Theta) -- (linearGamma);
+\draw[->] (Theta) -- (penGamma);
 \draw[->] (linearGamma) -- (linearBeta) ;
 \draw[->] (penGamma) -- (penBeta);
-\draw[->] (ab) -- (linearTheta);
-\draw[->] (ab) -- (penTheta);
+\draw[->] (ab) -- (Theta);
 \draw[->] (s) -- (linearBeta) ;
 \draw[->] (s) -- (penBeta);
 \draw[->] (linearBeta) -- (Beta);
@@ -105,21 +99,15 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \draw[->] (Beta) --  (Y);
 
 
-% Now that the diagram has been drawn, background rectangles
-% can be fitted to its elements. This requires the TikZ
-% libraries "fit" and "background".
-% Control input and measurement are labeled. These labels have
-% not been translated to English as "Measurement" instead of
-% "Messung" would not look good due to it being too long a word.
 \begin{pgfonlayer}{background}
-    \node [background,
-                fit=(linearTheta) (linearBeta),
-                label=above:Null Space:] {};
-    \node [background,
-                 fit=(penTheta) (penBeta),
-                label=above:Penalized Space:] {};
-
+  \node [background,
+   fit=(linearGamma) (linearBeta),
+   label=above:Null Space:] {};
+  \node [background,
+    fit=(penGamma) (penBeta),
+    label=above:Penalized Space:] {};
 \end{pgfonlayer}
+
 \end{tikzpicture}
 
 \caption{Directed acyclic grpah of BHAM-SSL model with parameter expansion. Elliposes are stochastic mnodes, rectangles and are deterministic nodes. }
