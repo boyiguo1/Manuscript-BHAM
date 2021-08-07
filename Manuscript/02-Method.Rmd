@@ -72,11 +72,11 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 ]
 
 \matrix (linearPrior) [matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (linearGamma) [outCome] { $\gamma_j^0 \sim Bin(1, \theta_j^0) $ };\\
+  \node (linearGamma) [outCome] { $\gamma_j^0 \sim Bin(1, \theta_j) $ };\\
   \node (linearBeta) [outCome] { $\beta_j^0 \sim DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
 };
 \matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j^\tp)$ };\\
+  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j)$ };\\
   \node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^0_{j}) s_0 + \gamma^0_{j} s_1)$};\\
 };
 
