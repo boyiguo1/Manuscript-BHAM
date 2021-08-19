@@ -107,7 +107,11 @@ tar_plan(
   ful_dat_raw = left_join(cov_dat, mb_dat),
   
   ful_dat = ful_dat_raw %>% 
-    filter(complete.cases(.)),
+    filter(complete.cases(.)) %>% 
+    filter(out_HOMA_PC < 100,
+           cov_Race != "O"),
+  train_dat = ful_dat %>% filter(Study == "WLM"),
+  test_dat = ful_dat %>% filter(Study != "WLM"),
   
   # * Analysis --------------------------------------------------------------
 
@@ -121,11 +125,26 @@ tar_plan(
   
 # ** bgam --------------------------------------------------------------
 
+  ## Linear Regression
   base_mdl = lm(out_HOMA_PC~cov_Age + cov_Sex + cov_Race + cov_Triglycerides_Baseline + cov_Weight_PC,
                 data = ful_dat),
 # mean(base_mdl$residuals^2)
 
   # data.frame(ful_dat$out_HOMA_PC, bgam_mdl$y, bgam_mdl$linear.predictors, base_mdl$fitted.values) %>% head()
+
+  ## Lasso Model
+  cv_lasso_mdl = cv.glmnet(x = train_dat %>%
+                             select(starts_with("cov"), starts_with("mb")) %>%
+                             data.matrix(),
+            y = train_dat$out_HOMA_PC,
+            penalty.factor = c(rep(0, 5), rep(1, 484))),
+
+  lasso_mdl = glmnet(x = train_dat %>%
+                       select(starts_with("cov"), starts_with("mb")) %>%
+                       data.matrix(),
+                     y = train_dat$out_HOMA_PC,
+                     lambda = cv_lasso_mdl$lambda.min,
+                     penalty.factor = c(rep(0, 5), rep(1, 484))),
 
   bgam_mdl = make_bgam_mdl(ful_dat),
   # mean((bgam_mdl$y - bgam_mdl$linear.predictors)^2),  
