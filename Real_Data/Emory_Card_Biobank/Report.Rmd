@@ -17,8 +17,6 @@ library(BhGLM)
 library(BHAM)
 
 train_dat <- targets::tar_read(RD_ECB_train_dat)
-valid_dat <- targets::tar_read(RD_ECB_valid_dat)
-
 gam_scn_res <- targets::tar_read(train_gam_screen)
 ```
 
@@ -30,7 +28,7 @@ For study design, please visit the article <https://journals.plos.org/plosone/ar
 
 ## Data Introducetion
 
-* Two data sets: model development set (N=`r NROW(train_dat)`), validation set (N=`r NROW(valid_dat)`)
+* Two data sets: model development set (N=`r NROW(train_dat)`)
 
 
 * Variable Descriptions
@@ -293,20 +291,6 @@ mdl_pen_extreme <- bamlasso(dsn_mat, train_dat$death3yr, family = "binomial",
 # measure.bh(mdl_pen_extreme, new.x = test_sm_dat, new.y=test_data$death3yr)
 ```
 
-
-
-
-## Validation
-
-The validation data set have mostly distinct feature from the training data set. Hence, the validation in the traditional sense does not exists.
-
-```{r eval = F}
-
-test_mz_names <- valid_dat  %>% select(starts_with("mz")) %>% names
-measure.bh(mdl_defaul, new.x = test_sm_dat, new.y=valid_dat$death3yr)
-
-measure.bh(mdl_dflt)
-```
 
 
 

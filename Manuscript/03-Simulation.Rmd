@@ -32,19 +32,19 @@ tab_binom %>%
 
 To evaluate the  predictive performance of the models, the statistics caluclated based on the testing dataset, $R^2$ for Gaussian model, area under the curve (AUC) for binomial model,  are calculated <!--and deviance are calculated for Poisson model,--> averaging across 50 simulations. The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.^[is it better to provide a box plot or a table.]
 
-```{r, fig.height=8}
+```{r, fig.height=8, eval = FALSE}
 targets::tar_load(binom_plot)
 binom_plot
 ```
 
 
-```{r, fig.height=8}
+```{r, fig.height=8, eval = FALSE}
 targets::tar_load(gaussian_plot)
 gaussian_plot
 ```
 
 
-```{r, fig.height=8}
+```{r, fig.height=8, eval = FALSE}
 targets::tar_load(poisson_plot)
 poisson_plot
 ```
