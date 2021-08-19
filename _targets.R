@@ -60,27 +60,27 @@ tar_plan(
   #  Real Data Analysis -----------------------------------------------------
   # #* Emory Card Biobank ####
   # #** Load Data ####
-  # tar_target(realdata_ECB_train_path,
-  #            "Real_Data/Emory_Card_Biobank/Data/Analysis_data_first_cohort.csv",
-  #            format = "file"),
+  tar_target(realdata_ECB_train_path,
+             "Real_Data/Emory_Card_Biobank/Data/Analysis_data_first_cohort.csv",
+             format = "file"),
   # tar_target(realdata_ECB_valid_path,
   #            "Real_Data/Emory_Card_Biobank/Data/Analysis_data_second_cohort.csv",
   #            format = "file"),
-  # tar_target(RD_ECB_train_dat,
-  #            readr::read_csv(realdata_ECB_train_path)),
+  tar_target(RD_ECB_train_dat,
+             readr::read_csv(realdata_ECB_train_path)),
   # tar_target(RD_ECB_valid_dat,
   #            readr::read_csv(realdata_ECB_valid_path)), 
   # 
   # #** GAM Screening ####
-  # tar_target(train_gam_screen,
-  #            gam_screen(RD_ECB_train_dat)),
-  # 
+  tar_target(train_gam_screen,
+             gam_screen(RD_ECB_train_dat)),
+
   # #** Report ####
-  # tar_render(real_data_report_ECB,
-  #            "Real_Data/Emory_Card_Biobank/Report.Rmd",
-  #            output_dir = "Real_Data/Emory_Card_Biobank/",
-  #            output_file = "ECB_report.html"),
-  
+  tar_render(real_data_report_ECB,
+             "Real_Data/Emory_Card_Biobank/Report.Rmd",
+             output_dir = "Real_Data/Emory_Card_Biobank/",
+             output_file = "ECB_report.html"),
+
   
   # Dataset 2 ---------------------------------------------------------------
   
@@ -95,7 +95,7 @@ tar_plan(
     clean_meta_dat(),
   
   tar_target(cov_path,
-             "./Real_Data/Copy of Adult_Obesity_Nontargeted_Metabolomics_Sample_Metadata.csv",
+             "./Real_Data/Adult_Obesity_Nontargeted_Metabolomics_Sample_Metadata.csv",
              format = "file"),
   
   cov_dat_raw = readr::read_csv(cov_path),
@@ -109,7 +109,8 @@ tar_plan(
   ful_dat = ful_dat_raw %>% 
     filter(complete.cases(.)) %>% 
     filter(out_HOMA_PC < 100,
-           cov_Race != "O"),
+           cov_Race != "O") %>% 
+    mutate(out_HOMA_std = scale(out_HOMA_PC) %>% as.numeric),
   train_dat = ful_dat %>% filter(Study == "WLM"),
   test_dat = ful_dat %>% filter(Study != "WLM"),
   
@@ -126,8 +127,9 @@ tar_plan(
 # ** bgam --------------------------------------------------------------
 
   ## Linear Regression
-  base_mdl = lm(out_HOMA_PC~cov_Age + cov_Sex + cov_Race + cov_Triglycerides_Baseline + cov_Weight_PC,
-                data = ful_dat),
+  base_mdl = lm(out_HOMA_std~cov_Age + cov_Sex + cov_Race + cov_Triglycerides_Baseline + cov_Weight_PC,
+                data = train_dat),
+
 # mean(base_mdl$residuals^2)
 
   # data.frame(ful_dat$out_HOMA_PC, bgam_mdl$y, bgam_mdl$linear.predictors, base_mdl$fitted.values) %>% head()
@@ -136,21 +138,38 @@ tar_plan(
   cv_lasso_mdl = cv.glmnet(x = train_dat %>%
                              select(starts_with("cov"), starts_with("mb")) %>%
                              data.matrix(),
-            y = train_dat$out_HOMA_PC,
-            penalty.factor = c(rep(0, 5), rep(1, 484))),
+            y = train_dat$out_HOMA_std,
+            #penalty.factor = c(rep(0, 5), rep(1, 484))
+            ),
 
   lasso_mdl = glmnet(x = train_dat %>%
                        select(starts_with("cov"), starts_with("mb")) %>%
                        data.matrix(),
-                     y = train_dat$out_HOMA_PC,
+                     y = train_dat$out_HOMA_std,
                      lambda = cv_lasso_mdl$lambda.min,
-                     penalty.factor = c(rep(0, 5), rep(1, 484))),
+                     #penalty.factor = c(rep(0, 5), rep(1, 484))
+                     ),
+  
 
-  bgam_mdl = make_bgam_mdl(ful_dat),
+  ## Prepare dat
+  # bgam_dat = make_bgam_dat(train_dat, test_dat = test_dat),
+  # bgam_mdl = bamlasso(bgam_dat$train_dat, train_dat$out_HOMA_std, family = "gaussian",
+  #                     ss=c(0.005, 0.05),
+  #                     group = bgam_dat$group),
+
+  ## bmlasso
+
+  # bmlass_mdl = bmlasso(bgam_dat$train_dat, train_dat$out_HOMA_std, family = "gaussian",
+  #                      ss=c(0.005, 0.05),
+  #                      group = bgam_dat$group),
+
+  
+
+,
   # mean((bgam_mdl$y - bgam_mdl$linear.predictors)^2),  
 
 
-  bgam_dml_tun = tune.bgam(bgam_mdl, nfolds = 5, s0 = seq(0.005, 0.1, 0.01)),
+  # bgam_dml_tun = tune.bgam(bgam_mdl, nfolds = 5, s0 = seq(0.005, 0.1, 0.01)),
   
   # bgam_mdl = make_bgam_mdl(ful_dat),
   
