@@ -23,6 +23,7 @@ library(flextable)
 library(BHAM)
 library(BhGLM)
 library(sparseGAM)
+library(glmnet)
 
 conflict_prefer("filter", "dplyr")
 conflict_prefer("mutate", "dplyr")
