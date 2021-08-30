@@ -25,10 +25,6 @@ tar_plan(
   tab_pois = make_sim_main_table(success_rate,
                                  dist = "poisson",
                                  measures = "mse"),
-  
-  
-  
-  
   # 
   # tar_target(binom_plot,
   #            make_sim_main_plots(
@@ -74,12 +70,67 @@ tar_plan(
   # #** GAM Screening ####
   tar_target(train_gam_screen,
              gam_screen(RD_ECB_train_dat)),
+  
+  tar_target(ECB_cov,
+             RD_ECB_train_dat %>% 
+               select(train_gam_screen %>% pull(var)) %>% 
+               data.matrix),
+  tar_target(ECB_outcome,
+             RD_ECB_train_dat %>% pull(death3yr)),
+  
+  
+  # tar_target(ECB_fold_id,
+  #            )
+  
+  # ** BHAM --------------------------------------------------------------- 
+  mz_names = ECB_cov %>% colnames,  
+  sm_df = data.frame(
+    Var = mz_names,
+    Func = "s",
+    Args ="bs='cr', k=5"
+  ),
+  
+  sm_obj = construct_smooth_data(sm_df, RD_ECB_train_dat),
+  dsn_mat = sm_obj$data,
+  bamlasso_raw = bamlasso(dsn_mat, ECB_outcome, family = "binomial",
+                         group = make_group(names(dsn_mat))),
+  
+  cv_id = cv.bgam(bamlasso_raw)$foldid,
+  
+  bamlasso_tune = tune.bgam(bamlasso_raw, s0 = seq(0.005, 0.1, 0.01),
+                          foldid = cv_id),
+  
+  # TODO: Use cv.bh to get the measures.
+  
+  # ** SB-GAM ---------------------------------------------------------------
+  tar_target(bai_mdl_tune,
+             cv.SBGAM( X = ECB_cov,
+                       y = ECB_outcome,
+                       family = "binomial")
+             ),
+  
+  tar_target(bai_cv_pred,
+    make_SB_cv(x  = ECB_cov, y = ECB_outcome, bai_mdl_tune, cv_id)
+  ),
+
+  bai_cv_res = BhGLM::measure.glm(y = ECB_outcome, bai_cv_pred, family = "binomial"),
+  # ** COSSO ---------------------------------------------------------------
+  # tar_target(cosso_tune,
+  #            cosso(ECB_cov, ECB_outcome, family = "Binomial", nbasis=6)
+  #            # %>%
+  #              # tune.cosso()
+  #              ),
+
+  # tar_target(cosso_cv_pred,
+  #            make_cosso_cv(cosso_tune, fold_id),
+  # ),
+  
 
   # #** Report ####
-  tar_render(real_data_report_ECB,
-             "Real_Data/Emory_Card_Biobank/Report.Rmd",
-             output_dir = "Real_Data/Emory_Card_Biobank/",
-             output_file = "ECB_report.html"),
+  # tar_render(real_data_report_ECB,
+  #            "Real_Data/Emory_Card_Biobank/Report.Rmd",
+  #            output_dir = "Real_Data/Emory_Card_Biobank/",
+  #            output_file = "ECB_report.html"),
 
   
   # Dataset 2 ---------------------------------------------------------------
@@ -109,10 +160,11 @@ tar_plan(
   ful_dat = ful_dat_raw %>% 
     filter(complete.cases(.)) %>% 
     filter(out_HOMA_PC < 100,
-           cov_Race != "O") %>% 
+           cov_Race != "O",
+           Study %in% c("WLM", "STRRIDEPD")) %>% 
     mutate(out_HOMA_std = scale(out_HOMA_PC) %>% as.numeric),
   train_dat = ful_dat %>% filter(Study == "WLM"),
-  test_dat = ful_dat %>% filter(Study != "WLM"),
+  test_dat = ful_dat %>% filter(Study == "STRRIDEPD"),
   
   # * Analysis --------------------------------------------------------------
 
@@ -127,28 +179,28 @@ tar_plan(
 # ** bgam --------------------------------------------------------------
 
   ## Linear Regression
-  base_mdl = lm(out_HOMA_std~cov_Age + cov_Sex + cov_Race + cov_Triglycerides_Baseline + cov_Weight_PC,
-                data = train_dat),
+  # base_mdl = lm(out_HOMA_std~cov_Age + cov_Sex + cov_Race + cov_Triglycerides_Baseline + cov_Weight_PC,
+  #               data = train_dat),
 
 # mean(base_mdl$residuals^2)
 
   # data.frame(ful_dat$out_HOMA_PC, bgam_mdl$y, bgam_mdl$linear.predictors, base_mdl$fitted.values) %>% head()
 
   ## Lasso Model
-  cv_lasso_mdl = cv.glmnet(x = train_dat %>%
-                             select(starts_with("cov"), starts_with("mb")) %>%
-                             data.matrix(),
-            y = train_dat$out_HOMA_std,
-            #penalty.factor = c(rep(0, 5), rep(1, 484))
-            ),
+  # cv_lasso_mdl = cv.glmnet(x = train_dat %>%
+  #                            select(starts_with("mb")) %>%
+  #                            data.matrix(),
+  #           y = train_dat$out_HOMA_std,
+  #           #penalty.factor = c(rep(0, 5), rep(1, 484))
+  #           ),
 
-  lasso_mdl = glmnet(x = train_dat %>%
-                       select(starts_with("cov"), starts_with("mb")) %>%
-                       data.matrix(),
-                     y = train_dat$out_HOMA_std,
-                     lambda = cv_lasso_mdl$lambda.min,
-                     #penalty.factor = c(rep(0, 5), rep(1, 484))
-                     ),
+  # lasso_mdl = glmnet(x = train_dat %>%
+  #                      select(starts_with("mb")) %>%
+  #                      data.matrix(),
+  #                    y = train_dat$out_HOMA_std,
+  #                    lambda = cv_lasso_mdl$lambda,
+  #                    #penalty.factor = c(rep(0, 5), rep(1, 484))
+  #                    ),
   
 
   ## Prepare dat
@@ -156,6 +208,8 @@ tar_plan(
   # bgam_mdl = bamlasso(bgam_dat$train_dat, train_dat$out_HOMA_std, family = "gaussian",
   #                     ss=c(0.005, 0.05),
   #                     group = bgam_dat$group),
+  # 
+  # tune_bgam_mdl = tune.bgam(bgam_mdl,s0 = seq(0.005, 0.1, 0.01)),
 
   ## bmlasso
 
@@ -165,7 +219,7 @@ tar_plan(
 
   
 
-,
+# ,
   # mean((bgam_mdl$y - bgam_mdl$linear.predictors)^2),  
 
 
