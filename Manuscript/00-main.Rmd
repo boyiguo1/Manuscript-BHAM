@@ -60,6 +60,8 @@ tar_load(tab_gaus)
 
 tar_load(ful_dat)
 tar_load(tbl_one)
+tar_load(bamlasso_tune)
+tar_load(bai_cv_res)
 ```
 
 ```{r child=here(intro_path)}
