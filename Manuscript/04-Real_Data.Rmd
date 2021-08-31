@@ -1,12 +1,33 @@
 # Metabolomics Data Analysis
 
+In this section, we apply the proposed models BHAM-SSL to analyze two real-world metabolomics datasets where the outcomes are binary and continuous respectively. We demonstrate the improved prediction performance compared to the other Bayesian hierarchical additive model, SB-GAM [@Bai2021]. 
+
+## Emory Cardiovarcular Biobank
+We use the proposed models BHAM-SSL to analyze a metabolic dataset from a recently published research [@Mehta2020] studying plasma metabolomic profile on the three-year all-cause mortality among patients undergoing cardiac catheterization. The dataset is publicly available via \textit{Dryad} [@Mehta2020_data]. It contains in total of 776 subjects from two cohorts. As there is a large number of non-overlapping features among the two cohorts, we use the cohort with larger sample size (N=454). There were initially 6796 features in the dataset, which is too large to be practically meaningful to analyze. Hence, we performed a univariate screening procedure on the features, via GAM implemented in \texttt{mgcv}, and chose the the top 200 features with smallest p-values. 5-Knot spline additive models for binary outcome are constructed using two different models, the proposed BHAM-SSL and the SB-GAM. 10-Fold cross-validation(CV) are used to choose the optimal tuning parameters of each framework with respect to the default selection criterion implemented in the software. Out-of-bag samples were used for prediction performance evaluation, where deviance, area under the ROC curve (AUC), mean squared error (MSE) defined as $\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2$, and misclassication error defined as $\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)$ were calculated and tabulated in Table \ref{tab:ECB_res}.
+
+
+```{r}
+
+bam_mdl_res <- bamlasso_tune %>% 
+  arrange(desc(auc)) %>% 
+  slice(1) %>% 
+  select(-s0)
+
+rbind(
+  'BHAM-SSL' = bam_mdl_res,
+  'SB-GAM' = bai_cv_res %>% t %>%  data.frame()
+) %>% 
+  flextable() %>% 
+  flextable::autofit() %>% 
+  flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation\\label{tab:ECB_res}")
+```
+
+
+
+## Weight Loss Maintenance Cohort 
 We use the proposed models BHAM-SSL to analyze metabolomics data from a recently published study ^[TODO: add citation:https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0240764] on the association between metabolic biomarkers and weight loss. The data contained 765 metaboliltes in baseline plasma collected from three separate studies, profiled using liquid chromatography mass spectrometry. Quality control and natural log transformation were performed during metabolites data preparation. The outcome of interest was percent change in insulin resistance, and hence modeled using a Gaussian model adjusting for covariates including age, sex, race, baseline clinical triglycerides, and percent change in weight over the follow-up time period. 731 individuals were included in the initial studies, and reduced to `r nrow(ful_dat)` after removing missing values. The descriptive statistics were tabulated in Table \ref{tab:tbl_one}.
 
-```{r, results = "asis", eval = F}
-tbl_one %>% 
-  xtable(caption = "The descriptive statistics of the sample in the metabolomics data analysis stratified by studies", label = "tab:tbl_one") %>% 
-  print(comment = FALSE)
-```
+
 
 ```{r}
 tbl_one %>% 
