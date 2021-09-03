@@ -16,7 +16,7 @@ address:
   org: Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA
 - num: b
   org: Department of Biostatistics and Data Science, Wake Forest University, Winston-Salem, USA
-corres: "*Corresponding author name, This is sample corresponding address. \\email{xxx@uab}"
+corres: "Nengjun Yi, epartment of Biostatistics, University of Alabama at Birmingham, Birmingham, USA. \\email{nyi@uab.edu}"
 presentaddress: This is sample for present address text this is sample for present address text
 authormark: Guo et al.
 articletype: Research article
