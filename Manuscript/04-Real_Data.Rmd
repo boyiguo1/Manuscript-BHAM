@@ -8,15 +8,11 @@ We use the proposed models BHAM-SSL to analyze a metabolic dataset from a recent
 
 ```{r}
 
-bam_mdl_res <- bamlasso_tune %>% 
-  arrange(desc(auc)) %>% 
-  slice(1) %>% 
-  select(-s0)
-
 rbind(
-  'BHAM-SSL' = bam_mdl_res,
-  'SB-GAM' = bai_cv_res %>% t %>%  data.frame()
+  'BHAM-SSL' = bamlasso_tune %>% slice_min(mse) %>% select(-s0),
+  'SB-GAM' = bai_cv_res %>%  slice_min(mse) %>% select(-lambda)
 ) %>% 
+  rownames_to_column("Methods") %>% 
   flextable() %>% 
   flextable::autofit() %>% 
   flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation\\label{tab:ECB_res}")
