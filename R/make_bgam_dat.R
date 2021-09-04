@@ -19,7 +19,7 @@ make_bgam_dat <- function(train_dat, test_dat = NULL){
   cov_mat <- model.matrix(~ -1 +cov_Age + cov_Sex + cov_Race + cov_Triglycerides_Baseline + cov_Weight_PC,
                           train_dat %>% select(starts_with("cov_")))
   dsn_mat <- data.frame(
-    cov_mat,
+    # cov_mat,
     dsn_mat)
   
   spl_grp <- make_group(spl_pt_name)
@@ -34,7 +34,7 @@ make_bgam_dat <- function(train_dat, test_dat = NULL){
     test_cov_mat <- model.matrix(~ -1 +cov_Age + cov_Sex + cov_Race + cov_Triglycerides_Baseline + cov_Weight_PC,
                                  test_dat %>% select(starts_with("cov_")))
     test_dsn_mat <- data.frame(
-      test_cov_mat,
+      # test_cov_mat,
       test_sm_dat
     )
     
