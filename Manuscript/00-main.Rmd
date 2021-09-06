@@ -16,14 +16,14 @@ address:
   org: Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA
 - num: b
   org: Department of Biostatistics and Data Science, Wake Forest University, Winston-Salem, USA
-corres: "Nengjun Yi, epartment of Biostatistics, University of Alabama at Birmingham, Birmingham, USA. \\email{nyi@uab.edu}"
+corres: "Nengjun Yi, Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA. \\email{nyi@uab.edu}"
 presentaddress: This is sample for present address text this is sample for present address text
 authormark: Guo et al.
 articletype: Research article
 received: 2021-01-01
 revised: 2021-02-01
 accepted: 2021-03-01
-abstract: "Spike-and-slab priors have been extensively studied for variable selection, and recently been extended to function selection in generalized additive models (GAMs). Most of the previous works on fitting spike-and-slab GAM relies on Markov chain Monte Carlo (MCMC) algorithms to identify the promising subsets of functions. The computational burden of MCMC makes these models less feasible, especially in high-dimensional setting. Besides, most of the current spike-and-slab GAM consider an “all-in-all-out” approach for function selection, rendering less flexibility to answer if non-linear effects are necessary in the model. We propose Bayesian hierarchical generalized additive models for function selection and prediction. The proposed models employ spike-and-slab priors, mixture normal and mixture double exponential, for smooth and sparse solution. Two EM based algorithms, EM-IWLS and EM-Coordinate Descent, are developed for accelerated computation. Simulation studies and real data analysis demonstrated improved performance against the state-of-art models, mgcv and COSSO. The software implementation of the proposed methods is freely available via the R package BHAM."
+abstract: "There are many proposals that extend the classical generalized additive models (GAMs) to accommodate the high-dimensional (p>>n) problem using group penalties and priors. These models rarely smooth the nonlinear effect properly because of the sparse regularization. It leads to excess shrinkage on coefficients and inaccurate prediction. Besides, most of these GAMs consider an “all-in-all-out” approach for function selection, rendering them difficult to answer if nonlinear effects are necessary. While some Bayesian models can address the shortcomings, using Markov chain Monte Carlo (MCMC) algorithms for model fitting creates a new challenge, scalability. Hence, we propose Bayesian hierarchical generalized additive models as a solution. For smooth and sparse solutions, the proposed models employ bi-part spike-and-slab spline priors, including mixture double exponential and mixture normal priors. Two optimization-based algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least Squares, are developed for expedited computation. Simulation studies and metabolomics data analyses demonstrate improved performance against state-of-art models, mgcv, COSSO and sparse Bayesian GAM. The software implementation of the proposed models is freely available via an R package BHAM."
 keywords: Spike-and-Slab Priors; High-Dimensional Data; Generalized Additive Models; EM-IWLS; EM-Coordinate Decent
 bibliography: bibfile.bib
 output: 
@@ -46,7 +46,7 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 library(knitr)
 library(targets)
-library(here)
+# library(here)
 library(xtable)
 
 tar_load(intro_path)
@@ -58,43 +58,27 @@ tar_load(disc_path)
 tar_load(tab_binom)
 tar_load(tab_gaus)
 
-tar_load(ful_dat)
-tar_load(tbl_one)
-tar_load(bamlasso_tune)
-tar_load(bai_cv_res)
+tar_load(WLM_train_dat)
+# tar_load(tbl_one)
+tar_load(ECB_bamlasso_cv)
+tar_load(ECB_SBGAM_cv)
+tar_load(WLM_bamlasso_cv)
+tar_load(WLM_SBGAM_cv)
 ```
 
-```{r child=here(intro_path)}
+```{r child="01-Intro.Rmd"}
 ```
 
-```{r child=here(method_path)}
+```{r child="02-Method.Rmd"}
 ```
 
-```{r child=here(sim_path)}
+```{r child="03-Simulation.Rmd"}
 ```
 
-```{r child=here(real_data_path)}
+```{r child="04-Real_Data.Rmd"}
 ```
 
-```{r child=here(disc_path)}
-```
-
-
-
-```{r plot-ref, fig.cap = "Fancy Caption\\label{fig:plot}", eval = F}
-x = rnorm(10)
-y = rnorm(10)
-plot(x, y)
-```
-
-<!-- ...and can be referenced (Figure \ref{fig:plot}) by including the `\\label{}` tag in the `fig.cap` attribute of the R chunk: `fig.cap = "Fancy Caption\\label{fig:plot}"`. It is a quirky hack at the moment, see [here](https://github.com/yihui/knitr/issues/323). -->
-
-<!-- Analogously, use Rmarkdown to produce tables as usual: -->
-
-```{r, results = "asis", eval = F}
-if (!require("xtable")) install.packages("xtable")
-xt <- xtable(head(cars), caption = "A table", label = "tab:table")
-print(xt, comment = FALSE)
+```{r child="05-Discussion.Rmd"}
 ```
 
 

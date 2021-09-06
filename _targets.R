@@ -93,14 +93,14 @@ tar_plan(
   
   ECB_SBGAM_cv = summary_cv_SBGAM(ECB_SBGAM_cv_raw, family = "binomial"),
   
-  # ECB_SBGAM_fnl = SBGAM(X = ECB_cov, y = ECB_outcome, family = "binomial", lambda0 = 32, a = 1, b = 1),
+  ECB_SBGAM_fnl = SBGAM(X = ECB_cov, y = ECB_outcome, family = "binomial", lambda0 = 24, a = 1, b = 1),
 
-  #   tar_target(ECB_SBGAM_insample_msr,
-  #            measure.glm(y = ECB_outcome, ECB_SBGAM_fnl$mu.pred, family = "binomial")),
+    tar_target(ECB_SBGAM_insample_msr,
+             measure.glm(y = ECB_outcome, ECB_SBGAM_fnl$mu.pred, family = "binomial")),
   # 
   # train_msr = data.frame("method" = c("BHAM-SSL", "SB-GAM"),
   #                        rbind(ECB_bamlasso_insample_msr ,ECB_SBGAM_insample_msr)),
-  
+
   
   #* Weight Loss Maintainace Study---------------------------------------------------------------
   
@@ -148,11 +148,12 @@ tar_plan(
                               group = WLM_bgam_dat$group),
   
   WLM_bamlasso_cv = tune.bgam(WLM_bamlasso_raw,s0 = seq(0.005, 0.1, 0.01)),
-  # measure.bh(bgam_mdl),
+
   
-  # bglm_mdl_fnl = bamlasso(bgam_dat$train_dat, train_dat$out_HOMA_std, family = "gaussian",
-  #                         ss=c(0.005, 0.05),
-  #                         group = bgam_dat$group)
+  bglm_mdl_fnl = bamlasso(WLM_bgam_dat$train_dat, WLM_train_dat$out_HOMA_std, family = "gaussian",
+                          ss=c(0.025, 0.05),
+                          group = WLM_bgam_dat$group),
+  # measure.bh(bglm_mdl_fnl),
   
   # ** SB_GAM ---------------------------------------------------------------
   
@@ -170,7 +171,7 @@ tar_plan(
     df=5, family = "gaussian", a = 1, b = 1,
     max.iter=100, tol = 1e-6, lambda0 = 58),
   
-  # measure.glm(ful_dat$out_HOMA_std, bai_mdl_fnl$mu.pred, family = "gaussian"),  
+  # measure.glm(WLM_train_dat$out_HOMA_std, WLM_SBGAM_fnl$mu.pred, family = "gaussian"),  
   
   # Manuscript --------------------------------------------------------------
   tar_target(intro_path,

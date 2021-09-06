@@ -1,4 +1,5 @@
 # Metabolomics Data Analysis
+\label{sec:real_data}
 
 In this section, we apply the proposed models BHAM-SSL to analyze two real-world metabolomics datasets where the outcomes are binary and continuous respectively. We demonstrate the improved prediction performance compared to the other Bayesian hierarchical additive model, SB-GAM [@Bai2021]. 
 
@@ -7,10 +8,9 @@ We use the proposed models BHAM-SSL to analyze a metabolic dataset from a recent
 
 
 ```{r}
-
 rbind(
-  'BHAM-SSL' = bamlasso_tune %>% slice_min(mse) %>% select(-s0),
-  'SB-GAM' = bai_cv_res %>%  slice_min(mse) %>% select(-lambda)
+  'BHAM-SSL' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
+  'SB-GAM' = ECB_SBGAM_cv %>%  slice_max(auc) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>% 
   flextable() %>% 
@@ -21,13 +21,15 @@ rbind(
 
 
 ## Weight Loss Maintenance Cohort 
-We use the proposed models BHAM-SSL to analyze metabolomics data from a recently published study ^[TODO: add citation:https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0240764] on the association between metabolic biomarkers and weight loss. The data contained 765 metaboliltes in baseline plasma collected from three separate studies, profiled using liquid chromatography mass spectrometry. Quality control and natural log transformation were performed during metabolites data preparation. The outcome of interest was percent change in insulin resistance, and hence modeled using a Gaussian model adjusting for covariates including age, sex, race, baseline clinical triglycerides, and percent change in weight over the follow-up time period. 731 individuals were included in the initial studies, and reduced to `r nrow(ful_dat)` after removing missing values. The descriptive statistics were tabulated in Table \ref{tab:tbl_one}.
-
-
+We use the proposed models BHAM-SSL to analyze metabolomics data from a recently published study [@Bihlmeyer2021] on the association between metabolic biomarkers and weight loss, where the dataset is publically available [@Bihlmeyer2021_data]. In this analysis, we primarily focused on the analysis of one of the three studies included, weight loss maintenance (WLM) cohort [@Svetkey2008], due to the drastically different intervention effects. In the dataset, 765 metaboliltes in baseline plasma collected were profiled using liquid chromatography mass spectrometry. Quality control and natural log transformation were performed during metabolites data preparation. The outcome of interest was standardized percent change in insulin resistance, and hence modeled using a Gaussian model. After removing missing datapoints and addressing outliers in the data, there were `r nrow(WLM_train_dat)` remaining in the analysis. 5-Knot spline additive models for the gaussian outcome are constructed using two different models, the proposed BHAM-SSL and the SB-GAM. 10-Fold cross-validation(CV) are used to choose the optimal tuning parameters of each framework with respect to the default selection criterion implemented in the software. Out-of-bag samples were used for prediction performance evaluation, where deviance, mean squared error (MSE) defined as $\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2$, and mean abosolute error (MAE)defined as $\frac{1}{n}\sum\limits^{n}_{i=1}|y_i - \hat y_i|$ were calculated and tabulated in Table \ref{tab:WLM_res}.
 
 ```{r}
-tbl_one %>% 
-  as_flex_table() %>% 
+rbind(
+  'BHAM-SSL' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
+  'SB-GAM' = WLM_SBGAM_cv %>%  slice_min(mse) %>% select(-lambda)
+) %>% 
+  rownames_to_column("Methods") %>% 
+  flextable() %>% 
   flextable::autofit() %>% 
-  flextable::set_caption(caption = "The descriptive statistics of the sample in the metabolomics data analysis stratified by studies\\label{tab:tbl_one}")
+  flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
 ```
