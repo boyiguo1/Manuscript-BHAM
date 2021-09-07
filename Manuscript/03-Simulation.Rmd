@@ -16,7 +16,7 @@ for gaussian and binomial outcomes and shrinked effects
 $$
 \mathbb{E}(Y) = g^{-1}(\sin(2\pi x_1) - 2\cos(2\pi x_2 -0.5) + 0.4(x_3-0.5) - 2(x_4^2 -0.3))
 $$
-for  poisson outcomes. Gaussian outcomes required specification of dispersion, where we set the dispersion parameter to be 1. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active covariates, while the rest covariates are inactive, i.e. $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$,($x_{new} ,y_{new}$), are created following the same data generating process, serving as the testing data. The dimensionality of the smooth functions are controlled as k=10. Hence, the corresponding number of coefficient parameters to be estimated is 37, 82, 451 and 1801. 
+for  poisson outcomes. Gaussian outcomes required specification of dispersion, where we set the dispersion parameter to be 1. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active covariates, while the rest covariates are inactive, i.e. $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$,($x_{new} ,y_{new}$), are created following the same data generating process, serving as the testing data. The dimensionality of the smoothing functions are controlled as k=10. Hence, the corresponding number of coefficient parameters to be estimated is 37, 82, 451 and 1801. 
 <!-- We also run the simulation where the number of bases are increased to 25 deliberately. -->
 
 ```{r, results = "asis"}
@@ -71,7 +71,7 @@ The predictive performances have a consistent pattern across the three distribut
 
  \  
 
-### Simulation Results
+<!-- ### Simulation Results -->
 
 <!-- Overall, the proposed priors outperforms the state-of-art GAM model `mgcv` when the dimensionality is low, median, and high. The proposed priors predicts better than `mgcv` and infers better of the underlying smooth function. Most importantly, `mgcv` is infeasible in the high dimensional setting, i.e. when $p=50$ where the number of parameters are greater than the sample size.  -->
 

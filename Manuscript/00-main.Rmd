@@ -34,7 +34,6 @@ header-includes:
   - \usepackage{pgfplots}
 ---
 
-
 <!-- \usepackage{tikz} -->
 \usetikzlibrary{shapes.geometric, arrows, positioning, calc, matrix, backgrounds, fit}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
