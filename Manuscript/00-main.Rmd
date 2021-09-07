@@ -38,6 +38,7 @@ header-includes:
 \usetikzlibrary{shapes.geometric, arrows, positioning, calc, matrix, backgrounds, fit}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 \newcommand{\tp}{\text{pen}}
+\newcommand{\pr}{\text{Pr}}
 
 
 ```{r setup, include=FALSE}
