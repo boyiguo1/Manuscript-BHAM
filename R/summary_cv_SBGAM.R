@@ -9,7 +9,7 @@ summary_cv_SBGAM <- function(cv.SBGAM_output, family = "gaussian"){
 
 
 summary_cv_SBGAM_per_fold <- function(cv.SBGAM_output, family = "gaussian"){
-  browser()
+  # browser()
   ret <- map_dfr(1:length(cv.SBGAM_output$lambda0),
           .f = function(i){
             map_dfr(unique(cv.SBGAM_output$folds), .f = function(j){

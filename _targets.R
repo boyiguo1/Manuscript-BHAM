@@ -92,11 +92,16 @@ tar_plan(
                        a = 1, b = 1),
   
   ECB_SBGAM_cv = summary_cv_SBGAM(ECB_SBGAM_cv_raw, family = "binomial"),
+  # ECB_SBGAM_cv_per_fold = summary_cv_SBGAM_per_fold(ECB_SBGAM_cv_raw, family = "binomial"),
+  # ggplot(ECB_SBGAM_cv_per_fold)+
+  #   geom_violin(aes(x = lambda0, y = deviance)),
   
   ECB_SBGAM_fnl = SBGAM(X = ECB_cov, y = ECB_outcome, family = "binomial", lambda0 = 24, a = 1, b = 1),
 
     tar_target(ECB_SBGAM_insample_msr,
              measure.glm(y = ECB_outcome, ECB_SBGAM_fnl$mu.pred, family = "binomial")),
+  
+  
   # 
   # train_msr = data.frame("method" = c("BHAM-SSL", "SB-GAM"),
   #                        rbind(ECB_bamlasso_insample_msr ,ECB_SBGAM_insample_msr)),
@@ -164,6 +169,10 @@ tar_plan(
     max.iter=100, tol = 1e-6, nlambda0 = 10, nfolds = 10),
   
   WLM_SBGAM_cv = summary_cv_SBGAM(WLM_SBGAM_cv_raw),
+  # WLM_SBGAM_cv_per_fold = summary_cv_SBGAM_per_fold(WLM_SBGAM_cv_raw),
+  # 
+  # ggplot(WLM_SBGAM_cv_per_fold %>% filter(lambda0!=23.7))+
+  #   geom_violin(aes(x = lambda0, y = deviance)),
   
   WLM_SBGAM_fnl = SBGAM(
     y = WLM_train_dat$out_HOMA_std,
