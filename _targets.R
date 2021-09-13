@@ -46,6 +46,7 @@ tar_plan(
   tar_target(ECB_train_path,
              "Real_Data/Emory_Card_Biobank/Data/Analysis_data_first_cohort.csv",
              format = "file"),
+  
   tar_target(ECB_train_dat,
              readr::read_csv(ECB_train_path)),
   
@@ -205,7 +206,10 @@ tar_plan(
   
   #* Assemble Manuscript ####
   tar_render(manu, "Manuscript/00-main.Rmd",
-             output_file = "SS_GAM.pdf")
+             output_file = "SS_GAM.pdf"),
+  
+  # tar_render(manu, "Manuscript/00-main_word.Rmd",
+  #            output_file = "SS_GAM.pdf"), 
   
 )
 

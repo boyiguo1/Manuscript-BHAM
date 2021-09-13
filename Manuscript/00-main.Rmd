@@ -9,14 +9,14 @@ author:
   num: a   
 - name: D. Leann Long
   num: a  
-- name: Nengjun Yi
+- name: Nengjun Yi*
   num: a
 address:
 - num: a
   org: Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA
 - num: b
   org: Department of Biostatistics and Data Science, Wake Forest University, Winston-Salem, USA
-corres: "Nengjun Yi, Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA. \\email{nyi@uab.edu}"
+corres: "Boyi Guo and Nengjun Yi, Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA. \\email{boyiguo1@uab.edu} and  \\email{nyi@uab.edu}"
 presentaddress: This is sample for present address text this is sample for present address text
 authormark: Guo et al.
 articletype: Research article
@@ -38,7 +38,7 @@ header-includes:
 \pgfplotsset{compat=1.18}
 \usetikzlibrary{shapes.geometric, arrows, positioning, calc, matrix, backgrounds, fit}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
-\newcommand{\tp}{\text{pen}}
+\newcommand{\tp}{*}
 \newcommand{\pr}{\text{Pr}}
 
 
