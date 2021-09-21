@@ -208,8 +208,8 @@ tar_plan(
   tar_render(manu, "Manuscript/00-main.Rmd",
              output_file = "SS_GAM.pdf"),
   
-  # tar_render(manu, "Manuscript/00-main_word.Rmd",
-  #            output_file = "SS_GAM.pdf"), 
+  tar_render(manu_word, "Manuscript/00-main_word.Rmd",
+             output_file = "SS_GAM.docx"),
   
 )
 

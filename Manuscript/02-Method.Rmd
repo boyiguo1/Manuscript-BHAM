@@ -279,8 +279,7 @@ $$
 z_i &= \hat\eta_i - \frac{L^{'}(y_i|\hat\eta_i)}{L^{''}(y_i|\hat\eta_i)}& w_i &= - L^{''}(y_i|\hat\eta_i),
 \end{aligned}
 $$
-where $L^{'}(y_i|\hat\eta_i, \hat \phi)$ and $L^{''}(y_i|\hat\eta_i, \hat \phi)$ are the first and second derivative of the log density, $\log f(\textbf{y}_i|\bs \beta, \phi)$. With $z\sim N(X\beta, \Sigma\phi)$ and $\beta \sim N(0, \phi\Sigma_{\tau^2})$, we can augment the two normal distributions and iterative solve for $\bs \beta$ and $\phi$.
-  To note, as the EM-IWLS algorithm is based on the IWLS algorithm, an Hessian matrix can be derived. The Hessian matrix can be further used to construct variance-covariance matrix of coefficient estimates and in turn used for statistical inferences.
+where $L^{'}(y_i|\hat\eta_i, \hat \phi)$ and $L^{''}(y_i|\hat\eta_i, \hat \phi)$ are the first and second derivative of the log density, $\log f(\textbf{y}_i|\bs \beta, \phi)$. With $z\sim N(X\beta, \Sigma\phi)$ and $\beta \sim N(0, \phi\Sigma_{\tau^2})$, we can augment the two normal distributions and derive the estimates for $\bs \beta$ and $\phi$ in each step in closed form equations. To note, an estimate of the variance-covariance matrix can be derived in the EM-IWLS algorithm and in turn can be used for statistical inferences.
     
     
     

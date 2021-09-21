@@ -736,58 +736,64 @@ is a small value (say \(10^{-5}\)).
 \subsubsection{EM-IWLS}\label{em-iwls}}
 
 Similar to the EM-CD algorithm, the EM-IWLS algorithm is an iterative
-EM-based algorithm where iterative weighted least square algorithm are
-used to find the estimate of \(\boldsymbol{\beta}, \phi\) that maximizes
-\(E(Q_1)\), instead of the coordinate descent algorithm. It also can fit
-the models with a wider range of priors, e.g.~mixture \(t\) prior,
-including mixture normal prior as an special case, and mixture double
-exponential prior. The basic idea is to formulate the priors as
-hierarchical normal distributions and augment with the weighted normal
-likelihood of the generalized model, such that the model is feasible to
-fit via least squares algorithms. \citep{Yi2012} The primary purpose of
-the EM algorithm here is mitigate the computational burden associate
-with the hierarchical normal formulation.
+EM-based algorithm where the iterative weighted least squares algorithm
+is used to find the estimate of \(\boldsymbol{\beta}, \phi\) that
+maximizes \(E(Q_1)\). The iterative weighted least squares algorithm was
+originally proposed to fit the classical generalized linear models, and
+generalized to fit some Bayesian hierarchical models.\citep{Gelman2013}
+Yi and Ma \citep{Yi2012} formulated Student's t-distribution and double
+exponential distribution as hierarchical normal distributions such that
+generalized linear models with shrinkage priors can be easily fitted
+using IWLS in combination with EM algorithm. In this work, we adapt the
+EM-IWLS paradigm to fit BHAM with spike-and-slab spline prior, with the
+full potential to adopt Student's t, double exponential and mixture
+Student's t priors when sparse assumption is not necessary.
 
 A double exponential prior, \(\beta|S \sim DE(0, S)\) can be formulated
-as a hierarchical normal prior with unknown variances, following gamma
-distributions, integrated out: \begin{align*}
+as a hierarchical normal prior with unknown variance
+\(\tau^2 \sim Gamma(1, 1/(2S^2))\) integrated out: \begin{align*}
   \beta &\sim N(0, \tau^2)\\
   \tau^2 & \sim Gamma(1, 1/(2S^2)), 
-\end{align*} where \(S = (1-\gamma)s_0 + \gamma s_1\) for spike-and-slab
-lasso priors. Now \(Q_1\) needs to account for the hyper prior of
-\(\tau^2\) and is expressed as \begin{equation}\label{eq:Q1_IWLS}
+\end{align*} For the mixture double exponential priors, we can define
+the scale parameter \(S = (1-\gamma)s_0 + \gamma s_1\) following
+Equation (\ref{eq:ssl}). The change in the prior formulation in turns
+leads to the change in the log posterior density function, as \(Q_1\)
+needs to account for the hyper prior of \(\tau^2\):
+\begin{equation}\label{eq:Q1_IWLS}
 Q_1(\boldsymbol{\beta}, \phi) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) + \log f(\phi) + \sum\limits_{j=1}^p\left[\log f(\beta^0_j|{\tau^0}^2_j) + \log f({\tau^0}^2_j| S_j^0)+\sum\limits_{k=1}^{K_j} \{\log f(\beta^{*}_{jk}|{\tau^{*}}^2_{jk})+\log f({\tau^*}^2_{jk}| S^*_j)\}\right].
-\end{equation} As \(\boldsymbol{\tau}^2\) are not of primary interest,
-we treat them as the ``missing'' data besides the latent indicators
-\(\boldsymbol{\gamma}\), and hence need to construct the expectation
-\(E_{\boldsymbol{\gamma}, \boldsymbol{\tau}^2|\Theta^{(t-1)}}(Q_1)\). To
-note, unlike the coefficients of the non-linear terms \(\beta^*_{jk}\)
-which share the same latent indicator \(\gamma^*_j\), \(\tau^2_{jk}\) is
-coefficient specific for \(\beta^*_{jk}\). Primarily, four quantities
-need to be calculate to formulate
-\(E(Q_1), E({S_j^0}^{-1}|\beta_j^0, s_0, s_1), E(S^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1), E({\tau^0}^2_{j}|S_j^0, \beta^0_j) \text{ and } E({\tau^*}^2_{jk}|S_j^*, \beta^*_{jk})\).
-As neither \(E({S_j^0}^{-1}|\beta_j^0, s_0, s_1)\) nor
+\end{equation} Since \(\boldsymbol{\tau}^2\) are not of our primary
+interest, we treat them as the ``missing'' data in addition to the
+latent indicators \(\boldsymbol{\gamma}\), and hence construct the
+expectation
+\(E_{\boldsymbol{\gamma}, \boldsymbol{\tau}^2|\Theta^{(t-1)}}(Q_1)\) in
+the E-step. To note, unlike the same latent indicator \(\gamma^*_j\)
+which is shared by the coefficients of the non-linear terms
+\(\beta^*_{jk}\) for \(k = 1, \dots, K_j\) , \(\tau^2_{jk}\) is
+coefficient specific for \(\beta^*_{jk}\).
+\(E({S_j^0}^{-1}|\beta_j^0, s_0, s_1), E(S^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1), E({\tau^0}^2_{j}|S_j^0, \beta^0_j) \text{ and } E({\tau^*}^2_{jk}|S_j^*, \beta^*_{jk})\)
+needs to be calculated to formulate \(E(Q_1)\). As neither
+\(E({S_j^0}^{-1}|\beta_j^0, s_0, s_1)\) nor
 \(E(S^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1)\) depends on \(\tau^2\)s,
-they can be derived via Bayes' theorem as in Equation
-(\ref{eq:exp_scale}). Shown in Yi and Ma \citep{Yi2012}, the conditional
-posterior density of \(\tau^{-2}\) is an inverse Gaussian distribution,
-and hence \begin{align*}
+they can be derived using Equation (\ref{eq:exp_scale}) via Bayes'
+Theorem. On the other hand, \(\tau^{2}\) following a gamma distribution
+is a conjugate prior for the normal variance, and the conditional
+posterior density of \(\tau^{-2}\) is an inverse Gaussian distribution.
+\(E({\tau^0}^{-2}_{j})\) and \(E({\tau^*}^{-2}_{jk})\) are calculated
+using the closed form equation \begin{align*}
  E({\tau^0}^{-2}_{j}|S_j^0, \beta^0_j) ={S_j^0}^{-1}/|\beta^0_j| \qquad E({\tau^*}^{-2}_{jk}|S_j^*, \beta^*_{jk})={S_j^*}^{-1}/|\beta^*_{jk}|,
 \end{align*} where \(S_j^0\) and \(S_j^*\) are replaced by the
-expectation.
-
-To simplify \(E(Q_1)\) by removing constant additive terms, we have
-\begin{equation}\label{eq:Q1_IWLS}
-E(Q_1(\boldsymbol{\beta}, \phi)) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) + \log f(\phi) - \sum\limits_{j=1}^p\left[ \frac{({\beta_j^0}^2)E({\tau_j^0}^{-2}}{2\phi} +\sum\limits_{k=1}^{K_j} \frac{({\beta_{jk}^*}^2)E({\tau_{jk}^*}^{-2}}{2\phi}\right],
-\end{equation} where
-\(\frac{({\beta_{jk}^*}^2)E({\tau_{jk}^*}^{-2}}{2\phi}\) is the kernel
-of a normal density with mean 0 and variance
-\(E({\tau_{jk}^*}^{-2})\phi\).
+expectation and \(\beta\)s are replaced with \(\beta^{(t-1)}\). With
+simplification (up to constant additive terms), we have
+\begin{equation}\label{eq:EQ1_IWLS}
+E(Q_1) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) + \log f(\phi) - \sum\limits_{j=1}^p\left[ \frac{({\beta_j^0}^2)}{2\phi E{\tau_j^0}^{2}} +\sum\limits_{k=1}^{K_j} \frac{{\beta_{jk}^*}^2}{2\phi E({\tau_{jk}^*}^{2})}\right].
+\end{equation} \(\frac{\beta^2}{2\phi E(\tau^{2})}\) can be seen as the
+kernel of a normal density with mean 0 and variance
+\(\phi E(\tau^{2})\).
 
 Meanwhile, following the classical IWLS, we can approximate the
-generalized model likelihood at each iteration of the algorithms by the
-weighted normal likelihood: \[
-  f(\textbf{y}_i|\boldsymbol{\beta}, \phi) \approx Normal(\textbf{z}_i|X_i\beta, w_i^{-1}\phi)
+generalized model likelihood at each iteration with a weighted normal
+likelihood: \[
+  f(\textbf{y}|\boldsymbol{\beta}, \phi) \approx MVN(\textbf{z}|X\beta, \Sigma w_i^{-1}\phi)
 \] where the `normal response' \(z_i\) and `weight' \(w_i\) are called
 the pseudo-response and pseudo-weight respectively.The pseudo data and
 the pseudo-weight are calculated by \[
@@ -800,11 +806,10 @@ derivative of the log density,
 \(\log f(\textbf{y}_i|\boldsymbol{\beta}, \phi)\). With
 \(z\sim N(X\beta, \Sigma\phi)\) and
 \(\beta \sim N(0, \phi\Sigma_{\tau^2})\), we can augment the two normal
-distributions and iterative solve for \(\boldsymbol{\beta}\) and
-\(\phi\). To note, as the EM-IWLS algorithm is based on the IWLS
-algorithm, an Hessian matrix can be derived. The Hessian matrix can be
-further used to construct variance-covariance matrix of coefficient
-estimates and in turn used for statistical inferences.
+distributions and derive the estimates for \(\boldsymbol{\beta}\) and
+\(\phi\) in each step in closed form equations. To note, an estimate of
+the variance-covariance matrix can be derived in the EM-IWLS algorithm
+and in turn can be used for statistical inferences.
 
 \hypertarget{selecting-optimal-scale-values}{%
 \subsection{Selecting Optimal Scale
