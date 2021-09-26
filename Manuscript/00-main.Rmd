@@ -23,7 +23,7 @@ articletype: Research article
 received: 2021-01-01
 revised: 2021-02-01
 accepted: 2021-03-01
-abstract: "There are proposals that extend the classical generalized additive models (GAMs) to accommodate the high-dimensional (p>>n) problem using group penalties and priors. These models rarely smooth the nonlinear effect properly because of the sparse regularization. It leads to excess shrinkage on coefficients and inaccurate prediction. Besides, most of these GAMs consider an “all-in-all-out” approach for function selection, rendering them difficult to answer if nonlinear effects are necessary. While some Bayesian models can address the shortcomings, using Markov chain Monte Carlo (MCMC) algorithms for model fitting creates a new challenge, scalability. Hence, we propose Bayesian hierarchical generalized additive models as a solution. For smooth and sparse solutions, the proposed models employ bi-part spike-and-slab spline priors, including mixture double exponential and mixture normal priors. Two optimization-based algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least Squares, are developed for expedited computation. Simulation studies and metabolomics data analyses demonstrate improved performance against state-of-art models, mgcv, COSSO and sparse Bayesian GAM. The software implementation of the proposed models is freely available via an R package BHAM."
+abstract: "There are proposals that extend the classical generalized additive models (GAMs) to accommodate the high-dimensional ($p>>n$) problem using group penalties and priors. These models rarely smooth the nonlinear effect properly because of the sparse regularization. It leads to excess shrinkage on coefficients and inaccurate prediction. Besides, most of these GAMs consider an “all-in-all-out” approach for function selection, rendering them difficult to answer if nonlinear effects are necessary. While some Bayesian models can address the shortcomings, using Markov chain Monte Carlo (MCMC) algorithms for model fitting creates a new challenge, scalability. Hence, we propose Bayesian hierarchical generalized additive models as a solution. For smooth and sparse solutions, the proposed models employ bi-part spike-and-slab spline priors, including mixture double exponential and mixture normal priors. Two optimization-based algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least Squares, are developed for expedited computation. Simulation studies and metabolomics data analyses demonstrate improved performance against state-of-art models, mgcv, COSSO and sparse Bayesian GAM. The software implementation of the proposed models is freely available via an R package BHAM."
 keywords: Spike-and-Slab Priors; High-Dimensional Data; Generalized Additive Models; EM-IWLS; EM-Coordinate Decent
 bibliography: bibfile.bib
 output: 
@@ -40,6 +40,8 @@ header-includes:
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 \newcommand{\tp}{*}
 \newcommand{\pr}{\text{Pr}}
+\newcommand{\repa}{\text{repa}}
+\newcommand{\simiid}{\overset{\text{iid}}{\sim}}
 
 
 ```{r setup, include=FALSE}
