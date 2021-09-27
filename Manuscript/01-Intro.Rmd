@@ -7,9 +7,9 @@ Many modern biomedical research, e.g. sequencing data analysis, electric health 
 
 <!-- However, these models have a fatal flaw, the lack of transparency and interpretability, and hence are referred to as "black box" models [@Breiman2001]. Given that the primary objective of biomedical studies is to understand , "Black box" models are less helpful as they can hardly explain how the change of biomarkers is associated with the disease. -->
 
-Nonparametric regression models are appropriate alternatives to the "black-box" models thanks to their balance between model flexibility and interpretability. Among those, generalized additive models (GAMs), proposed in the seminal work of Hastie and Tibshirani [@Hastie1987], grew to be one of the most popular modeling tools. In a GAM, the response variable, $Y$, which is assumed to follow some exponential family distribution $EF(\mu, \phi)$ with mean $\mu$ and dispersion $\phi$, can be modeled with the summation of smoothing functions, $B_j(\cdot), j = 1, \dots, p$, of a given $p$-dimensional vector of covariates $\bs x$, written as 
+Nonparametric regression models are appropriate alternatives to the "black-box" models thanks to their balance between model flexibility and interpretability. Among those, generalized additive models (GAMs), proposed in the seminal work of Hastie and Tibshirani [@Hastie1987], grew to be one of the most popular modeling tools. In a GAM, the response variable, $Y$, which is assumed to follow some exponential family distribution, denoted by $EF(\mu, \phi)$, with mean $\mu$ and dispersion $\phi$, can be modeled with the summation of smoothing functions, $B_j(\cdot), j = 1, \dots, p$, of a given $p$-dimensional vector of covariates $\bs x$, written as 
 $$
- E(Y|\bs x) = g^{-1}(a + \sum\limits^p_{j=1}B_j(x_j)),
+ E(Y|\bs x) = g^{-1}(\beta_0 + \sum\limits^p_{j=1}B_j(x_j)),
 $$
 where $g^{-1}(\cdot)$ is the inverse of a monotonic link function. The smoothing functions can take many forms and are estimated using a pseudo-weighted version of the backfitting algorithm [@Breiman1985]. Nevertheless, the classical GAMs cannot fulfill the increasing analytic demands for high-dimensional data analysis in biomedical studies.
 

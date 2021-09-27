@@ -1,13 +1,13 @@
-# Bayesian Hierarchical Additive Models
+# Bayesian Hierarchical Additive Models (BHAMs)
 \label{sec:BHAM}
 
 Following the GLM notation introduced in Section \ref{sec:intro}, we have a generalized additive model and its matrix form,
 \begin{equation}\label{eq:gam}
-E(Y|\bs x) = g^{-1}(a + \sum\limits^p_{j=1}B_j(x_j)) = g^{-1}(a + \sum\limits^p_{j=1} \bs \beta_j^T \bs X_j),
+E(Y|\bs x) = g^{-1}(\beta_0 + \sum\limits^p_{j=1}B_j(x_j)) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} \bs \beta_j^T \bs X_j),
 \end{equation}
 and the data distribution is
 \begin{equation}
-f(\bs y| \bs \beta, \phi) = \prod\limits^n_{i=1}f(y_i|\bs \beta, \phi),\nonumber
+f(\bs Y = \bs y| \bs \beta, \phi) = \prod\limits^n_{i=1}f( Y = y_i|\bs \beta, \phi),\nonumber
 \end{equation}
 with smoothing functions $B_j(x_j)$ of the variable $x_j, j = 1, \dots, p.$ The basis function matrix, i.e. the design matrix derived from the smoothing function $B_j(x_j)$, is denoted $\bs X_j$ for the variable $x_j$. The dimension of the design matrix depends on the choice of the smoothing function. For example, a cubic spline function with $k$ knots produces a $k+3$ elements column vector. Its corresponding smoothing penalty matrix is denoted as $\bs S_j$. $\bs \beta_j$ denotes the basis function coefficients for the $j$th variable such that $B_j(x_j) = \bs \beta_j^T \bs X_j$. With slight abuse of notation, we denote vectors and matrices in bold fonts $\bs \beta, \bs X$ with conformable dimensions, where scalar and random variables are denoted in with unbold fonts $\beta, X$. The matrix transposing operation is denoted with a superscript $^T$. To note, the proposed model can include parametric forms of variables in the model, treating the parametric function as a special case of the smoothing function, e.g. $B_j(x_j) = x_j$ with the smoothing penalty matrix defined as $\bs S_j = \begin{bmatrix}0\end{bmatrix}$. 
 
@@ -17,7 +17,7 @@ B_j(x_j) = B_j^0(x_j) + B_j^\tp (x_j) = \beta_j X^0_j + \bs {\beta_j^\tp}^T \bs 
 $$
 and the generalized additive model in Equation (\ref{eq:gam}) be
 \begin{equation}\label{eq:gam-repa}
-E(Y|\bs x) = g^{-1}(a + \sum\limits^p_{j=1} B_j(x_j)) = g^{-1}(a + \sum\limits^p_{j=1} \bs \beta_j^T \bs X_j) = g^{-1}\left[a + \sum\limits^p_{j=1} (\beta_j X^0_j + {\bs \beta_j^\tp}^T \bs X_j^\tp)\right],
+E(Y|\bs x) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} B_j(x_j)) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} \bs \beta_j^T \bs X_j) = g^{-1}\left[\beta_0 + \sum\limits^p_{j=1} (\beta_j X^0_j + {\bs \beta_j^\tp}^T \bs X_j^\tp)\right],
 \end{equation}
 where the coefficients $\bs \beta_j \equiv \begin{bmatrix} \beta_j : \bs \beta^\tp_j \end{bmatrix}$ is an augmentation of the coefficient scalar $\beta_j$ of linear space and the coefficient vector $\bs \beta^\tp_j$ of non-linear space.
 
