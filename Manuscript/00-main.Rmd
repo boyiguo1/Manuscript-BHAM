@@ -67,6 +67,7 @@ tar_load(ECB_bamlasso_cv)
 tar_load(ECB_SBGAM_cv)
 tar_load(WLM_bamlasso_cv)
 tar_load(WLM_SBGAM_cv)
+tar_load(tbl_real_time)
 ```
 
 ```{r child="01-Intro.Rmd"}

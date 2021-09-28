@@ -8,7 +8,7 @@ tar_option_set(
                "broom", "unglue", "knitr", "ggpubr", "xtable", "janitor", 
                "flextable", "BHAM", "BhGLM", "sparseGAM", "cosso", "glmnet"
   ),
-  imports = c("BHAM", "BhGLM", "sparseGAM")
+  imports = c( "BHAM", "BhGLM", "sparseGAM")
 )
 
 ## Load your R files
@@ -156,7 +156,7 @@ tar_plan(
   WLM_bamlasso_cv = tune.bgam(WLM_bamlasso_raw,s0 = seq(0.005, 0.1, 0.01)),
 
   
-  bglm_mdl_fnl = bamlasso(WLM_bgam_dat$train_dat, WLM_train_dat$out_HOMA_std, family = "gaussian",
+  WLM_bamlasso_fnl = bamlasso(WLM_bgam_dat$train_dat, WLM_train_dat$out_HOMA_std, family = "gaussian",
                           ss=c(0.025, 0.05),
                           group = WLM_bgam_dat$group),
   # measure.bh(bglm_mdl_fnl),
@@ -203,6 +203,17 @@ tar_plan(
   tar_target(disc_path,
              "Manuscript/05-Discussion.Rmd",
              format = "file"),
+  
+  tar_target(tbl_real_time,
+             create_real_data_time_tbl(  # Introduce dependency
+               ECB_bamlasso_cv,
+               ECB_bamlasso_fnl,
+               ECB_SBGAM_cv_raw,
+               ECB_SBGAM_fnl,
+               WLM_bamlasso_cv,
+               WLM_bamlasso_fnl,
+               WLM_SBGAM_cv_raw,
+               WLM_SBGAM_fnl)),
   
   #* Assemble Manuscript ####
   tar_render(manu, "Manuscript/00-main.Rmd",
