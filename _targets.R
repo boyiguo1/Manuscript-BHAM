@@ -83,6 +83,7 @@ tar_plan(
                           ss = c(0.095, 0.5)),
   
   ECB_bamlasso_insample_msr = measure.bh(ECB_bamlasso_fnl),
+  ECB_bamlasso_var = bamlasso_var_selection(ECB_bamlasso_fnl),
   # TODO: Use cv.bh to get the measures.
   
   # ** SB-GAM ---------------------------------------------------------------
@@ -101,6 +102,8 @@ tar_plan(
 
     tar_target(ECB_SBGAM_insample_msr,
              measure.glm(y = ECB_outcome, ECB_SBGAM_fnl$mu.pred, family = "binomial")),
+  
+  ECB_SBGAM_var = (ECB_cov %>% colnames())[ECB_SBGAM_fnl$classifications!=0],
   
   
   # 
@@ -160,6 +163,7 @@ tar_plan(
                           ss=c(0.025, 0.05),
                           group = WLM_bgam_dat$group),
   # measure.bh(bglm_mdl_fnl),
+  WLM_bamlasso_var = bamlasso_var_selection(WLM_bamlasso_fnl),
   
   # ** SB_GAM ---------------------------------------------------------------
   
@@ -180,6 +184,7 @@ tar_plan(
     X = WLM_train_dat %>% select(starts_with("mb_")) %>% as.matrix, 
     df=5, family = "gaussian", a = 1, b = 1,
     max.iter=100, tol = 1e-6, lambda0 = 58),
+  WLM_SBGAM_vars = (WLM_train_dat %>% select(starts_with("mb_")) %>% as.matrix %>% colnames())[WLM_SBGAM_fnl$classifications!=0],
   
   # measure.glm(WLM_train_dat$out_HOMA_std, WLM_SBGAM_fnl$mu.pred, family = "gaussian"),  
   
