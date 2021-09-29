@@ -54,25 +54,26 @@ for present address text}
 \abstract{There are proposals that extend the classical generalized
 additive models (GAMs) to accommodate the high-dimensional (\(p>>n\))
 problem using group penalties and priors. These models rarely smooth the
-nonlinear effect properly because of the sparse regularization. It leads
-to excess shrinkage on coefficients and inaccurate prediction. Besides,
-most of these GAMs consider an ``all-in-all-out'' approach for function
+nonlinear effect properly as the sparse regularization leads to excess
+shrinkage on coefficients and inaccurate prediction. Moreover, most of
+these GAMs consider an ``all-in-all-out'' approach for function
 selection, rendering them difficult to answer if nonlinear effects are
-necessary. While some Bayesian models can address the shortcomings,
+necessary. While some Bayesian models can address these shortcomings,
 using Markov chain Monte Carlo (MCMC) algorithms for model fitting
 creates a new challenge, scalability. Hence, we propose Bayesian
-hierarchical generalized additive models as a solution. For smooth and
-sparse solutions, the proposed models employ bi-part spike-and-slab
-spline priors, including mixture double exponential and mixture normal
-priors. Two optimization-based algorithms, EM-Coordinate Descent and
-EM-Iterative Weighted Least Squares, are developed for expedited
-computation. Simulation studies and metabolomics data analyses
-demonstrate improved performance against state-of-art models, mgcv,
-COSSO and sparse Bayesian GAM. The software implementation of the
-proposed models is freely available via an R package BHAM.}
+hierarchical generalized additive models as a solution: we propose a
+novel spike-and-slab spline prior for smoothing functions, where a
+reparameterization step facilitates smoothing penalty and separate
+selection of linear and nonlinear spaces. Two scalable and deterministic
+algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least
+Squares, are developed to fit the proposed model. Simulation studies and
+metabolomics data analyses demonstrate improved performance against
+state-of-the-art models, mgcv, COSSO and sparse Bayesian GAM. The
+software implementation of the proposed models is freely available via
+an R package BHAM.}
 
 \keywords{Spike-and-Slab Priors; High-Dimensional Data; Generalized
-Additive Models; EM-IWLS; EM-Coordinate Decent}
+Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility}
 
 \maketitle
 
@@ -104,8 +105,7 @@ complex models to address nonlinear effects include random forest and
 other so-called ``black box'' models \citep{Breiman2001}. These models
 are not particularly attractive in biomedical studies, as they lack the
 transparency to understand the etiology of diseases. In addition, how to
-generalized these models to the high-dimensional setting remains
-unclear.
+generalize these models to the high-dimensional setting remains unclear.
 
 Nonparametric regression models are appropriate alternatives to the
 ``black-box'' models thanks to their balance between model flexibility
@@ -672,9 +672,10 @@ E(Q_1) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) - \sum\limits_{j=1}^p\left[
 \end{equation} where
 \(S_{j} = (1-\gamma^{0}_{j}) s_0 + \gamma^{0}_{j} s_1\) and
 \(S^*_{j} = (1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1\). To calculate two
-unknown quantities \(E({S_j}^{-1})\) and \(E(S^{-1}_j)\), the posterior
-probability \(p_{j} \equiv \text{Pr}(\gamma^{0}_{j}=1|\Theta^{(t-1)})\)
-and \(p_{j}^*\equiv \text{Pr}(\gamma^*_{j}=1|\Theta^{(t-1)})\) are
+unknown quantities \(E({S_j}^{-1})\) and \(E({S^*}^{-1}_j)\), the
+posterior probability
+\(p_{j} \equiv \text{Pr}(\gamma^{0}_{j}=1|\Theta^{(t-1)})\) and
+\(p_{j}^*\equiv \text{Pr}(\gamma^*_{j}=1|\Theta^{(t-1)})\) are
 necessary, which can be derived via Bayes' theorem. The calculation of
 \(p_j^*\) is slightly different from that of \(p_j\), as \(p_j^*\)
 depends on the value of the vector \(\boldsymbol{\beta}^*_{j}\) and
@@ -778,16 +779,16 @@ the E-step. To note, unlike the same latent indicator \(\gamma^*_j\)
 which is shared by the coefficients of the non-linear terms
 \(\beta^*_{jk}\) for \(k = 1, \dots, K_j\) , \(\tau^2_{jk}\) is
 coefficient specific for \(\beta^*_{jk}\).
-\(E({S_j}^{-1}|\beta_j, s_0, s_1), E(S^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1), E({\tau}^2_{j}|S_j, \beta_j) \text{ and } E({\tau^*}^2_{jk}|S_j^*, \beta^*_{jk})\)
+\(E({S_j}^{-1}|\beta_j, s_0, s_1), E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1), E({\tau}^2_{j}|S_j, \beta_j) \text{ and } E({\tau^*}^2_{jk}|S_j^*, \beta^*_{jk})\)
 needs to be calculated to formulate \(E(Q_1)\). As neither
 \(E({S_j}^{-1}|\beta_j, s_0, s_1)\) nor
-\(E(S^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1)\) depends on \(\tau^2\)s,
-they can be derived using Equation (\ref{eq:exp_scale}) via Bayes'
-Theorem. On the other hand, \(\tau^{2}\) following a gamma distribution
-is a conjugate prior for the normal variance, and the conditional
-posterior density of \(\tau^{-2}\) is an inverse Gaussian distribution.
-\(E({\tau}^{-2}_{j})\) and \(E({\tau^*}^{-2}_{jk})\) are calculated
-using the closed form equation \begin{align*}
+\(E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1)\) depends on
+\(\tau^2\)s, they can be derived using Equation (\ref{eq:exp_scale}) via
+Bayes' Theorem. On the other hand, \(\tau^{2}\) following a gamma
+distribution is a conjugate prior for the normal variance, and the
+conditional posterior density of \(\tau^{-2}\) is an inverse Gaussian
+distribution. \(E({\tau}^{-2}_{j})\) and \(E({\tau^*}^{-2}_{jk})\) are
+calculated using the closed form equation \begin{align*}
  E({\tau}^{-2}_{j}|S_j, \beta_j) ={S_j}^{-1}/|\beta_j| \qquad E({\tau^*}^{-2}_{jk}|S_j^*, \beta^*_{jk})={S_j^*}^{-1}/|\beta^*_{jk}|,
 \end{align*} where \(S_j\) and \(S_j^*\) are replaced by the expectation
 and \(\beta\)s are replaced with \(\beta^{(t-1)}\). With simplification
