@@ -21,49 +21,11 @@ Gaussian outcomes required specification of dispersion, where we set the dispers
 <!-- The dimensional of the smoothing functions are controlled as k=10. Hence, the corresponding number of coefficient parameters to be estimated is 37, 82, 451 and 1801.  -->
 <!-- We also run the simulation where the number of bases are increased to 25 deliberately. -->
 
-```{r, results = "asis"}
-tab_gaus$mgcv[4] <- "-"
-tab_gaus %>% 
-  mutate(p = as.integer(p)) %>% 
-  rename(
-    "P" = p,
-    "BHAM-IWLS" = bglm_spline_de,
-    "BHAM-CD" = blasso_spline,
-    "COSSO" = cosso,
-    "Adaptive COSSO" = acosso,
-    "SB-GAM" = SB_GAM
-  ) %>% 
-  xtable(
-    align = "cccccccc",
-    caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations",
-    label = "tab:gaus") %>% 
-  print(comment = FALSE, include.rownames = FALSE)
-  # flextable(
-  #   # col_keys = c("P", "BHAM-IWLS", "BHAM-CD", "COSSO", "Adaptive COSSO", "mgcv", "SB-GAM")
-  # ) %>% 
-  # flextable::autofit() %>% 
-  # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations\\label{tab:gaus}")
-```
-
-```{r, results = "asis"}
-tab_binom$mgcv[4] <- "-"
-
-tab_binom %>% 
-  mutate(p = as.integer(p)) %>% 
-  rename(
-    "P" = p,
-    "BHAM-IWLS" = bglm_spline_de,
-    "BHAM-CD" = blasso_spline,
-    "COSSO" = cosso,
-    "Adaptive COSSO" = acosso,
-    "SB-GAM" = SB_GAM
-  ) %>%  
-  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure for binomial outcomes over 50 iterations", label = "tab:bin_auc") %>% 
-  print(comment = FALSE, include.rownames = FALSE)
-```
-
-To evaluate the  predictive performance of the models, the statistics caluclated based on the testing dataset, $R^2$ for Gaussian model, area under the curve (AUC) for binomial model,  are calculated <!--and deviance are calculated for Poisson model,--> averaging across 50 simulations. The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.
-
+To evaluate the  predictive performance of the models, the statistics calculated based on the testing dataset, $R^2$ for Gaussian model, area under the curve (AUC) for binomial model,  are calculated <!--and deviance are calculated for Poisson model,--> averaging across 50 simulations. The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.
+\begin{center}
+Table \ref{tab:gaus} here\\
+Table \ref{tab:bin_auc} here\\
+\end{center}
 ```{r, fig.height=8, eval = FALSE}
 targets::tar_load(binom_plot)
 binom_plot

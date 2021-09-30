@@ -67,59 +67,9 @@ $$
 \theta_j \sim Beta(a, b).
 $$
 The beta distribution is a conjugate prior for the binomial distribution and hence provides some computation convenience. For simplicity, we focus on a special case of beta distribution, uniform (0,1), i.e. $a = 1, b = 1$. When the variable have large effects in any of the bases, the parameter $\theta_j$ will be estimated large, which in turn encourages the model to include the rest of bases, achieving the local adaption among spline bases. Hereafter, we refer Bayesian hierarchical generalized additive models with the spike-and-slab lasso prior as the BHAM-SSL, and visually presented in Figure \ref{fig:SSprior}.
-
-\begin{figure}
-\centering
-\begin{tikzpicture} [
-staticCompo/.style = {rectangle, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
-outCome/.style={ellipse, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
-mymatrix/.style={matrix of nodes, nodes=outCome, row sep=1em},
-PriorBoarder/.style={rectangle, minimum width=5cm, minimum height=10cm, text centered, fill=lightgray!30},
-background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
-]
-
-\matrix (linearPrior) [matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (linearGamma) [outCome] { $\gamma_j \sim Bin(1, \theta_j) $ };\\
-  \node (linearBeta) [outCome] { $\beta_j \sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)$};\\
-};
-\matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j)$ };\\
-  \node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^\tp_{j}) s_0 + \gamma^\tp_{j} s_1)$};\\
-};
-
-
-\node (s) [staticCompo]  at ($(linearBeta)!0.5!(penBeta)$)  {($s_0, s_1$)};
-\node (Beta) [staticCompo, below = 1cm of s] {$\bs \beta = (\beta_1, \bs \beta^\tp_1, \dots,\beta_j, \bs \beta^\tp_j , \dots,\beta_p, \bs \beta^\tp_p) $};
-\node (Theta)[outCome, above = 2cm of s] {$\theta_{j} \sim Beta(a, b)$};
-\node (ab)[staticCompo, above = 0.5cm of Theta] {$(a, b)$};
-\node (Y) [outCome, below = 1cm of Beta] {$y_i \sim Expo. Fam. (g^{-1}(\bs \beta^T \bs X_i), \phi)$};
-
-\draw[->] (Theta) -- (linearGamma);
-\draw[->] (Theta) -- (penGamma);
-\draw[->] (linearGamma) -- (linearBeta) ;
-\draw[->] (penGamma) -- (penBeta);
-\draw[->] (ab) -- (Theta);
-\draw[->] (s) -- (linearBeta) ;
-\draw[->] (s) -- (penBeta);
-\draw[->] (linearBeta) -- (Beta);
-\draw[->] (penBeta) -- (Beta);
-\draw[->] (Beta) --  (Y);
-
-
-\begin{pgfonlayer}{background}
-  \node [background,
-   fit=(linearGamma) (linearBeta),
-   label=above:Linear Space:] {};
-  \node [background,
-    fit=(penGamma) (penBeta),
-    label=above:Nonlinear Space:] {};
-\end{pgfonlayer}
-
-\end{tikzpicture}
-
-\caption{Directed acyclic grpah of BHAM-SSL model with parameter expansion. Elliposes are stochastic nodes, rectangles and are deterministic nodes. }
-\label{fig:SSprior}
-\end{figure}
+\begin{center}
+Figure \ref{fig:SSprior} here
+\end{center}
 
 ### Other Priors
 

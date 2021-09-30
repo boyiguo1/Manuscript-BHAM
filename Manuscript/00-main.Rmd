@@ -25,7 +25,7 @@ revised: 2021-02-01
 accepted: 2021-03-01
 abstract: "There are proposals that extend the classical generalized additive models (GAMs) to accommodate the high-dimensional ($p>>n$) problem using group penalties and priors. These models rarely smooth the nonlinear effect properly as the sparse regularization leads to excess shrinkage on coefficients and inaccurate prediction. Moreover, most of these GAMs consider an “all-in-all-out” approach for function selection, rendering them difficult to answer if nonlinear effects are necessary. While some Bayesian models can address these shortcomings, using Markov chain Monte Carlo (MCMC) algorithms for model fitting creates a new challenge, scalability. Hence, we propose Bayesian hierarchical generalized additive models as a solution: we propose a novel spike-and-slab spline prior for smoothing functions, where a reparameterization step facilitates smoothing penalty and separate selection of linear and nonlinear spaces. Two scalable and deterministic algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least Squares, are developed to fit the proposed model. Simulation studies and metabolomics data analyses demonstrate improved performance against state-of-the-art models, mgcv, COSSO and sparse Bayesian GAM. The software implementation of the proposed models is freely available via an R package BHAM."
 keywords: Spike-and-Slab Priors; High-Dimensional Data; Generalized Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility
-bibliography: bibfile.bib
+# bibliography: bibfile.bib
 output: 
   rticles::sim_article:
     keep_tex: TRUE
@@ -89,4 +89,128 @@ tar_load(tbl_real_time)
 ```{r child="05-Discussion.Rmd"}
 ```
 
+\bibliography{bibfile.bib}
 
+\newpage
+
+\begin{figure}
+\centering
+\begin{tikzpicture} [
+staticCompo/.style = {rectangle, minimum width=1cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
+outCome/.style={ellipse, minimum width=3cm, minimum height=1cm,text centered, draw=black, fill=blue!30},
+mymatrix/.style={matrix of nodes, nodes=outCome, row sep=1em},
+PriorBoarder/.style={rectangle, minimum width=5cm, minimum height=10cm, text centered, fill=lightgray!30},
+background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
+]
+
+\matrix (linearPrior) [matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
+  \node (linearGamma) [outCome] { $\gamma_j \sim Bin(1, \theta_j) $ };\\
+  \node (linearBeta) [outCome] { $\beta_j \sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)$};\\
+};
+\matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
+  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j)$ };\\
+  \node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^\tp_{j}) s_0 + \gamma^\tp_{j} s_1)$};\\
+};
+
+
+\node (s) [staticCompo]  at ($(linearBeta)!0.5!(penBeta)$)  {($s_0, s_1$)};
+\node (Beta) [staticCompo, below = 1cm of s] {$\bs \beta = (\beta_1, \bs \beta^\tp_1, \dots,\beta_j, \bs \beta^\tp_j , \dots,\beta_p, \bs \beta^\tp_p) $};
+\node (Theta)[outCome, above = 2cm of s] {$\theta_{j} \sim Beta(a, b)$};
+\node (ab)[staticCompo, above = 0.5cm of Theta] {$(a, b)$};
+\node (Y) [outCome, below = 1cm of Beta] {$y_i \sim Expo. Fam. (g^{-1}(\bs \beta^T \bs X_i), \phi)$};
+
+\draw[->] (Theta) -- (linearGamma);
+\draw[->] (Theta) -- (penGamma);
+\draw[->] (linearGamma) -- (linearBeta) ;
+\draw[->] (penGamma) -- (penBeta);
+\draw[->] (ab) -- (Theta);
+\draw[->] (s) -- (linearBeta) ;
+\draw[->] (s) -- (penBeta);
+\draw[->] (linearBeta) -- (Beta);
+\draw[->] (penBeta) -- (Beta);
+\draw[->] (Beta) --  (Y);
+
+
+\begin{pgfonlayer}{background}
+  \node [background,
+   fit=(linearGamma) (linearBeta),
+   label=above:Linear Space:] {};
+  \node [background,
+    fit=(penGamma) (penBeta),
+    label=above:Nonlinear Space:] {};
+\end{pgfonlayer}
+
+\end{tikzpicture}
+
+\caption{Directed acyclic grpah of BHAM-SSL model with parameter expansion. Elliposes are stochastic nodes, rectangles and are deterministic nodes. }
+\label{fig:SSprior}
+\end{figure}
+
+
+```{r, results = "asis"}
+tab_gaus$mgcv[4] <- "-"
+tab_gaus %>% 
+  mutate(p = as.integer(p)) %>% 
+  rename(
+    "P" = p,
+    "BHAM-IWLS" = bglm_spline_de,
+    "BHAM-CD" = blasso_spline,
+    "COSSO" = cosso,
+    "Adaptive COSSO" = acosso,
+    "SB-GAM" = SB_GAM
+  ) %>% 
+  xtable(
+    align = "cccccccc",
+    caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations",
+    label = "tab:gaus") %>% 
+  print(comment = FALSE, include.rownames = FALSE)
+  # flextable(
+  #   # col_keys = c("P", "BHAM-IWLS", "BHAM-CD", "COSSO", "Adaptive COSSO", "mgcv", "SB-GAM")
+  # ) %>% 
+  # flextable::autofit() %>% 
+  # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations\\label{tab:gaus}")
+```
+
+```{r, results = "asis"}
+tab_binom$mgcv[4] <- "-"
+
+tab_binom %>% 
+  mutate(p = as.integer(p)) %>% 
+  rename(
+    "P" = p,
+    "BHAM-IWLS" = bglm_spline_de,
+    "BHAM-CD" = blasso_spline,
+    "COSSO" = cosso,
+    "Adaptive COSSO" = acosso,
+    "SB-GAM" = SB_GAM
+  ) %>%  
+  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure for binomial outcomes over 50 iterations", label = "tab:bin_auc") %>% 
+  print(comment = FALSE, include.rownames = FALSE)
+```
+
+```{r}
+tbl_real_time %>% 
+  flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\\label{tab:time_real_data}")
+```
+
+```{r}
+rbind(
+  'BHAM-SSL' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
+  'SB-GAM' = ECB_SBGAM_cv %>%  slice_max(auc) %>% select(-lambda)
+) %>% 
+  rownames_to_column("Methods") %>% 
+  flextable() %>% 
+  flextable::autofit() %>% 
+  flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation\\label{tab:ECB_res}")
+```
+
+```{r}
+rbind(
+  'BHAM-SSL' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
+  'SB-GAM' = WLM_SBGAM_cv %>%  slice_min(mse) %>% select(-lambda)
+) %>% 
+  rownames_to_column("Methods") %>% 
+  flextable() %>% 
+  flextable::autofit() %>% 
+  flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
+```
