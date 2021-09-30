@@ -1469,7 +1469,7 @@ Key words:\hskip1em}\ignorespaces}
 to 7.75pt{\tiny C}}}
 \def\ps@titlepage{\let\@mkboth\@gobbletwo
  \def\@oddhead{\footnotesize\@journal\hfill}
- \def\@oddfoot{\hfill{\reset@font\ This paper has been submitted for consideration for {\it ENAR} Student Compedition} \hfill}
+ \def\@oddfoot{\hfill{\reset@font\ This paper has been submitted for consideration for {\it ENAR} Student Paper Awards} \hfill}
 %\hfill{\reset@font\thepage}\hfill}
  \def\@evenhead{\footnotesize\@journal\hfill}
  %\def\@evenfoot{\hfil\small\copyright\ \@pubyear\ The Society for the Study

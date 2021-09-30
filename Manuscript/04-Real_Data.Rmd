@@ -3,24 +3,39 @@
 
 In this section, we apply the proposed models BHAM-SSL, fitted with the EM-CD algorithm, to analyze two real-world metabolomics datasets where the outcomes are binary and continuous respectively. We demonstrate the improved prediction performance compared to the other Bayesian hierarchical additive model, SB-GAM [@Bai2021]. Computation time for cross-validation and optimal model fitting steps are recorded and presented in Table \ref{tab:time_real_data}.
 
-```{r}
+```{r results = "asis"}
 tbl_real_time %>% 
-  flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\\label{tab:time_real_data}")
+  xtable(
+    caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.",
+    label= "tab:time_real_data"
+  ) %>% 
+  print(comment = FALSE, include.rownames = FALSE, caption.placement = "top")
+
+  # flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\\label{tab:time_real_data}")
 ```
 
 ## Emory Cardiovascular Biobank
 We use the proposed models BHAM-SSL to analyze a metabolic dataset from a recently published research [@Mehta2020] studying plasma metabolomic profile on the three-year all-cause mortality among patients undergoing cardiac catheterization. The dataset is publicly available via \textit{Dryad} [@Mehta2020_data]. It contains in total of 776 subjects from two cohorts. As there is a large number of non-overlapping features among the two cohorts, we use the cohort with larger sample size (N=454). There were initially 6796 features in the dataset, which is too large to be practically meaningful to analyze. Hence, we performed a univariate screening procedure on the features, via GAM implemented in \texttt{mgcv}, and chose the the top 200 features with smallest p-values. 5-Knot spline additive models for binary outcome are constructed using two different models, the proposed BHAM-SSL and the SB-GAM. 10-Fold cross-validation(CV) are used to choose the optimal tuning parameters of each framework with respect to the default selection criterion implemented in the software. Out-of-bag samples were used for prediction performance evaluation, where deviance, area under the ROC curve (AUC), mean squared error (MSE) defined as $\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2$, and misclassication error defined as $\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)$ were calculated and tabulated in Table \ref{tab:ECB_res}.
 
 
-```{r}
+```{r results = "asis"}
 rbind(
   'BHAM-SSL' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
   'SB-GAM' = ECB_SBGAM_cv %>%  slice_max(auc) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>% 
-  flextable() %>% 
-  flextable::autofit() %>% 
-  flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation\\label{tab:ECB_res}")
+  xtable(
+    caption = "Measures of optimal BHAM-SSL and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation",
+    label = "tab:ECB_res"
+  ) %>% 
+  print(comment = FALSE, include.rownames = FALSE, caption.placement = "top")
+  
+  
+  
+  # flextable::flextable() %>% 
+  # flextable::autofit() %>% 
+  # flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation\\label{tab:ECB_res}") %>% 
+  # flextable_to_rmd()
 ```
 
 
@@ -28,13 +43,20 @@ rbind(
 ## Weight Loss Maintenance Cohort 
 We use the proposed models BHAM-SSL to analyze metabolomics data from a recently published study [@Bihlmeyer2021] on the association between metabolic biomarkers and weight loss, where the dataset is publically available [@Bihlmeyer2021_data]. In this analysis, we primarily focused on the analysis of one of the three studies included, weight loss maintenance (WLM) cohort [@Svetkey2008], due to the drastically different intervention effects. In the dataset, 765 metaboliltes in baseline plasma collected were profiled using liquid chromatography mass spectrometry. Quality control and natural log transformation were performed during metabolites data preparation. The outcome of interest was standardized percent change in insulin resistance, and hence modeled using a Gaussian model. After removing missing datapoints and addressing outliers in the data, there were `r nrow(WLM_train_dat)` remaining in the analysis. 5-Knot spline additive models for the gaussian outcome are constructed using two different models, the proposed BHAM-SSL and the SB-GAM. 10-Fold cross-validation(CV) are used to choose the optimal tuning parameters of each framework with respect to the default selection criterion implemented in the software. Out-of-bag samples were used for prediction performance evaluation, where deviance, mean squared error (MSE) defined as $\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2$, and mean abosolute error (MAE)defined as $\frac{1}{n}\sum\limits^{n}_{i=1}|y_i - \hat y_i|$ were calculated and tabulated in Table \ref{tab:WLM_res}.
 
-```{r}
+```{r results = "asis"}
 rbind(
   'BHAM-SSL' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
   'SB-GAM' = WLM_SBGAM_cv %>%  slice_min(mse) %>% select(-lambda)
 ) %>% 
-  rownames_to_column("Methods") %>% 
-  flextable() %>% 
-  flextable::autofit() %>% 
-  flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
+  rownames_to_column("Methods")  %>% 
+  xtable(
+    caption = "Measures of optimal BHAM-SSL and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation",
+    label = "tab:WLM_res"
+  ) %>% 
+  print(comment = FALSE, include.rownames = FALSE, caption.placement = "top")
+
+
+  # flextable() %>% 
+  # flextable::autofit() %>% 
+  # flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
 ```

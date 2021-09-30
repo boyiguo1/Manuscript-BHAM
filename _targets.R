@@ -210,7 +210,8 @@ tar_plan(
              format = "file"),
   
   tar_target(tbl_real_time,
-             create_real_data_time_tbl(  # Introduce dependency
+             create_real_data_time_tbl( 
+               raw=TRUE,# Introduce dependency
                ECB_bamlasso_cv,
                ECB_bamlasso_fnl,
                ECB_SBGAM_cv_raw,
@@ -221,8 +222,8 @@ tar_plan(
                WLM_SBGAM_fnl)),
   
   #* Assemble Manuscript ####
-  tar_render(manu, "Manuscript/00-main.Rmd",
-             output_file = "SS_GAM.pdf"),
+  # tar_render(manu, "Manuscript/00-main.Rmd",
+  #            output_file = "SS_GAM.pdf"),
   
   tar_render(manu_ENAR, "Manuscript/00-main_ENAR.Rmd",
              output_file = "SS_GAM-ENAR.pdf"),

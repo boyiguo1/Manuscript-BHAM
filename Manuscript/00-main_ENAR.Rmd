@@ -72,7 +72,6 @@ tar_load(tbl_real_time)
 
 ```{r child="01-Intro.Rmd"}
 ```
-
 ```{r child="02-Method.Rmd"}
 ```
 

@@ -37,7 +37,7 @@ tab_gaus %>%
     align = "cccccccc",
     caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations",
     label = "tab:gaus") %>% 
-  print(comment = FALSE, include.rownames = FALSE)
+  print(comment = FALSE, include.rownames = FALSE, caption.placement = "top")
   # flextable(
   #   # col_keys = c("P", "BHAM-IWLS", "BHAM-CD", "COSSO", "Adaptive COSSO", "mgcv", "SB-GAM")
   # ) %>% 
@@ -59,7 +59,7 @@ tab_binom %>%
     "SB-GAM" = SB_GAM
   ) %>%  
   xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure for binomial outcomes over 50 iterations", label = "tab:bin_auc") %>% 
-  print(comment = FALSE, include.rownames = FALSE)
+  print(comment = FALSE, include.rownames = FALSE, caption.placement = "top")
 ```
 
 To evaluate the  predictive performance of the models, the statistics caluclated based on the testing dataset, $R^2$ for Gaussian model, area under the curve (AUC) for binomial model,  are calculated <!--and deviance are calculated for Poisson model,--> averaging across 50 simulations. The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.

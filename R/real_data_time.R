@@ -1,4 +1,4 @@
-create_real_data_time_tbl <- function(...){
+create_real_data_time_tbl <- function(raw = FALSE, ...){
   
 
   
@@ -20,6 +20,8 @@ create_real_data_time_tbl <- function(...){
       SBGAM_cv, SBGAM_fnl,
       SBGAM_total = SBGAM_cv + SBGAM_fnl) 
   
+  if(raw) return(time_tbl_raw)
+  
   time_tbl_header <- time_tbl_raw %>% 
     colnames %>% data.frame(col_keys = .) %>% 
     unglue::unglue_unnest(
@@ -30,6 +32,8 @@ create_real_data_time_tbl <- function(...){
                           SBGAM = "SB-GAM"),
            line3 = recode(line3, cv = "CV", fnl = "Final",
                           total = "Total"))
+  
+
   
   flextable(time_tbl_raw) %>% 
     colformat_double(digits = 1) %>% 
