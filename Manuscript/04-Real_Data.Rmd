@@ -1,9 +1,26 @@
 # Metabolomics Data Analysis
 \label{sec:real_data}
 
-We apply the proposed models BHAM, fitted with the EM-CD algorithm ,to analyze two real-world metabolomics datasets where the outcomes are binary and continuous respectively. We present the analysis results for the Emory Cardiovascular Biobank data [@Mehta2020], and include the analysis of Weight Loss Maintenance Cohort  data in Appendix A.2. We demonstrate the improved prediction performance compared to the other Bayesian hierarchical additive model, SB-GAM [@Bai2021]. Computation time for cross-validation and optimal model fitting steps are recorded and presented in Table \ref{tab:time_real_data}, where we see the proposed model are more computationally efficient.
+We apply the proposed models BHAM, fitted with the EM-CD algorithm ,to analyze two real-world metabolomics datasets where the outcomes are binary and continuous respectively. We present the analysis result for the Emory Cardiovascular Biobank data [@Mehta2020], and include the analysis of Weight Loss Maintenance Cohort  data [@Bihlmeyer2021] in Appendix A.2. We observe a improved prediction performance compared to the other Bayesian hierarchical additive model, SB-GAM [@Bai2021]. Computation time for cross-validation and optimal model fitting steps are recorded and presented in Table \ref{tab:time_real_data}, where we see the proposed model are more computationally efficient.
 
-```{r results = "asis"}
+
+\begin{table}[ht]
+\centering
+\caption{Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.} 
+\label{tab:time_real_data}
+\begin{tabular}{lcccccc}
+  \hline
+  & & BHAM-CD & & & SB-GAM &\\
+  \cmidrule{2-4}  \cmidrule{5-7}
+Data & CV & Final & Total & CV & Final & Total \\ 
+  \hline
+ECB & 225.23 & 3.02 & 228.25 & 3506.39 & 34.36 & 3540.75 \\ 
+  WLM & 1207.98 & 8.03 & 1216.01 & 3116.00 & 32.68 & 3148.68 \\ 
+   \hline
+\end{tabular}
+\end{table}
+
+```{r eval = F, results = "asis"}
 tbl_real_time %>% 
   xtable(
     caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.",
@@ -15,17 +32,22 @@ tbl_real_time %>%
 ```
 
 ## Emory Cardiovascular Biobank
-We use the proposed models BHAM-SSL to analyze a metabolic dataset from a recently published research [@Mehta2020] studying plasma metabolomic profile on the three-year all-cause mortality among patients undergoing cardiac catheterization. The dataset is publicly available via \textit{Dryad} [@Mehta2020_data]. It contains in total of 776 subjects from two cohorts. As there is a large number of non-overlapping features among the two cohorts, we use the cohort with larger sample size (N=454). There were initially 6796 features in the dataset, which is too large to be practically meaningful to analyze. Hence, we performed a univariate screening procedure on the features, via GAM implemented in \texttt{mgcv}, and chose the the top 200 features with smallest p-values. 5-Knot spline additive models for binary outcome are constructed using two different models, the proposed BHAM-SSL and the SB-GAM. 10-Fold cross-validation(CV) are used to choose the optimal tuning parameters of each framework with respect to the default selection criterion implemented in the software. Out-of-bag samples were used for prediction performance evaluation, where deviance, area under the ROC curve (AUC), mean squared error (MSE) defined as $\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2$, and misclassication error defined as $\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)$ were calculated and tabulated in Table \ref{tab:ECB_res}.
+We use the proposed models BHAM to analyze a metabolic dataset from a recently published research [@Mehta2020] studying plasma metabolomic profile on the three-year all-cause mortality among patients undergoing cardiac catheterization. The dataset is publicly available via \textit{Dryad} [@Mehta2020_data]. It contains in total of 776 subjects from two cohorts. As there is a large number of non-overlapping features among the two cohorts, we use the cohort with larger sample size (N=454). There were initially 6796 features in the dataset, which is too large to be practically meaningful to analyze. Hence, we performed a univariate screening procedure on the features, via GAM implemented in \texttt{mgcv}, and chose the the top 200 features with smallest p-values. 5-Knot spline additive models for binary outcome are constructed using two different models, the proposed BHAM and the SB-GAM. 10-Fold cross-validation(CV) are used to choose the optimal tuning parameters of each framework with respect to the default selection criterion implemented in the softwares. Out-of-bag samples were used for prediction performance evaluation, where deviance, area under the ROC curve (AUC), mean squared error (MSE) defined as $\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2$, and misclassication error defined as $\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)$ were calculated and tabulated in Table \ref{tab:ECB_res}.
 
 
 ```{r results = "asis"}
 rbind(
-  'BHAM-SSL' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
+  'BHAM' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
   'SB-GAM' = ECB_SBGAM_cv %>%  slice_max(auc) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>% 
+  select(-mae) %>% 
+  rename(Deviance = deviance,
+         AUC = auc,
+         MSE = mse,
+         Misclass = misclassification) %>% 
   xtable(
-    caption = "Measures of optimal BHAM-SSL and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation",
+    caption = "Prediction performance of optimal BHAM and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), mean squared error (MSE), and misclassification (Misclass)",
     label = "tab:ECB_res"
   ) %>% 
   print(comment = FALSE, include.rownames = FALSE, caption.placement = "top")

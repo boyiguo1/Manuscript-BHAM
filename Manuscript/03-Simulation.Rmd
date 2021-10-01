@@ -1,23 +1,27 @@
 # Simulation Study
 \label{sec:sim}
 
-In this section, we compare the performance of the proposed models to four alternative models: component selection and smoothing operator (COSSO) [@Zhang2006GAM], adaptive COSSO [@Storlie2011], generalized additive models with automatic smoothing [@Wood2011], SB-GAM [@Bai2021]. COSSO is one of the earliest smoothing spline models that consider sparsity-smoothness penalty. Adaptive COSSO improved upon COSSO by using adaptive weight for penalties such that the penalty of each functional component are different for extra flexibility. Generalized additive models with automatic smoothing, hereafter \textit{mgcv}, is one of the most popular models for nonlinear effect interpolation and prediction. SB-GAM is the first spike-and-slab lasso GAM. We implemented COSSO and adaptive COSSO with R package \texttt{cosso 2.1-1}, generalized additive models with automatic smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R package \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide flexibility to define smoothing functions, and hence used the default choices. Both mgcv and proposed models allow customized smoothing functions and we chose the cubic regression spline. We controlled the dimensionality of each smoothing function, 10 bases, for all different choices of smoothing functions. 5-fold cross-validation were used for COSSO models, SB-GAM and the proposed models for tuning parameter selection based on the default selection criteria. 20 default candidates of tuning parameters ($s_0$ in BHAM, $\lambda_0$ in SB-GAM) were examined for SB-GAM and the proposed models that allow user-specification of tuning candidates. All computation was conducted on a high-performance 64-bit Linux platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680 processors and 24G of RAM per core and R 3.6.2 [@R].
+In this section, we conduct Monte Carlo simulation to compare the performance of the proposed models to four alternative models: component selection and smoothing operator (COSSO) [@Zhang2006GAM], adaptive COSSO [@Storlie2011], generalized additive models with automatic smoothing [@Wood2011], SB-GAM [@Bai2021]. COSSO is one of the earliest smoothing spline models that consider sparsity-smoothness penalty. Adaptive COSSO improved upon COSSO by using adaptive weight for penalties such that the penalty of each functional component are different for extra flexibility. Generalized additive models with automatic smoothing, hereafter \textit{mgcv}, is one of the most popular models for nonlinear effect interpolation and prediction. SB-GAM is the first spike-and-slab lasso GAM. We implemented COSSO and adaptive COSSO with R package \texttt{cosso 2.1-1}, generalized additive models with automatic smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R package \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide flexibility to define smoothing functions, and hence used the default choices. Both mgcv and proposed models allow customized smoothing functions and we chose the cubic regression spline in this study. We controlled the dimensionality of each smoothing function, 10 bases, for all different choices of smoothing functions. 5-fold cross-validation were used for COSSO models, SB-GAM and the proposed models for tuning parameter selection based on the default selection criteria. 20 default candidates of tuning parameters ($s_0$ in BHAM, $\lambda_0$ in SB-GAM) were examined for SB-GAM and the proposed models that allow user-specification of tuning candidates. All computation was conducted on a high-performance 64-bit Linux platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680 processors and 24G of RAM per core and R 3.6.2 [@R].
 <!-- Other related methods for high-dimensional GAMs also exist, notably the methods of sparse additive models by Ravikumar et al. [@Ravikumar2009], stochastic search term selection for GAM [@Scheipl2012]. However, we exclude these methods from current simulation study because of demonstrated inferior predictive performance compared to mgcv and scalability issues with increased number of predictors. [@Scheipl2013] -->
 
 <!-- ## Monte Carlo Simulation Study -->
-We follow the data generating process described in Bai [@Bai2021]. We first generated $n=500$ training data points with $p=4, 10, 50, 200$ predictors respectively, where the predictors $X$ are simulated from a multivariate normal distribution $\text{MVN}_{n\times p}(0, I_{P})$. We then simulated the outcome $y$ from two distributions, Gaussian and binomial with the identity link and logit link $g(x) = \log(\frac{x}{1-x})$ respectively. The mean of each outcome were simulated via the following function
+We follow the data generating process described in Bai [@Bai2021]. We first generat $n=500$ training data points with $p=4, 10, 50, 200$ predictors respectively, where the predictors $\bs X$ are simulated from a multivariate normal distribution $\text{MVN}_{n\times p}(0, I_{P})$. We then simulat the outcome $y$ from two distributions, Gaussian and binomial with the identity link and logit link $g(x) = \log(\frac{x}{1-x})$ respectively. The mean of each outcome were simulated via the following function
 $$
-\mathbb{E}(Y) = g^{-1}(5 \sin(2\pi x_1) - 4 \cos(2\pi x_2 -0.5) + 6(x_3-0.5) - 5(x_4^2 -0.3))
+\mathbb{E}(Y) = g^{-1}(5 \sin(2\pi x_1) - 4 \cos(2\pi x_2 -0.5) + 6(x_3-0.5) - 5(x_4^2 -0.3)).
 $$
-for gaussian and binomial outcomes.
+<!-- for gaussian and binomial outcomes. -->
 <!-- and shrinked effects -->
 <!-- $$ -->
 <!-- \mathbb{E}(Y) = g^{-1}(\sin(2\pi x_1) - 2\cos(2\pi x_2 -0.5) + 0.4(x_3-0.5) - 2(x_4^2 -0.3)) -->
 <!-- $$ -->
 <!-- for  poisson outcomes.  -->
-Gaussian outcomes required specification of dispersion, where we set the dispersion parameter to be 1. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active covariates, while the rest covariates are inactive, i.e. $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$,($x_{new} ,y_{new}$), are created following the same data generating process, serving as the testing data. We generated 50 independent pairs of training and testing datasets to evaluate the prediction performance of the chosen models, where training datasets are used to fit the models and testing datasets used to calculate assessment measures.
+Gaussian outcomes required specification of dispersion, where we set the dispersion parameter to be 1. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active predictors, while the rest predictors are inactive, i.e. $B_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$,($x_{new} ,y_{new}$), are created following the same data generating process, serving as the testing data. We generated 50 independent pairs of training and testing datasets to evaluate the prediction performance of the chosen models, where training datasets are used to fit and tune the models and testing datasets are used to calculate assessment measures.
 <!-- The dimensional of the smoothing functions are controlled as k=10. Hence, the corresponding number of coefficient parameters to be estimated is 37, 82, 451 and 1801.  -->
 <!-- We also run the simulation where the number of bases are increased to 25 deliberately. -->
+
+
+To evaluate the  predictive performance of the models, the statistics calculated out of the testing datasets, $R^2$ for Gaussian model, area under the curve (AUC) for binomial model,  are calculated <!--and deviance are calculated for Poisson model,--> averaging across 50 simulations. The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.
+
 
 ```{r, results = "asis"}
 tab_gaus$mgcv[4] <- "-"
@@ -58,8 +62,6 @@ tab_binom %>%
   print(comment = FALSE, include.rownames = FALSE, caption.placement = "top")
 ```
 
-To evaluate the  predictive performance of the models, the statistics caluclated based on the testing dataset, $R^2$ for Gaussian model, area under the curve (AUC) for binomial model,  are calculated <!--and deviance are calculated for Poisson model,--> averaging across 50 simulations. The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.
-
 ```{r, fig.height=8, eval = FALSE}
 targets::tar_load(binom_plot)
 binom_plot
@@ -77,7 +79,7 @@ targets::tar_load(poisson_plot)
 poisson_plot
 ```
 
-The predictive performances have a consistent pattern across the three distributions of outcomes. Across all the scenarios, COSSO and adaptive COSSO have the least favorable performance among the applicable methods examined. To note, mgcv doesn't support high-dimensional analysis when the number of coefficients are greater than the sample size. mgcv predicts well when $p$ is small or moderate (p = 4, 10), and deteriorate when the number of predictors increase. Among the three fast-computing Bayesian hierarchical models, the proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when the dimension of are small, moderate, and high. However, in the hyper high dimensional case, SB-GAM has better performance. Among the proposed methods, BHAM-IWLS performs consistently better than BHAM-CD.
+The predictive performances have a consistent pattern across the two distributions of outcomes. Across all the scenarios, COSSO and adaptive COSSO have the least favorable performance among the applicable methods examined. To note, mgcv doesn't support high-dimensional analysis when the number of coefficients are greater than the sample size. mgcv predicts well when $p$ is small or moderate (p = 4, 10), and its performance deteriorates when the number of predictors increase. Among the three fast-computing Bayesian hierarchical models, the proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when the dimension of are small, moderate, and high. However, when $p$ increase to 200 for the extremely sparse-signal setting, SB-GAM has better performance. Among the proposed methods, BHAM-IWLS performs consistently better than BHAM-CD at the cost of computation time.
 
 
 
