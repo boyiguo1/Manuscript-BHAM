@@ -148,22 +148,31 @@ tar_plan(
   #               include = starts_with("cov_")) %>% 
   #   add_overall(),
   
-  # ** BHAM --------------------------------------------------------------
+  # ** BHAM-CD --------------------------------------------------------------
   
   ## Prepare dat
   WLM_bgam_dat = make_bgam_dat(WLM_train_dat, test_dat = WLM_test_dat),
   WLM_bamlasso_raw = bamlasso(WLM_bgam_dat$train_dat, WLM_train_dat$out_HOMA_std, family = "gaussian",
-                              ss=c(0.005, 0.05),
+                              ss=c(0.005, 0.5),
                               group = WLM_bgam_dat$group),
   
-  WLM_bamlasso_cv = tune.bgam(WLM_bamlasso_raw,s0 = seq(0.005, 0.1, 0.01)),
+  WLM_bamlasso_cv = tune.bgam(WLM_bamlasso_raw, s0 = seq(0.005, 0.1, 0.01)),
 
   
   WLM_bamlasso_fnl = bamlasso(WLM_bgam_dat$train_dat, WLM_train_dat$out_HOMA_std, family = "gaussian",
-                          ss=c(0.025, 0.05),
+                          ss=c(0.025, 0.5),
                           group = WLM_bgam_dat$group),
   # measure.bh(bglm_mdl_fnl),
   WLM_bamlasso_var = bamlasso_var_selection(WLM_bamlasso_fnl),
+  
+  # ** BHAM-IWLS --------------------------------------------------------------
+  WLM_bgam_raw = bgam(out_HOMA_std~.-out_HOMA_std, 
+                      data = data.frame(out_HOMA_std =  WLM_train_dat$out_HOMA_std, WLM_bgam_dat$train_dat),
+                      family = "gaussian",
+                              prior = mde(),
+                              group = WLM_bgam_dat$group),
+  
+  WLM_bgam_cv = tune.bgam(WLM_bgam_raw,s0 = seq(0.005, 0.1, 0.01)),
   
   # ** SB_GAM ---------------------------------------------------------------
   
