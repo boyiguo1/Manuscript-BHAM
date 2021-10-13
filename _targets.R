@@ -233,8 +233,8 @@ tar_plan(
   tar_render(manu, "Manuscript/00-main.Rmd",
              output_file = "SS_GAM.pdf"),
   
-  tar_render(manu_ENAR, "Manuscript/00-main_ENAR.Rmd",
-             output_file = "SS_GAM-ENAR.pdf"),
+  # tar_render(manu_ENAR, "Manuscript/00-main_ENAR.Rmd",
+  #            output_file = "SS_GAM-ENAR.pdf"),
   
 )
 
