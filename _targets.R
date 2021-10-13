@@ -22,18 +22,18 @@ tar_plan(
   
   #  Simulations Studies -----------------------------------------------------
   #* Main Simulation Study ####
-  # tar_files(sim_main_path,
-  #           list.files("./Simulation/main", recursive = T, full.names = T)),
+  tar_files(sim_main_path,
+            list.files("~/Downloads/main/", recursive = T, full.names = T)),
+
+  success_rate = create_success_rate_table(sim_main_path),
   # 
-  # success_rate = create_success_rate_table(sim_main_path),
+  tab_binom = make_sim_main_table(success_rate,
+                                  dist = "binomial",
+                                  measures = "auc"),
   # 
-  # tab_binom = make_sim_main_table(success_rate,
-  #                                 dist = "binomial",
-  #                                 measures = "auc"),
-  # 
-  # tab_gaus = make_sim_main_table(success_rate,
-  #                                dist = "gaussian",
-  #                                measures = "R2"),
+  tab_gaus = make_sim_main_table(success_rate,
+                                 dist = "gaussian",
+                                 measures = "R2"),
   # 
   # tab_pois = make_sim_main_table(success_rate,
   #                                dist = "poisson",

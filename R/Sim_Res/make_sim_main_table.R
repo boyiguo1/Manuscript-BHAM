@@ -20,13 +20,13 @@ make_sim_main_table <- function(success_rate, dist, section = "test" , measures)
         return(data.frame(NULL))
       
       # .file <- fls[1]
-      
       ret <- fls %>%
         map_dfr(.f = function(.file){
           it <- unglue_data(.file, "{whatever}/it_{it}.rds") %>% pull(it) %>% as.numeric
           ret <- data.frame(
             it = it,
             read_rds(.file) %>% 
+              `[[`(section)%>% 
               data.frame() %>% 
               rownames_to_column("method")
             
@@ -47,8 +47,9 @@ make_sim_main_table <- function(success_rate, dist, section = "test" , measures)
     )
   
   total_dat %>% 
-    select(p, method, 
-           {{measures}} := paste(section, measures, sep=".")) %>% #head
+    select(p, method, {{measures}}
+           # {{measures}} := paste(section, measures, sep=".")
+           ) %>% #head
     filter(method %in% c("bglm_spline_de", "blasso_spline",
                          "cosso", "acosso", "mgcv", "SB_GAM")) %>% 
     group_by(p, method) %>% 

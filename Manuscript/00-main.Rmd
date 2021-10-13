@@ -15,7 +15,7 @@ address:
 - num: a
   org: Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA
 - num: b
-  org: Department of Biostatistics and Data Science, Wake Forest University, Winston-Salem, USA
+  org: Department of Biostatistics and Data Science, Wake Forest School of Medicine, Winston-Salem, USA
 corres: "Boyi Guo and Nengjun Yi, Department of Biostatistics, University of Alabama at Birmingham, Birmingham, USA. \\email{boyiguo1@uab.edu},  \\email{nyi@uab.edu}"
 presentaddress: This is sample for present address text this is sample for present address text
 authormark: Guo et al.
@@ -23,7 +23,7 @@ articletype: Research article
 received: 2021-01-01
 revised: 2021-02-01
 accepted: 2021-03-01
-abstract: "There are proposals that extend the classical generalized additive models (GAMs) to accommodate the high-dimensional ($p>>n$) problem using group penalties and priors. These models rarely smooth the nonlinear effect properly as the sparse regularization leads to excess shrinkage on coefficients and inaccurate prediction. Moreover, most of these GAMs consider an “all-in-all-out” approach for function selection, rendering them difficult to answer if nonlinear effects are necessary. While some Bayesian models can address these shortcomings, using Markov chain Monte Carlo (MCMC) algorithms for model fitting creates a new challenge, scalability. Hence, we propose Bayesian hierarchical generalized additive models as a solution: we propose a novel spike-and-slab spline prior for smoothing functions, where a reparameterization step facilitates smoothing penalty and separate selection of linear and nonlinear spaces. Two scalable and deterministic algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least Squares, are developed to fit the proposed model. Simulation studies and metabolomics data analyses demonstrate improved performance against state-of-the-art models, mgcv, COSSO and sparse Bayesian GAM. The software implementation of the proposed models is freely available via an R package BHAM."
+abstract: "There are proposals that extend the classical generalized additive models (GAMs) to accommodate high-dimensional data ($p>>n$) using group sparse regularization. However, the sparse reuglarization may induce excess shrinkage when estimating smoothing functions, damaging predictive performance. Moreover, most of these GAMs consider an “all-in-all-out” approach for function selection, rendering them difficult to answer if nonlinear effects are necessary. While some Bayesian models can address these shortcomings, using Markov chain Monte Carlo (MCMC) algorithms for model fitting creates a new challenge, scalability. Hence, we propose Bayesian hierarchical generalized additive models as a solution: we incorporate the smoothing penalty that can separate linear and nonlinear spaces of smoothing function. A novel spike-and-slab spline prior is used to select the components of smoothing functions. Two scalable and deterministic algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least Squares, are developed for different utilities. Simulation studies and metabolomics data analyses demonstrate improved predictive or computational performance against state-of-the-art models, mgcv, COSSO and sparse Bayesian GAM. The software implementation of the proposed models is freely available via an R package BHAM."
 keywords: Spike-and-Slab Priors; High-Dimensional Data; Generalized Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility
 # bibliography: bibfile.bib
 output: 
@@ -142,13 +142,17 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 
 \end{tikzpicture}
 
-\caption{Directed acyclic grpah of BHAM-SSL model with parameter expansion. Elliposes are stochastic nodes, rectangles and are deterministic nodes. }
+\caption{Directed acyclic graph of BHAM-SSL model with parameter expansion. Elliposes are stochastic nodes, rectangles and are deterministic nodes. }
 \label{fig:SSprior}
 \end{figure}
 
 
+\newpage
+
+
 ```{r, results = "asis"}
 tab_gaus$mgcv[4] <- "-"
+tab_gaus$mgcv[5] <- "-"
 tab_gaus %>% 
   mutate(p = as.integer(p)) %>% 
   rename(
@@ -168,12 +172,16 @@ tab_gaus %>%
   #   # col_keys = c("P", "BHAM-IWLS", "BHAM-CD", "COSSO", "Adaptive COSSO", "mgcv", "SB-GAM")
   # ) %>% 
   # flextable::autofit() %>% 
-  # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations\\label{tab:gaus}")
+  # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations.\\label{tab:gaus}")
 ```
+
+
+\newpage
+
 
 ```{r, results = "asis"}
 tab_binom$mgcv[4] <- "-"
-
+tab_binom$mgcv[5] <- "-"
 tab_binom %>% 
   mutate(p = as.integer(p)) %>% 
   rename(
@@ -184,33 +192,61 @@ tab_binom %>%
     "Adaptive COSSO" = acosso,
     "SB-GAM" = SB_GAM
   ) %>%  
-  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure for binomial outcomes over 50 iterations", label = "tab:bin_auc") %>% 
+  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure for binomial outcomes over 50 iterations.", label = "tab:bin_auc") %>% 
   print(comment = FALSE, include.rownames = FALSE)
 ```
+
+\newpage
 
 ```{r}
 tbl_real_time %>% 
   flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\\label{tab:time_real_data}")
 ```
 
-```{r}
+\newpage
+
+```{r results = "asis"}
 rbind(
   'BHAM-SSL' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
   'SB-GAM' = ECB_SBGAM_cv %>%  slice_max(auc) %>% select(-lambda)
 ) %>% 
-  rownames_to_column("Methods") %>% 
-  flextable() %>% 
-  flextable::autofit() %>% 
-  flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation\\label{tab:ECB_res}")
+  rownames_to_column("Methods") %>%
+  select(-mae) %>% 
+  rename(Deviance = deviance,
+         AUC = auc,
+         Brier = mse,
+         Misclass = misclassification) %>% 
+  xtable(
+    caption = "Prediction performance of optimal BHAM and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.",
+    label = "tab:ECB_res"
+  ) %>% 
+  print(comment = FALSE, include.rownames = FALSE#, caption.placement = "top"
+        )
 ```
 
-```{r}
+
+\newpage
+
+
+```{r results = "asis"}
 rbind(
   'BHAM-SSL' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
   'SB-GAM' = WLM_SBGAM_cv %>%  slice_min(mse) %>% select(-lambda)
 ) %>% 
-  rownames_to_column("Methods") %>% 
-  flextable() %>% 
-  flextable::autofit() %>% 
-  flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
+  rownames_to_column("Methods") %>%
+  rename(
+    Deviance = deviance,
+    MSE = mse,
+    MAE = mae,
+    `$R^2$` = R2
+  ) %>% 
+    xtable(
+    caption = "Prediction performance of of optimal BHAM and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).",
+    label = "tab:WLM_res"
+  ) %>%
+  print(comment = FALSE, include.rownames = FALSE, sanitize.text.function=function(x){x}#, caption.placement = "top"
+        )
+  # flextable() %>% 
+  # flextable::autofit() %>% 
+  # flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
 ```

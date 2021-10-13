@@ -7,7 +7,7 @@ Other related methods for high-dimensional GAMs also exist, notably the methods 
 
 
 ## Monte Carlo Simulation Study
-We follow the data generating process described in Bai [@Bai2021]. We first generated $n=500$ training data points with $p=4, 10, 50, 200$ predictors respectively, where the predictors $X$ are simulated from a multivariate normal distribution $\text{MVN}_{n\times p}(0, I_{P})$. We then simulated the outcome $y$ from two distributions, Gaussian and binomial with the identity link and logit link $g(x) = \log(\frac{x}{1-x})$ respectively. The mean of each outcome were simulated via the following function
+We follow the data generating process described in Bai [@Bai2021]. We first generated $n=500$ training data points with $p=4, 10, 50, 100, 200$ predictors respectively, where the predictors $X$ are simulated from a multivariate normal distribution $\text{MVN}_{n\times p}(0, I_{P})$. We then simulated the outcome $y$ from two distributions, Gaussian and binomial with the identity link and logit link $g(x) = \log(\frac{x}{1-x})$ respectively. The mean of each outcome were simulated via the following function
 $$
 \mathbb{E}(Y) = g^{-1}(5 \sin(2\pi x_1) - 4 \cos(2\pi x_2 -0.5) + 6(x_3-0.5) - 5(x_4^2 -0.3))
 $$
@@ -66,7 +66,7 @@ The predictive performances have a consistent pattern across the three distribut
 
 <!-- ### Simulation Results -->
 
-<!-- Overall, the proposed priors outperforms the state-of-art GAM model `mgcv` when the dimensionality is low, median, and high. The proposed priors predicts better than `mgcv` and infers better of the underlying smooth function. Most importantly, `mgcv` is infeasible in the high dimensional setting, i.e. when $p=50$ where the number of parameters are greater than the sample size.  -->
+<!-- Overall, the proposed priors outperforms the state-of-the-art GAM model `mgcv` when the dimensionality is low, median, and high. The proposed priors predicts better than `mgcv` and infers better of the underlying smooth function. Most importantly, `mgcv` is infeasible in the high dimensional setting, i.e. when $p=50$ where the number of parameters are greater than the sample size.  -->
 
 
 <!-- #### Prediction Performace -->
