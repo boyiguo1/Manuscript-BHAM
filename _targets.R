@@ -34,6 +34,7 @@ tar_plan(
   tab_gaus = make_sim_main_table(success_rate,
                                  dist = "gaussian",
                                  measures = "R2"),
+  tab_time = make_time_table(success_rate),
   # 
   # tab_pois = make_sim_main_table(success_rate,
   #                                dist = "poisson",

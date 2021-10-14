@@ -1,15 +1,15 @@
 # Bayesian Hierarchical Additive Models (BHAMs)
 \label{sec:BHAM}
 
-Following the GLM notation introduced in Section \ref{sec:intro}, we have a generalized additive model and its matrix form,
+Following the GLM notation introduced in Section \ref{sec:intro}, we have a generalized additive model with link function $g(\cdot)$ and linear predictor
 \begin{equation}\label{eq:gam}
-E(Y|\bs x) = g^{-1}(\beta_0 + \sum\limits^p_{j=1}B_j(x_j)) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} \bs \beta_j^T \bs X_j),
+\eta = \beta_0 + \sum\limits^p_{j=1}B_j(x_j) = \beta_0 + \sum\limits^p_{j=1} \bs \beta_j^T \bs X_j,
 \end{equation}
-and the data distribution is
+with smoothing functions $B_j(x_j)$ of the variable $x_j, j = 1, \dots, p.$ The outcome $Y$ follows a exponential family distribution with density function $f(y)$, mean $\mu = g^{-1}(\eta)$ and dispersion parameter $\phi$, and the data distribution is
 \begin{equation}
 f(\bs Y = \bs y| \bs \beta, \phi) = \prod\limits^n_{i=1}f( Y = y_i|\bs \beta, \phi),\nonumber
 \end{equation}
-with smoothing functions $B_j(x_j)$ of the variable $x_j, j = 1, \dots, p.$ The basis function matrix, i.e. the design matrix derived from the smoothing function $B_j(x_j)$, is denoted $\bs X_j$ for the variable $x_j$. The dimension of the design matrix depends on the choice of the smoothing function. For example, a cubic spline function with $k$ knots produces a $k+3$ elements column vector. Its corresponding smoothing penalty matrix is denoted as $\bs S_j$. $\bs \beta_j$ denotes the basis function coefficients for the $j$th variable such that $B_j(x_j) = \bs \beta_j^T \bs X_j$. With slight abuse of notation, we denote vectors and matrices in bold fonts $\bs \beta, \bs X$ with conformable dimensions, where scalar and random variables are denoted in with unbold fonts $\beta, X$. The matrix transposing operation is denoted with a superscript $^T$. To note, the proposed model can include parametric forms of variables in the model, treating the parametric function as a special case of the smoothing function, e.g. $B_j(x_j) = x_j$ with the smoothing penalty matrix defined as $\bs S_j = \begin{bmatrix}0\end{bmatrix}$. 
+ The basis function matrix, i.e. the design matrix derived from the smoothing function $B_j(x_j)$, is denoted $\bs X_j$ for the variable $x_j$. The dimension of the design matrix depends on the choice of the smoothing function. For example, a cubic spline function with $k$ knots produces a $k+3$ elements column vector. Its corresponding smoothing penalty matrix is denoted as $\bs S_j$. $\bs \beta_j$ denotes the basis function coefficients for the $j$th variable such that $B_j(x_j) = \bs \beta_j^T \bs X_j$. With slight abuse of notation, we denote vectors and matrices in bold fonts $\bs \beta, \bs X$ with conformable dimensions, where scalar and random variables are denoted in with unbold fonts $\beta, X$. The matrix transposing operation is denoted with a superscript $^T$. To note, the proposed model can include parametric forms of variables in the model, treating the parametric function as a special case of the smoothing function, e.g. $B_j(x_j) = x_j$ with the smoothing penalty matrix defined as $\bs S_j = \begin{bmatrix}0\end{bmatrix}$. 
 
 To encourage proper smoothing of the functions, we adopt the idea of smoothing penalties from smoothing spline models. The basic idea is to set up a smoothing penalty, described in Equation (\ref{eq:smoothpen}), in the prior density function. However, the direct integration of smoothing penalty with sparsity penalty is not obvious. Marra and  Wood [@Marra2011] proposed a re-parameterization procedure to accommodate the smoothing penalty implicitly. Given the smoothing penalty matrix $\bs S_j$ is symmetric and positive semi-definite for univariate smoothing functions, we apply eigendecomposition on the penalty matrix $\bs S = \bs U \bs D \bs U^T$ , where the matrix $\bs D$ is diagonal with the eigenvalues arranged in the ascending order. To note, $\bs D$ can contain elements of zeros on the diagonal, where the zeros are associated with the linear space of the smoothing function. For the most popular smoothing function, cubic splines, the dimension of the linear space is one. Hereafter, we focus on discussing a uni-dimensional linear space for simplicity; however, it generalizes easily to the cases where the linear space is multidimensional. We further write the orthonormal matrix $\bs U \equiv \begin{bmatrix} \bs U^0 : \bs U^{\tp}\end{bmatrix}$ containing the eigenvectors as columns in the corresponding order to $\bs D$. That is, $\bs U$ contains the eigenvectors $U^0$ with zero eigenvalues for the linear space and $\bs U^{\tp}$ contains the eigenvectors (as columns) for the non-zero eigenvalues, i.e. the non-linear space. We multiply the basis function matrix $\bs X$ with the orthonormal matrix $\bs U$ for the new design matrix ${\bs X}^\repa = \bs X \bs U \equiv \begin{bmatrix} X^0 : \bs X^{\tp} \end{bmatrix}$. An additional scaling step is imposed on $\bs X^{\tp}$ by the non-zero eigenvalues of $\bs D$ such that the new basis function matrix $\bs X^\ast$ can receive uniform penalty on each of its dimensions. With slight abuse of the notation, we drop the superscript $^\repa$ and denote $\bs X_j \equiv \begin{bmatrix} X_j^0 : \bs X_j^{\tp} \end{bmatrix}$ as the basis function matrix for the $j$th variable after the re-parameterization. A spline function can be expressed in the matrix form
 $$
@@ -25,16 +25,16 @@ The re-parameterization step sets up the foundation of the proposed model and pr
 
 ## Spike-and-Slab Spline Priors
 
-The family of spike-and-slab (SS) priors regression models dominates Bayesian high-dimensional analysis for its utility in outcome prediction and variable selection. We defer to Bai et al. [@Bai2021Review] for an in-depth introduction to spike-and-slab priors. To summarize, spike-and-slab priors are a family of mixture distributions that comprises a skinny spike density $f_{\text{spike}}(\cdot)$ for weak signals and a flat slab density $f_{\text{slab}}(\cdot)$ for strong signals, mathematically
+The family of spike-and-slab (SS) priors regression models is one of most commonly used models in high-dimensional data analysis for its utility in outcome prediction and variable selection. We defer to Bai et al. [@Bai2021Review] for an in-depth introduction to spike-and-slab priors. To summarize, spike-and-slab priors are a family of mixture distributions that comprises a skinny spike density $f_{\text{spike}}(\cdot)$ for weak signals and a flat slab density $f_{\text{slab}}(\cdot)$ for strong signals, mathematically
 $$
  \beta|\gamma \sim (1-\gamma)f_{\text{spike}}(\beta) + \gamma f_{\text{slab}}(\beta).
 $$
-The most distinct feature of SS priors is that it is conditioned on a latent binary variable $\gamma \in \{0,1\}$ that indicates whether the variable $x$ is included in the model. There are various spike-and-slab priors depending on the choice for the spike density $f_{\text{spike}}(\cdot)$ and the slab density $f_{\text{slab}}(\cdot)$, see George and McCulloch [@George1993; @George1997]; Chipman [@Chipman1996] for grouped variables; Brown et al. [@Brown1998] for multivariate outcomes; Ishwaran and Rao [@Ishwaran2005]; Clyde and George [@Clyde2004] and reference therein.
+The most distinct feature of SS priors is that it is conditioned on a latent binary variable $\gamma \in \{0,1\}$ that indicates whether the variable $x$ is included in the model. There are various spike-and-slab priors depending on the choice for the spike density $f_{\text{spike}}(\cdot)$ and the slab density $f_{\text{slab}}(\cdot)$, see George and McCulloch [@George1993; @George1997]; Chipman [@Chipman1996] for grouped variables; Brown et al. [@Brown1998] for multivariate outcomes; Ishwaran and Rao [@Ishwaran2005]; Clyde and George [@Clyde2004] and reference therein. Two of most popular spike and slab priors are spike-and-slab normal prior [@George1993] and spike-and-slab double exponential prior[@Rockova2018].
 
 <!-- Comments -->
 <!-- Even the conjugate normal prior of $\bs \beta$ provides analytic simplicity, there is no closed form solution for the posterior density of $\bs \gamma$. @George1993 described a Gibbs sampling algorithm to approximate the posterior distribution of $\bs \gamma$ for variable selection. The same authors later compared SSVS with other Bayesian variable selection approaches, providing some empirical suggestions on the advantages and disadvantages of various formulations and estimation algorithms. [@George1997] Among the various problem SSVS addresses, high-dimensionality is not one of them, due to the intensive computation needs of MCMC algorithms. @George1997 suggested MCMC algorithms works well for medium size of predictors (p=25), which is not feasible for high-dimensional data, where the number of predictors easily exceeds 100. -->
 
-The major criticism of early spike-and-slab models is being computationally prohibitive. [@Bai2021Review] Since then, many studies focus on alleviating the computational burden that sampling algorithms bear, which include EMVS [@Rockova2014a] and spike-and-slab Lasso [@Rockova2018b; @Rockova2018]. Particularly, the development of spike-and-slab Lasso  substantially improves the scalability of SS models, setting up the theoretical foundation for generalized models in -omics data analysis [@Tang2017a; @Tang2017; @Tang2018; @Tang2019]. The spike-and-slab Lasso (SSL) prior is composed of two double exponential distributions with mean 0 and different dispersion parameters, $0 < s_0 < s_1$, mathematically,
+The major criticism of early spike-and-slab models is being computationally prohibitive. [@Bai2021Review] Since then, many studies focus on alleviating the computational burden that sampling algorithms bear, which include EMVS based on spike-and-slab normal prior[@Rockova2014a] and spike-and-slab Lasso [@Rockova2018b; @Rockova2018]. Particularly, the development of spike-and-slab Lasso  substantially improves the scalability of SS models, setting up the theoretical foundation for generalized models in -omics data analysis [@Tang2017a; @Tang2017; @Tang2018; @Tang2019]. The spike-and-slab Lasso (SSL) prior is composed of two double exponential distributions with mean 0 and different dispersion parameters, $0 < s_0 < s_1$, mathematically,
 \begin{equation} 
 \beta | \gamma \sim (1-\gamma)DE(0, s_0) + \gamma DE(0, s_1), 0 < s_0 < s_1.\nonumber
 \end{equation}
@@ -96,7 +96,7 @@ Yi and his group independently developed the EM-Iterative Weighted Least Square 
 
 <!-- Bai et al. [@Bai2020] provides an up-to-date summary of SSL methods and theoretical discussion. -->
 
-In this section, we extend the two EM-based algorithms, EM-CD and EM-IWLS algorithms, to fit BHAMs. To note, the two proposed algorithms provides different utilities. The EM-CD algorithm is specifically for fitting BHAM-SSL with an expedited performance, recommending to use in high and ultra-high dimensional setting. A specific concern of EM-CD algorithm is that it provides no information for inference. In contrast, the EM-IWLS can extract the variance-covariance matrix and be used to construct Wald type inference. Moreover, the EM-IWLS is a more general model fitting algorithm that can be used for fitting not only SSL and continuous SS priors but also Student's t-priors and double exponential priors. To note, SB-GAM[@Bai2020; @Bai2021] also used an EM-CD algorithm. The main difference between proposed EM-CD algorithm and that in SB-GAM is that SB-GAM uses a blocked CD algorithm for their group prior, while the proposed prior is pairwise independent requiring no special treatment in the CD algorithm. 
+In this section, we extend the two EM-based algorithms, EM-CD and EM-IWLS algorithms, to fit BHAMs. To note, the two proposed algorithms provides different utilities. The EM-CD algorithm is specifically for fitting BHAM-SSL with an expedited performance, recommending to use in high and ultra-high dimensional setting. A specific concern of EM-CD algorithm is that it provides no information for inference. In contrast, the EM-IWLS can estimate the variance-covariance matrix of the coefficients. Moreover, the EM-IWLS is a more general model fitting algorithm that can be used for fitting not only SSL and continuous SS priors but also Student's t-priors and double exponential priors. To note, SB-GAM[@Bai2020; @Bai2021] also used an EM-CD algorithm. The main difference between proposed EM-CD algorithm and that in SB-GAM is that SB-GAM uses a blocked CD algorithm for their group prior, while the proposed prior is pairwise independent requiring no special treatment in the CD algorithm. 
 
 
 <!-- , stemming from previous EM-coordinate descent algorithms[@Tang2018; @Tang2019] and EM-IWLS [@Rockova2014a]. Instead of simulating the posterior distribution via MCMC, we iteratively estimate the MAP. Compared to the EM-IRLS algorithm, the EM-coordinate descent provides an expedited model fitting process at the cost of model uncertainty.  -->
@@ -122,7 +122,7 @@ $$
 & +\sum\limits_{j=1}^{p} \left[ (\gamma_j+\gamma_{j}^{\tp})\log \theta_j + (2-\gamma_j-\gamma_{j}^{\tp}) \log (1-\theta_j)\right] +  \sum\limits_{j=1}^{p}\log f(\theta_j),
 \end{aligned}
 $$  
-where $f(\textbf{y}|\bs \beta, \phi)$ is the data distribution and $f(\theta)$ is the Beta(1,1) density.
+where $f(\textbf{y}|\bs \beta, \phi)$ is the data distribution and $f(\theta)$ is the Beta(1,1) density. We choose non-informative prior for the intercept $\beta_0$ and the dispersion parameter $\phi$; for example, $f(\beta_0|\tau_0^2)=N(0,\tau_0^2)$ with $\tau^2_0$ set to a large value and $f(\log \phi) \propto 1$.
 
 <!-- , and rewrite $\beta_j$ as $\beta_{j0}$, and hence removing the superscript $^{*}$ from the coefficients of the the penalized space. Using the new notation, the part component $\log p(\beta_j|\gamma_j)+\sum\limits_{k=1}^{K_j} \log p(\beta^{*}_{jk}|\gamma^{*}_{jk})$ can simplifies to $\sum\limits_{k=0}^{K_j} \log p(\beta_{jk}|\gamma_{jk})$. Without loos of generality, the model still work for the spline function whose dimensionality of the null space is more than 1. -->
 
@@ -244,7 +244,22 @@ To note, the variance-covariance matrixof the coefficient estimates variance-cov
 $$
   \text{Var}(\bs\beta^{(t)}) = (\bs X_*^T\bs \Sigma^{-1} \bs X_*)^{-1}\phi^{(t)}.
 $$
-The rest of the algorithm remains the same as described in Section \ref{sec:EMCD}.
+
+Totally, the proposed EM-iterative weighted least square algorithm is summarized as follows:
+
+1) Choose a starting value $\bs \beta^{(0)}$ and $\bs \theta^{(0)}$ for $\bs \beta$ and $\bs \theta$. For example, we can initialize $\bs \beta^{(0)} = \bs 0$ and $\bs \theta^{(0)} = \bs 0.5$
+
+2) Iterate over the E-step and M-step until convergence
+
+    E-step: calculate $E(\gamma_{j})$, $E(\gamma^\tp_{j})$ and $E(\tau^{-2}_{j})$, $E({\tau^\tp}^{-2}_{jk})$ with estimates of $\Theta^{(t-1)}$ from the previous iteration
+
+    M-step:
+
+    a) Based on the current value of $\beta$, calculate the pseudo-data $z_i^{(t)}$ and the pseudo-weights $w_i^{(t)}$
+    b) Update $\bs \beta^{(t)}$ by runing the augmented weighted least squared
+    c) If $\phi$ is present, update $\phi$
+
+Similar to EM-CD, we assess convergence by the criterion, $|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon$, where $\epsilon$ is a small value (say $10^{-5}$).
     
     
     

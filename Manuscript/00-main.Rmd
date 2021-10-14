@@ -72,6 +72,7 @@ tar_load(ECB_SBGAM_cv)
 tar_load(WLM_bamlasso_cv)
 tar_load(WLM_SBGAM_cv)
 tar_load(tbl_real_time)
+tar_load(tab_time)
 ```
 
 ```{r child="01-Intro.Rmd"}
@@ -165,14 +166,14 @@ tab_gaus %>%
   ) %>% 
   xtable(
     align = "cccccccc",
-    caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations",
+    caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:gaus") %>% 
   print(comment = FALSE, include.rownames = FALSE)
   # flextable(
   #   # col_keys = c("P", "BHAM-IWLS", "BHAM-CD", "COSSO", "Adaptive COSSO", "mgcv", "SB-GAM")
   # ) %>% 
   # flextable::autofit() %>% 
-  # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations.\\label{tab:gaus}")
+  # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measures for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). \\label{tab:gaus}")
 ```
 
 
@@ -192,8 +193,22 @@ tab_binom %>%
     "Adaptive COSSO" = acosso,
     "SB-GAM" = SB_GAM
   ) %>%  
-  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measure for binomial outcomes over 50 iterations.", label = "tab:bin_auc") %>% 
+  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measures for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.", label = "tab:bin_auc") %>% 
   print(comment = FALSE, include.rownames = FALSE)
+```
+
+\newpage
+```{r}
+tab_time %>% 
+  select(dist, p, `BHAM-IWLS`,`BHAM-CD`, cosso, acosso, mgcv, `SB-GAM`) %>% 
+  rename(Distribution = dist,
+         P = p,
+         COSSO = cosso,
+         `Adaptive COSSO` = acosso) %>% 
+  
+  flextable::flextable() %>% 
+    merge_v(j = 1) %>% 
+  flextable::set_caption(caption = "The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.\\label{tab:time_sim}")
 ```
 
 \newpage
@@ -207,7 +222,7 @@ tbl_real_time %>%
 
 ```{r results = "asis"}
 rbind(
-  'BHAM-SSL' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
+  'BHAM-CD' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
   'SB-GAM' = ECB_SBGAM_cv %>%  slice_max(auc) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>%
@@ -217,7 +232,7 @@ rbind(
          Brier = mse,
          Misclass = misclassification) %>% 
   xtable(
-    caption = "Prediction performance of optimal BHAM and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.",
+    caption = "Prediction performance of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.",
     label = "tab:ECB_res"
   ) %>% 
   print(comment = FALSE, include.rownames = FALSE#, caption.placement = "top"
@@ -230,7 +245,7 @@ rbind(
 
 ```{r results = "asis"}
 rbind(
-  'BHAM-SSL' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
+  'BHAM-CD' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
   'SB-GAM' = WLM_SBGAM_cv %>%  slice_min(mse) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>%
@@ -241,7 +256,7 @@ rbind(
     `$R^2$` = R2
   ) %>% 
     xtable(
-    caption = "Prediction performance of of optimal BHAM and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).",
+    caption = "Prediction performance of of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).",
     label = "tab:WLM_res"
   ) %>%
   print(comment = FALSE, include.rownames = FALSE, sanitize.text.function=function(x){x}#, caption.placement = "top"
