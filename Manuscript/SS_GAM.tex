@@ -5,6 +5,7 @@
 
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepackage{pdflscape}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{colortbl}
@@ -56,21 +57,21 @@ additive models (GAMs) to accommodate high-dimensional data (\(p>>n\))
 using group sparse regularization. However, the sparse reuglarization
 may induce excess shrinkage when estimating smoothing functions,
 damaging predictive performance. Moreover, most of these GAMs consider
-an ``all-in-all-out'' approach for function selection, rendering them
+an ``all-in-all-out'' approach for functional selection, rendering them
 difficult to answer if nonlinear effects are necessary. While some
 Bayesian models can address these shortcomings, using Markov chain Monte
-Carlo (MCMC) algorithms for model fitting creates a new challenge,
-scalability. Hence, we propose Bayesian hierarchical generalized
-additive models as a solution: we incorporate the smoothing penalty that
-can separate linear and nonlinear spaces of smoothing function. A novel
-spike-and-slab spline prior is used to select the components of
-smoothing functions. Two scalable and deterministic algorithms,
-EM-Coordinate Descent and EM-Iterative Weighted Least Squares, are
-developed for different utilities. Simulation studies and metabolomics
-data analyses demonstrate improved predictive or computational
-performance against state-of-the-art models, mgcv, COSSO and sparse
-Bayesian GAM. The software implementation of the proposed models is
-freely available via an R package BHAM.}
+Carlo algorithms for model fitting creates a new challenge, scalability.
+Hence, we propose Bayesian hierarchical generalized additive models as a
+solution: we consider the smoothing penalty for proper shrinkage of
+curve interpolation and separation of smoothing function linear and
+nonlinear spaces. A novel spike-and-slab spline prior is proposed to
+select components of smoothing functions. Two scalable and deterministic
+algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least
+Squares, are developed for different utilities. Simulation studies and
+metabolomics data analyses demonstrate improved predictive or
+computational performance against state-of-the-art models, mgcv, COSSO
+and sparse Bayesian GAM. The software implementation of the proposed
+models is freely available via an R package BHAM.}
 
 \keywords{Spike-and-Slab Priors; High-Dimensional Data; Generalized
 Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility}
@@ -135,25 +136,25 @@ lasso \citep{Yuan2006} to additive models (AMs); Huang et al.
 \citep{Huang2010} further developed adaptive grouped lasso for additive
 models; Wang et al. \citep{Wang2007} and Xue \citep{Xue2009}
 respectively applied grouped SCAD penalty \citep{Fan2001} to additive
-models. Recent Bayesian hierarchical models are also used in the context
-of high-dimensional additive models. Various group spike-and-slab priors
-combining with computationally intensive Markov chain Monte Carlo (MCMC)
-algorithms \citep{Xu2015, Yang2020} are proposed, where the application
-on AMs are by-products. Bai et al. \citep{Bai2020} was the first to
-apply group spike-and-slab lasso prior to Gaussian AMs using a fast
-optimization algorithm, and further generalized the framework to
-GAMs\citep{Bai2021}. Focus on addressing the sparsity, these methods can
-overly penalize the basis function coefficients and produce inaccurate
-predictions and curve interpolation, particularly when complex signals
-are assumed and large number of knots are used. \citep{Scheipl2013} In
-addition, these methods adapt an `all-in-all-out' strategy, i.e.~either
-including or excluding the variable completely, rendering no space for
-bi-level selection. Scheipl et al. \citep{Scheipl2012} proposed a
-spike-and-slab structure prior, normal-mixture-of-inverse gamma prior,
+models. Recently Bayesian hierarchical models are also used in the
+context of high-dimensional additive models. Various group
+spike-and-slab priors combining with computationally intensive Markov
+chain Monte Carlo (MCMC) algorithms \citep{Xu2015, Yang2020} are
+proposed, where the application on AMs are by-products. Bai et al.
+\citep{Bai2020} was the first to apply group spike-and-slab lasso prior
+to Gaussian AMs using a fast optimization algorithm, and further
+generalized the framework to GAMs\citep{Bai2021}. Focus on addressing
+the sparsity, these methods can overly penalize the basis function
+coefficients and produce inaccurate predictions and curve interpolation,
+particularly when complex signals are assumed and large number of knots
+are used. \citep{Scheipl2013} In addition, these methods adapt an
+`all-in-all-out' strategy, i.e.~either including or excluding the
+variable completely, rendering no space for bi-level selection. Scheipl
+et al. \citep{Scheipl2012} proposed a spike-and-slab structure prior
 that address the previous challenges. But the model fitting relies on
-computational intensive MCMC algorithmic and creates scalability
-concern. It would be of special interest to develop a fast, flexible and
-accurate generalized additive model framework.
+computational intensive MCMC algorithms and creates scalability concern.
+It would be of special interest to develop a fast, flexible and accurate
+generalized additive model framework.
 
 To address these challenges, we propose a novel Bayesian hierarchical
 generalized additive model (BHAM) for high dimensional data analysis.
@@ -172,41 +173,39 @@ matrix, and \(\boldsymbol{\beta}_j\) are the basis function
 coefficients. Smoothing penalties were also previously used in the
 spike-and-slab GAM \citep{Scheipl2012} and the sparsity-smoothness
 penalty \citep{Meier2009}. Moreover, incorporating the smoothing penalty
-allows the separation of the linear space of smoothing functions from
-the nonlinear space. We then impose a new bi-part spike-and-slab spline
+allows the separation of the linear space of a smoothing function from
+the nonlinear space. We then impose a new two-part spike-and-slab spline
 prior on the smoothing functions for bi-level selection such that the
 linear and nonlinear spaces of smoothing functions can be selected
-separately. The prior setup encourages a flexible solution, rending one
-of three possibilities: no effect, only linear effect, or nonlinear
-effect of a predictor. In addition, two scalable optimization-based
-algorithms are developed for high and
-ultrahigh-dimensional\citep{Fan2009} settings respectively.
+separately. The prior setup encourages a flexible solution, rendering
+one of three possibilities for each predictor: no effect, only linear
+effect, or linear and nonlinear effects. In addition, two scalable
+optimization-based algorithms, EM-Coordinate Descent (EM-CD) algorithm
+and EM-Iterative weighted least square (EM-IWLS) algorithm, are
+developed and implemented in an publicly available R package
+\texttt{BHAM} via \url{https://github.com/boyiguo1/BHAM}, making
+translational science more accessible.
 
 The proposed framework, BHAM, differs from previous spike-and-slab based
 GAMs, i.e.~the spike-and-slab GAM \citep{Scheipl2012} and the SB-GAM
 \citep{Bai2021} in three ways. First of all, the proposed spike-and-slab
 spline prior is a spike-and-slab lasso type prior using independent
-mixture double exponential distribution, compared to spike-and-slab GAM.
-Spike-and-slab lasso priors provide computational convenience during
-model fitting by using optimization algorithms instead of computational
-intensive sampling algorithms. They make fitting high- and
-ultrahigh-dimensional models more feasible without sacrificing
-performance in prediction and variable selection. Secondly, the
-optimization algorithms introduced in this article include EM-Coordinate
-Descent (EM-CD) algorithm and EM-Iterative weighted least square
-(EM-IWLS) algorithm for different utilities. The applications of the two
-aforementioned algorithms are fruitful in Bayesian hierarchical models
-for high-dimensional data. \citep{Yi2012, Rockova2014a, Rockova2018}
-Even though SB-GAM with a group spike-and-slab lasso prior also uses
-EM-CD for model fitting, the proposed EM-IWLS provides
-variance-covariance matrix of the coefficients, which has the potential
-to provide uncertainty inference. EM-IWLS complements the lack of
-inference potential from EM-CD in a median and high dimensional setting.
-Furthermore, the proposed model addresses the incapability of bi-level
-selection in SB-GAM. Lastly, the R implementation of the Bayesian
-hierarchical additive model is available publicly via BHAM at
-\url{https://github.com/boyiguo1/BHAM}, making translational science
-more accessible.
+mixture double exponential distribution, compared to spike-and-slab GAM
+that uses normal-mixture-of-inverse gamma prior. Spike-and-slab lasso
+priors provide computational convenience during model fitting by using
+optimization algorithms instead of intensive sampling algorithms. They
+make fitting high-dimensional models more feasible without sacrificing
+performance in prediction and variable selection. Secondly, SB-GAM uses
+a group spike-and-slab lasso prior with an EM-CD algorithm to fit the
+model. While both methods use the combination of expectation
+maximization algorithm and coordient descent algorithm, there are subtle
+difference in the implementation due to the difference in prior
+specification. The proposed model sets up independent priors among basis
+function coefficients after the re-parameterization step, which provides
+some advantage in computation. In addition, we offer an alternative
+algorithm, EM-IWLS, that can provide variance-covariance matrix of the
+coefficients. Last but not least, the proposed model addresses the
+incapability of bi-level selection in SB-GAM.
 
 In Section \ref{sec:BHAM}, we establish the Bayesian hierarchical
 generalized additive model, introduce the proposed spike-and-slab spline
@@ -236,15 +235,14 @@ f(\boldsymbol{Y} = \boldsymbol{y}| \boldsymbol{\beta}, \phi) = \prod\limits^n_{i
 \end{equation} The basis function matrix, i.e.~the design matrix derived
 from the smoothing function \(B_j(x_j)\), is denoted
 \(\boldsymbol{X}_j\) for the variable \(x_j\). The dimension of the
-design matrix depends on the choice of the smoothing function. For
-example, a cubic spline function with \(k\) knots produces a \(k+3\)
-elements column vector. Its corresponding smoothing penalty matrix is
-denoted as \(\boldsymbol{S}_j\). \(\boldsymbol{\beta}_j\) denotes the
-basis function coefficients for the \(j\)th variable such that
-\(B_j(x_j) = \boldsymbol{\beta}_j^T \boldsymbol{X}_j\). With slight
+design matrix depends on the choice of the smoothing function, and is
+denoted as \(K_j\) for \(x_j\). Its corresponding smoothing penalty
+matrix is denoted as \(\boldsymbol{S}_j\). \(\boldsymbol{\beta}_j\)
+denotes the basis function coefficients for the \(j\)th variable such
+that \(B_j(x_j) = \boldsymbol{\beta}_j^T \boldsymbol{X}_j\). With slight
 abuse of notation, we denote vectors and matrices in bold fonts
 \(\boldsymbol{\beta}, \boldsymbol{X}\) with conformable dimensions,
-where scalar and random variables are denoted in with unbold fonts
+where scalar and random variables are denoted in unbold fonts
 \(\beta, X\). The matrix transposing operation is denoted with a
 superscript \(^T\). To note, the proposed model can include parametric
 forms of variables in the model, treating the parametric function as a
@@ -252,14 +250,14 @@ special case of the smoothing function, e.g.~\(B_j(x_j) = x_j\) with the
 smoothing penalty matrix defined as
 \(\boldsymbol{S}_j = \begin{bmatrix}0\end{bmatrix}\).
 
-To encourage proper smoothing of the functions, we adopt the idea of
-smoothing penalties from smoothing spline models. The basic idea is to
-set up a smoothing penalty, described in Equation (\ref{eq:smoothpen}),
-in the prior density function. However, the direct integration of
-smoothing penalty with sparsity penalty is not obvious. Marra and Wood
-\citep{Marra2011} proposed a re-parameterization procedure to
-accommodate the smoothing penalty implicitly. Given the smoothing
-penalty matrix \(\boldsymbol{S}_j\) is symmetric and positive
+To encourage proper smoothing of additive functions, we adopt the idea
+of smoothing penalties from smoothing spline models. The basic idea is
+to set up a smoothing penalty, described in Equation
+(\ref{eq:smoothpen}), in the prior density function. However, the direct
+integration of smoothing penalty with sparsity penalty is not obvious.
+Marra and Wood \citep{Marra2011} proposed a re-parameterization
+procedure to accommodate the smoothing penalty implicitly. Given the
+smoothing penalty matrix \(\boldsymbol{S}_j\) is symmetric and positive
 semi-definite for univariate smoothing functions, we apply
 eigendecomposition on the penalty matrix
 \(\boldsymbol{S} = \boldsymbol{U} \boldsymbol{D} \boldsymbol{U}^T\) ,
@@ -291,7 +289,7 @@ as the basis function matrix for the \(j\)th variable after the
 re-parameterization. A spline function can be expressed in the matrix
 form \[
 B_j(x_j) = B_j^0(x_j) + B_j^*(x_j) = \beta_j X^0_j + \boldsymbol{\beta_j^*}^T \boldsymbol{X}_j^*,
-\] and the generalized additive model in Equation (\ref{eq:gam}) be
+\] and the generalized additive model in Equation (\ref{eq:gam}) now is
 \begin{equation}\label{eq:gam-repa}
 E(Y|\boldsymbol{x}) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} B_j(x_j)) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} \boldsymbol{\beta}_j^T \boldsymbol{X}_j) = g^{-1}\left[\beta_0 + \sum\limits^p_{j=1} (\beta_j X^0_j + {\boldsymbol{\beta}_j^*}^T \boldsymbol{X}_j^*)\right],
 \end{equation} where the coefficients
@@ -304,10 +302,10 @@ The re-parameterization step sets up the foundation of the proposed
 model and provides three benefits. First of all, the re-parameterization
 integrates the smoothing penalty into the design matrix, and encourages
 models to properly smooth the nonlinear function in addition to the
-sparse penalty for function selection. Secondly, the eigendecomposition
-of the smoothing penalty allows the isolation of the linear from the
-nonlinear space, improving the feasibility of bi-level function
-selection and inference. The eigendecomposition facilitates the
+sparse penalty for functional selection. Secondly, the
+eigendecomposition of the smoothing penalty allows the isolation of the
+linear space from the nonlinear space, improving the feasibility of
+bi-level functional selection. The eigendecomposition facilitates the
 construction of orthonormal design matrix, which makes imposing
 independent priors on the coefficients possible. This reduces the
 computational complexity compared to using a multivariate priors, and
@@ -320,10 +318,10 @@ unified prior.
 \subsection{Spike-and-Slab Spline
 Priors}\label{spike-and-slab-spline-priors}}
 
-The family of spike-and-slab (SS) priors regression models is one of
-most commonly used models in high-dimensional data analysis for its
-utility in outcome prediction and variable selection. We defer to Bai et
-al. \citep{Bai2021Review} for an in-depth introduction to spike-and-slab
+The family of spike-and-slab (SS) regression models is one of most
+commonly used models in high-dimensional data analysis for its utility
+in outcome prediction and variable selection. We defer to Bai et al.
+\citep{Bai2021Review} for an in-depth introduction to spike-and-slab
 priors. To summarize, spike-and-slab priors are a family of mixture
 distributions that comprises a skinny spike density
 \(f_{\text{spike}}(\cdot)\) for weak signals and a flat slab density
@@ -346,14 +344,14 @@ The major criticism of early spike-and-slab models is being
 computationally prohibitive. \citep{Bai2021Review} Since then, many
 studies focus on alleviating the computational burden that sampling
 algorithms bear, which include EMVS based on spike-and-slab normal
-prior\citep{Rockova2014a} and spike-and-slab Lasso
-\citep{Rockova2018b, Rockova2018}. Particularly, the development of
-spike-and-slab Lasso substantially improves the scalability of SS
-models, setting up the theoretical foundation for generalized models in
--omics data analysis \citep{Tang2017a, Tang2017, Tang2018, Tang2019}.
-The spike-and-slab Lasso (SSL) prior is composed of two double
-exponential distributions with mean 0 and different dispersion
-parameters, \(0 < s_0 < s_1\), mathematically, \begin{equation} 
+prior\citep{Rockova2014a} and spike-and-slab Lasso (SSL)
+\citep{Rockova2018b, Rockova2018}. Particularly, the development of SSL
+model substantially improves the scalability of SS models, setting up
+the theoretical foundation for generalized models in -omics data
+analysis \citep{Tang2017a, Tang2017, Tang2018, Tang2019}. The SSL prior
+is composed of two double exponential distributions with mean 0 and
+different dispersion parameters, \(0 < s_0 < s_1\), mathematically,
+\begin{equation} 
 \beta | \gamma \sim (1-\gamma)DE(0, s_0) + \gamma DE(0, s_1), 0 < s_0 < s_1.\nonumber
 \end{equation} Given that both double exponential distributions have a
 mean of 0 and the latent indicator \(\gamma\) can only take the value of
@@ -366,8 +364,8 @@ of EMVS where the weak signals are not shrink to zero, and hence is
 preferred in high-dimensional data analysis. We notice that Bai
 \citep{Bai2021} is the first to apply spike-and-slab lasso prior in the
 GAM framework, where the densities of the spike and slab components take
-the group lasso density \citep{Xu2015}. Bai \citep{Bai2021} takes an
-``all-in-all-out'' strategy for function selection.
+the group lasso density \citep{Xu2015} and limits to an
+``all-in-all-out'' strategy for functional selection.
 
 \hypertarget{two-part-spike-and-slab-lasso-prior}{%
 \subsubsection{Two-part Spike-and-Slab Lasso
@@ -394,18 +392,17 @@ scale parameters, assuming \(0 < s_0 < s_1\) and given. These scale
 parameters \(s_0\) and \(s_1\) can be treated as tuning parameters and
 optimized via cross-validation. A discussion of how to choose the scale
 parameters comes in Section \ref{sec:tune}. To note, this prior differs
-from previous group spike-and-slab lasso priors
-\citep{Tang2018, Tang2019}, as the \(\beta_j\) and
-\(\boldsymbol{\beta}^*_j\) have different indicator variables
-\(\gamma_j\), \(\gamma_j^*\) respectively. It is possible to add a more
-restrictive assumption on the priors, assuming that one indicator
-variable decides the inclusion of both the linear effect and nonlinear
-effect, i.e.~\(\gamma_j = \gamma^*_j\). This converges to the SB-GAM
-\citep{Bai2021}. Conversely, it is also possible to relax the assumption
-such that each coefficient \(\beta_{jk} \in \boldsymbol{\beta}^*_j\) has
-its own latent indicator \(\gamma_{jk}\), but at the cost of
-complicating the bi-level function selection. This reduces the proposed
-prior to the classic spike-and-slab lasso prior.
+from previous group SSL priors \citep{Tang2018, Tang2019}, as the
+\(\beta_j\) and \(\boldsymbol{\beta}^*_j\) have different indicator
+variables \(\gamma_j\), \(\gamma_j^*\) respectively. It is possible to
+add a more restrictive assumption on the priors, assuming that one
+indicator variable decides the inclusion of both the linear effect and
+nonlinear effect, i.e.~\(\gamma_j = \gamma^*_j\). This converges to the
+SB-GAM \citep{Bai2021}. Conversely, it is also possible to relax the
+assumption such that each coefficient
+\(\beta_{jk} \in \boldsymbol{\beta}^*_j\) has its own latent indicator
+\(\gamma_{jk}\), but at the cost of complicating the bi-level functional
+selection. This reduces the proposed prior to the classic SSL prior.
 
 The re-parameterization introduced in Section \ref{sec:BHAM} grants the
 validity of the proposed prior. First of all, the smoothing function
@@ -413,14 +410,14 @@ bases are linear dependent and necessitate extra attention. The
 eigeondecomposition remedies the problem and hence our prior can be set
 to be conditionally independent. Secondly, the eigenvalue scaling
 provides a panacea to allow unified scale parameters for all bases of
-all smoothing functions of variables.
+all smoothing functions.
 
-The rest of the hierarchical prior follows the traditional
-spike-and-slab lasso prior: we set up hyper-priors on
-\(\gamma_j, \gamma^*_j\) to allow local adaption of the shrinkage using
-a Bernoulli distribution, written as binomial distribution of one trial.
-The two indicators of the \(j\)th predictor, \(\gamma_j\) and
-\(\gamma^*_j\), shares the same probability parameter \(\theta_j\), \[
+The rest of the hierarchical prior follows the traditional SSL prior: we
+set up hyper-priors on \(\gamma_j, \gamma^*_j\) to allow local adaption
+of the shrinkage using a Bernoulli distribution, written as binomial
+distribution of one trial. The two indicators of the \(j\)th predictor,
+\(\gamma_j\) and \(\gamma^*_j\), shares the same probability parameter
+\(\theta_j\), \[
 \begin{aligned}
 &\gamma_{j} | \theta_j \sim Bin(1, \theta_j) & & 
 &\gamma_{j}^*| \theta_j \sim Bin(1, \theta_j).
@@ -429,7 +426,7 @@ The two indicators of the \(j\)th predictor, \(\gamma_j\) and
 bases of a smoothing function should be similar, while allowing
 different penalty on the linear space and non-linear space of the
 smoothing function. The hyper prior of \(\gamma_{j}\) decides the
-sparsity of the model at the function selection level, while that of
+sparsity of the model at the functional selection level, while that of
 \(\gamma_{j}^*\) decides the smoothness of the spline function at basis
 function level. Meanwhile, we specify that \(\gamma_{j}\) and
 \(\gamma_{j}^*\) are independently distributed for analytic simplicity.
@@ -441,11 +438,10 @@ distribution and hence provides some computation convenience. For
 simplicity, we focus on a special case of beta distribution, uniform
 (0,1), i.e.~\(a = 1, b = 1\). When the variable have large effects in
 any of the bases, the parameter \(\theta_j\) will be estimated large,
-which in turn encourages the model to include the rest of bases,
-achieving the local adaption among spline bases. Hereafter, we refer
-Bayesian hierarchical generalized additive models with the
-spike-and-slab lasso prior as the BHAM-SSL, and visually presented in
-Figure \ref{fig:SSprior}.
+which in turn encourages the model to include the rest of bases.
+Hereafter, we refer Bayesian hierarchical generalized additive models
+with the spike-and-slab spline prior as the BHAM, and visually presented
+in Figure \ref{fig:SSprior}.
 
 \begin{center}
 Figure \ref{fig:SSprior} here
@@ -467,7 +463,7 @@ A spike-and-slab mixture normal spline prior can be expressed as
 \begin{align*}
   \beta_{j} |\gamma_{j},s_0,s_1 &\sim N(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)\\
   \beta^*_{jk} | \gamma^*_{j},s_0,s_1 &\overset{\text{iid}}{\sim}N(0,(1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1), k=1,\dots, K_j.
-\end{align*} Similar to the BHAM-SSL prior in Equation
+\end{align*} Similar to the spike-and-slab spline prior in Equation
 (\ref{eq:bham_ssl}), \(0 < s_0 < s_1\) are tuning parameters and can be
 optimized via cross-validation. One of the critics received by the
 spike-and-slab mixture normal prior is that the tails of a normal
@@ -496,25 +492,25 @@ studies. Hence, we feel compelled to develop scalable algorithms for
 fitting Bayesian hierarchical additive models in high-dimensional
 settings.
 
-As alternatives to the sampling algorithms for fitting Bayesian models,
+As an alternative to sampling algorithms for fitting Bayesian models,
 optimization algorithms focus on the maximum a posteriori (MAP)
 estimates and speed up the model fitting process at the cost of
-uncertainty measures. The earlier work for fitting spike-and-slab models
-using optimization algorithms includes EMVS \citep{Rockova2014a}.
-Rockova and George\citep{Rockova2014a} proposed an
-expectation-maximization (EM) based algorithm to fit models that use
-continuous mixture normal priors. In the E step, the latent binary
-indicators \(\gamma\)s are treated as the missing data, and the
-posterior means are calculated conditioning on the current value of
-other parameters; in the M step, a ridge estimator was used to update
-the coefficients, followed by updating \(\phi, \theta\). The same
-authors \citep{Rockova2018b, Rockova2018} further combined the EM
-algorithm with coordinate descent algorithm to fit SSL models. Yi and
-his group independently developed the EM-Iterative Weighted Least Square
-and EM-cyclic coordinate descent algorithms to fit models with broader
-class of priors, SSL included.\citep{Yi2019} These algorithms were
-implemented for generalized linear models\citep{Tang2017a}, Cox
-proportional hazards models \citep{Tang2017} and their grouped
+posterior inference. The earlier work for fitting SS models using
+optimization algorithms includes EMVS \citep{Rockova2014a}. Rockova and
+George\citep{Rockova2014a} proposed an expectation-maximization (EM)
+based algorithm to fit models that use continuous mixture normal priors.
+In the E step, the latent binary indicators \(\gamma\)s are treated as
+the missing data, and the posterior means are calculated conditioning on
+the current value of other parameters; in the M step, a ridge estimator
+was used to update the coefficients, followed by updating
+\(\phi, \theta\). The same authors \citep{Rockova2018b, Rockova2018}
+further combined the EM algorithm with coordinate descent algorithm to
+fit SSL models. Yi and his group independently developed the
+EM-Iterative Weighted Least Square and EM-cyclic coordinate descent
+algorithms to fit models with broader class of priors, SSL
+included.\citep{Yi2019} These algorithms were implemented for
+generalized linear models\citep{Tang2017a}, Cox proportional hazards
+models \citep{Tang2017} and their grouped
 counterparts\citep{Tang2018, Tang2019}. Both EM based algorithms provide
 deterministic solutions, which becomes a popular property for
 reproducible research
@@ -522,8 +518,8 @@ reproducible research
 In this section, we extend the two EM-based algorithms, EM-CD and
 EM-IWLS algorithms, to fit BHAMs. To note, the two proposed algorithms
 provides different utilities. The EM-CD algorithm is specifically for
-fitting BHAM-SSL with an expedited performance, recommending to use in
-high and ultra-high dimensional setting. A specific concern of EM-CD
+fitting BHAM with an expedited performance, recommending to use in high
+and ultra-high dimensional setting. A specific concern of EM-CD
 algorithm is that it provides no information for inference. In contrast,
 the EM-IWLS can estimate the variance-covariance matrix of the
 coefficients. Moreover, the EM-IWLS is a more general model fitting
@@ -531,7 +527,7 @@ algorithm that can be used for fitting not only SSL and continuous SS
 priors but also Student's t-priors and double exponential priors. To
 note, SB-GAM\citep{Bai2020, Bai2021} also used an EM-CD algorithm. The
 main difference between proposed EM-CD algorithm and that in SB-GAM is
-that SB-GAM uses a blocked CD algorithm for their group prior, while the
+that SB-GAM uses a block CD algorithm for their group prior, while the
 proposed prior is pairwise independent requiring no special treatment in
 the CD algorithm.
 
@@ -553,8 +549,8 @@ The recursive algorithm consists of two steps:
   E-step: to calculate the expectation of the posterior density function
   with respect to some ``missing'' data
 \item
-  M-step: to maximize the expectation derived in the E-step to calculate
-  the parameter of interest
+  M-step: to maximize the expectation derived in the E-step and update
+  parameters of interest
 \end{itemize}
 
 For BHAMs, we define the parameters of interest as
@@ -577,11 +573,9 @@ non-informative prior for the intercept \(\beta_0\) and the dispersion
 parameter \(\phi\); for example, \(f(\beta_0|\tau_0^2)=N(0,\tau_0^2)\)
 with \(\tau^2_0\) set to a large value and \(f(\log \phi) \propto 1\).
 
-We use the EM algorithm to find the MAP estimate of \(\Theta\). Since
-the latent binary indicators \(\boldsymbol{\gamma}\) are not of our
-primary interest, we treat them as the ``missing data'' in the EM
-algorithm. Naturally, in the E-step, we calculate the expectation of
-posterior density function of
+We use the EM algorithm to find the MAP estimate of \(\Theta\). This is,
+in the E-step, we calculate the expectation of posterior density
+function of
 \(\log f(\Theta, \boldsymbol{\gamma}| \textbf{y}, \textbf{X})\) with
 respect to the latent indicators \(\boldsymbol{\gamma}\) conditioning on
 the values from previous iteration \(\Theta^{(t-1)}\), \[
@@ -625,8 +619,8 @@ its application in optimizing the \(l_1\) penalized likelihood function.
 The density function of spike-and-slab mixture double exponential prior
 can be written as \[
 f(\beta|\gamma, s_0, s_1) = \frac{1}{2\left[(1-\gamma)s_0 + \gamma s_1\right]}\exp(-\frac{|\beta|}{(1-\gamma)s_0 + \gamma s_1}),
-\] and \(E(Q_1)\) can be expressed as a likelihood function with \(l_1\)
-penalty \begin{equation}\label{eq:Q1_CD}
+\] and \(E(Q_1)\) can be expressed as a log-likelihood function with
+\(l_1\) penalty \begin{equation}\label{eq:Q1_CD}
 E(Q_1) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) - \sum\limits_{j=1}^p\left[E({S_j}^{-1})|\beta_j|+\sum\limits_{k=1}^{K_j}E({S^{*}}^{-1}_{j})|\beta_{jk}|\right],
 \end{equation} where
 \(S_{j} = (1-\gamma^{0}_{j}) s_0 + \gamma^{0}_{j} s_1\) and
@@ -741,9 +735,9 @@ needs to be calculated to formulate \(E(Q_1)\). As neither
 \(E({S_j}^{-1}|\beta_j, s_0, s_1)\) nor
 \(E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1)\) depends on
 \(\tau^2\)s, they can be derived using Equation (\ref{eq:exp_scale}). On
-the other hand, \(\tau^{2}\) follows a gamma distribution is a conjugate
-prior for the normal variance, and the conditional posterior density of
-\(\tau^{-2}\) is an inverse Gaussian distribution.
+the other hand, \(\tau^{2}\), following gamma distributions, is a
+conjugate prior for the normal variance, and the conditional posterior
+density of \(\tau^{-2}\) is an inverse Gaussian distribution.
 \(E({\tau}^{-2}_{j})\) and \(E({\tau^*}^{-2}_{jk})\) are calculated
 using the closed form equation \begin{align*}
  E({\tau}^{-2}_{j}|S_j, \beta_j) ={S_j}^{-1}/|\beta_j| \qquad E({\tau^*}^{-2}_{jk}|S_j^*, \beta^*_{jk})={S_j^*}^{-1}/|\beta^*_{jk}|,
@@ -796,14 +790,13 @@ augmented data, and augmented variance-covariance matrix following
 \] Using the least squares estimators to update \(\boldsymbol{\beta}\)
 and \(\phi\), we have \begin{align*}
 & \boldsymbol{\beta}^{(t)} = (\boldsymbol{X}_*^T \boldsymbol{\Sigma}^{-1} \boldsymbol{X}_*)^{-1}\boldsymbol{X}_*^T \boldsymbol{\Sigma}^{-1} \boldsymbol{z}_* && \phi^{(t)} = \frac{1}{n}(\boldsymbol{z}_*-X_*\boldsymbol{\beta}^{(t)})^T\boldsymbol{\Sigma}^{-1}(\boldsymbol{z}_*-X_*\boldsymbol{\beta}^{(t)}).&
-\end{align*} To note, the variance-covariance matrixof the coefficient
+\end{align*} To note, the variance-covariance matrix of the coefficient
 estimates variance-covariance matrix can be derived in the EM-IWLS
 algorithm and in turn can be used for statistical inferences, \[
   \text{Var}(\boldsymbol{\beta}^{(t)}) = (\boldsymbol{X}_*^T\boldsymbol{\Sigma}^{-1} \boldsymbol{X}_*)^{-1}\phi^{(t)}.
 \]
 
-Totally, the proposed EM-iterative weighted least square algorithm is
-summarized as follows:
+Totally, the proposed EM-IWLS algorithm is summarized as follows:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi})}
@@ -817,7 +810,7 @@ summarized as follows:
   Iterate over the E-step and M-step until convergence
 
   E-step: calculate \(E(\gamma_{j})\), \(E(\gamma^*_{j})\) and
-  \(E(\tau^{-2}_{j})\), \(E({\tau^*}^{-2}_{jk})\) with estimates of
+  \(E(\tau^{-2}_{j})\), \(E({\tau^*}^{-2}_{jk})\) with the estimates
   \(\Theta^{(t-1)}\) from the previous iteration
 
   M-step:
@@ -857,7 +850,7 @@ on examining different values of spike scale \(s_0\). Instead of the 2-D
 grid, We consider a sequence of \(L\) decreasing values
 \(\{s_0^l\}: 0 < s_0^1 < s_0^2 < \dots < s_0^L < s_1\). Increasing the
 spike scale \(s_0\) tends to include more non-zero coefficients in the
-model. A measure of preference calculated with cross-validations,
+model. A measure of preference calculated with cross-validations (CV),
 e.g.~deviance, area under the curve (AUC), mean squared error, can be
 used to facilitate the selection of a final model. The procedure is
 similar to the Lasso implemented in the widely used R package
@@ -881,27 +874,26 @@ penalty of each functional component are different for extra
 flexibility. Generalized additive models with automatic smoothing,
 hereafter \textit{mgcv}, is one of the most popular models for nonlinear
 effect interpolation and prediction. SB-GAM is the first spike-and-slab
-lasso GAM. We implemented COSSO and adaptive COSSO with R package
+lasso GAM. We implement COSSO and adaptive COSSO with R package
 \texttt{cosso 2.1-1}, generalized additive models with automatic
 smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R package
 \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide
-flexibility to define smoothing functions, and hence used the default
+flexibility to define smoothing functions, and hence use the default
 choices. Both mgcv and proposed models allow customized smoothing
-functions and we chose the cubic regression spline. We controlled the
+functions and we choose the cubic regression spline. We controll the
 dimensionality of each smoothing function, 10 bases, for all different
-choices of smoothing functions. 5-fold cross-validation were used for
-COSSO models, SB-GAM and the proposed models for tuning parameter
-selection based on the default selection criteria. 20 default candidates
-of tuning parameters (\(s_0\) in BHAM, \(\lambda_0\) in SB-GAM) were
-examined for SB-GAM and the proposed models that allow
-user-specification of tuning candidates. All computation was conducted
-on a high-performance 64-bit Linux platform with 48 cores of 2.70GHz
-eight-core Intel Xeon E5-2680 processors and 24G of RAM per core and R
-3.6.2 \citep{R}.
+choices of smoothing functions. We use 5-fold CV with the default
+selection criteria to select the final model for COSSO models, SB-GAM
+and the proposed models. 20 default candidates of tuning parameters
+(\(s_0\) in BHAM, \(\lambda_0\) in SB-GAM) are examined for SB-GAM and
+the proposed models which allow user-specification of tuning candidates.
+All computation was conducted on a high-performance 64-bit Linux
+platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680
+processors and 24G of RAM per core and R 3.6.2 \citep{R}.
 
 Other related methods for high-dimensional GAMs also exist, notably the
 methods of sparse additive models by Ravikumar et al.
-\citep{Ravikumar2009}, stochastic search term selection for GAM
+\citep{Ravikumar2009} and stochastic search term selection for GAM
 \citep{Scheipl2012}. However, we exclude these methods from current
 simulation study because of demonstrated inferior predictive performance
 compared to mgcv and scalability issues with increased number of
@@ -912,31 +904,33 @@ predictors. \citep{Scheipl2013}
 Study}\label{monte-carlo-simulation-study}}
 
 We follow the data generating process described in Bai \citep{Bai2021}.
-We first generated \(n=500\) training data points with
+We first generate \(n=500\) training data points with
 \(p=4, 10, 50, 100, 200\) predictors respectively, where the predictors
 \(X\) are simulated from a multivariate normal distribution
-\(\text{MVN}_{n\times p}(0, I_{P})\). We then simulated the outcome
-\(y\) from two distributions, Gaussian and binomial with the identity
-link and logit link \(g(x) = \log(\frac{x}{1-x})\) respectively. The
-mean of each outcome were simulated via the following function \[
+\(\text{MVN}_{n\times p}(0, I_{P})\). We then simulate the outcome \(y\)
+from two distributions, Gaussian and binomial with the identity link and
+logit link \(g(x) = \log(\frac{x}{1-x})\) respectively. The mean of each
+outcome were simulated via the following function \[
 \mathbb{E}(Y) = g^{-1}(5 \sin(2\pi x_1) - 4 \cos(2\pi x_2 -0.5) + 6(x_3-0.5) - 5(x_4^2 -0.3))
-\] for gaussian and binomial outcomes. Gaussian outcomes required
+\] for Gaussian and binomial outcomes. Gaussian outcomes requires
 specification of dispersion, where we set the dispersion parameter to be
 1. In this data generating process, we have \(x_1, x_2, x_3, x_4\) as
 the active covariates, while the rest covariates are inactive,
 i.e.~\(f_j(x_j) = 0\) for \(j = 4, \dots, p\). Another set of
-independent sample of size \(n_{test}=1000\),(\(x_{new} ,y_{new}\)), are
-created following the same data generating process, serving as the
-testing data. We generated 50 independent pairs of training and testing
-datasets to evaluate the prediction performance of the chosen models,
-where training datasets are used to fit the models and testing datasets
-used to calculate assessment measures.
+independent sample of size \(n_{test}=1000\), are created following the
+same data generating process, serving as the testing data. We generate
+50 independent pairs of training and testing datasets to evaluate the
+prediction performance of the chosen models, where training datasets are
+used to fit the models and testing datasets used to calculate assessment
+measures.
 
-To evaluate the predictive performance of the models, the statistics
-calculated based on the testing dataset, \(R^2\) for Gaussian model,
-area under the curve (AUC) for binomial model, are calculated averaging
-across 50 simulations. The results are tabulated in Table
-\ref{tab:gaus}, \ref{tab:bin_auc}.
+To evaluate the predictive performance of the models, the statistics,
+\(R^2\) for Gaussian model and AUC for binomial model calculated based
+on the testing dataset, are averaged across 50 simulations. Computation
+time for model selection, final model fitting and prediction are
+recorded for all simulations.
+
+The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.
 
 \begin{center}
 Table \ref{tab:gaus} here\\
@@ -963,7 +957,7 @@ BHAM-IWLS performs consistently better than BHAM-CD.
 
 \label{sec:real_data}
 
-In this section, we apply the proposed models BHAM-SSL, fitted with the
+In this section, we apply the proposed models BHAM, fitted with the
 EM-CD algorithm, to analyze two real-world metabolomics datasets where
 the outcomes are binary and continuous respectively. We demonstrate the
 improved prediction performance compared to the other Bayesian
@@ -979,27 +973,27 @@ Table \ref{tab:time_real_data} here
 \subsection{Emory Cardiovascular
 Biobank}\label{emory-cardiovascular-biobank}}
 
-We use the proposed models BHAM-SSL to analyze a metabolic dataset from
-a recently published research \citep{Mehta2020} studying plasma
-metabolomic profile on the three-year all-cause mortality among patients
-undergoing cardiac catheterization. The dataset is publicly available
-via \textit{Dryad} \citep{Mehta2020_data}. It contains in total of 776
-subjects from two cohorts. As there is a large number of non-overlapping
-features among the two cohorts, we use the cohort with larger sample
-size (N=454). There were initially 6796 features in the dataset, which
-is too large to be practically meaningful to analyze. Hence, we
-performed a univariate screening procedure on the features, via GAM
-implemented in \texttt{mgcv}, and chose the the top 200 features with
-smallest p-values. We used 5-knot spline additive models for binary
-outcome using two different models, the proposed BHAM-SSL and the
-SB-GAM. 10-Fold cross-validation(CV) are used to choose the optimal
-tuning parameters of each framework with respect to the default
-selection criterion implemented in the software. Out-of-bag samples were
-used for prediction performance evaluation, where deviance, AUC, Brier
-score defined as \(\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2\),
-and misclassication error defined as
-\(\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)\) were
-calculated. BHAM-CD obtained superior AUC, Brier score, and
+\label{sec:ECB} We use the proposed models BHAM to analyze a metabolic
+dataset from a recently published research \citep{Mehta2020} studying
+plasma metabolomic profile on the three-year all-cause mortality among
+patients undergoing cardiac catheterization. The dataset is publicly
+available via \textit{Dryad} \citep{Mehta2020_data}. It contains in
+total of 776 subjects from two cohorts. As there is a large number of
+non-overlapping features among the two cohorts, we use the cohort with
+larger sample size (N=454). There are initially 6796 features in the
+dataset, which is too large to be practically meaningful to analyze.
+Hence, we perform a univariate screening procedure on the features, via
+GAM implemented in \texttt{mgcv}, and choose the the top 200 features
+with smallest p-values. We use 5-knot spline additive models for binary
+outcome using two different models, the proposed BHAM and the SB-GAM.
+10-Fold CV are used to choose the optimal tuning parameters of each
+framework with respect to the default selection criterion implemented in
+the software. Out-of-bag samples are used for prediction performance
+evaluation, where deviance, AUC, Brier score defined as
+\(\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2\), and
+misclassication error defined as
+\(\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)\) are
+calculated. BHAM-CD obtains superior AUC, Brier score, and
 misclassification error in the out-of-bag samples compared to SB-GAM
 (Table \ref{tab:ECB_res}).
 
@@ -1011,30 +1005,30 @@ Table \ref{tab:ECB_res} here
 \subsection{Weight Loss Maintenance
 Cohort}\label{weight-loss-maintenance-cohort}}
 
-We use the proposed models BHAM-SSL to analyze metabolomics data from a
+We use the proposed models BHAM to analyze metabolomics data from a
 recently published study \citep{Bihlmeyer2021} on the association
 between metabolic biomarkers and weight loss, where the dataset is
 publicly available \citep{Bihlmeyer2021_data}. In this analysis, we
-primarily focused on the analysis of one of the three studies included,
-weight loss maintenance (WLM) cohort \citep{Svetkey2008}, due to the
+primarily focuse on the analysis of one of the three studies included,
+weight loss maintenance cohort \citep{Svetkey2008}, due to the
 drastically different intervention effects. In the dataset, 765
 metaboliltes in baseline plasma collected were profiled using liquid
 chromatography mass spectrometry. Quality control and natural log
-transformation were performed during metabolites data preparation. The
-outcome of interest was standardized percent change in insulin
+transformation are performed during metabolites data preparation. The
+outcome of interest are standardized percent change in insulin
 resistance, and hence modeled using a Gaussian model. After removing
-missing datapoints and addressing outliers in the data, there were
+missing datapoints and addressing outliers in the data, there are
 \(p\)=237 features remaining in the analysis. 5-Knot spline additive
-models for the gaussian outcome are constructed using two different
-models, the proposed BHAM-SSL and the SB-GAM. 10-Fold
-cross-validation(CV) are used to choose the optimal tuning parameters of
-each framework with respect to the default selection criterion
-implemented in the software. Out-of-bag samples were used for prediction
-performance evaluation, where deviance, \(R^2\), mean squared error
-(MSE) defined as \(\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2\),
-and mean absolute error (MAE) defined as
-\(\frac{1}{n}\sum\limits^{n}_{i=1}|y_i - \hat y_i|\) were calculated.
-BHAM-CD obtained superior R2, MSE, and MAE in the out-of-bag samples
+models for the Gaussian outcome are constructed using two different
+models, the proposed BHAM and the SB-GAM. 10-Fold CV are used to choose
+the optimal tuning parameters of each framework with respect to the
+default selection criterion implemented in the software. Out-of-bag
+samples are used for prediction performance evaluation, where deviance,
+\(R^2\), mean squared error (MSE) defined as
+\(\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2\), and mean
+absolute error (MAE) defined as
+\(\frac{1}{n}\sum\limits^{n}_{i=1}|y_i - \hat y_i|\) are calculated.
+BHAM-CD obtains superior \(R^2\), MSE, and MAE in the out-of-bag samples
 compared to SB-GAM (Table \ref{tab:WLM_res}).
 
 \begin{center}
@@ -1049,14 +1043,10 @@ additive model using Bayesian hierarchical priors, particularly the
 proposed spike-and-slab spline prior for bi-level functional selection.
 Meanwhile, we introduced two optimization based algorithms for model
 fitting. The algorithms can be easily scale up to address
-high-dimensional data analysis in a computational efficient manner, but
-also provide naive inferential supports for many commonly used
-hierarchical priors, e.g.~t-distribution, double exponential
-distribution, mixture t distribution, and mixture double exponential
-distribution, in the analyses that the sparse assumption is weak or not
-necessary. Via simulations, we demonstrated that the proposed model
-provides as good, if not better, prediction performance compared to some
-state-of-the-art non-linear modeling devices.
+high-dimensional data analysis in a computational efficient manner. Via
+simulations, we demonstrated that the proposed model provides as good,
+if not better, prediction performance compared to some state-of-the-art
+non-linear modeling devices.
 
 The proposed model shares many commonality with an high-dimensional
 Bayesian GAM, SB-GAM \citep{Bai2021}, independently developed around the
@@ -1078,7 +1068,12 @@ smoothing function specification, we deploy the same programming grammar
 as in the state-of-the-art package \texttt{mgcv}, in contrast to
 previous tools where smoothing functions are limited to the default
 ones. Ancillary functions are provided for model specification in
-high-dimensional settings, curve plotting and functional selection.
+high-dimensional settings, curve plotting and functional selection. In
+addition, in \texttt{BHAM}, we streamline the model fitting algorithms
+to support other popular Bayesian hierarchical prior for the smoothing
+functions, such as Student's T distribution, double exponential
+distribution, mixture normal and T distribution's. These priors could be
+helpful when the sparse assumption is weak or not necessary.,
 
 There are some improvements possible for the proposed models. First of
 all, the proposed model achieves a bi-level selection via the two-part
@@ -1088,23 +1083,38 @@ selected, but the linear component is not. We currently address it
 analytically by including the linear component in the model when
 non-linear component is selected. Another possible solution is to impose
 a dependent structure of \(\gamma_{j}^*\) on \(\gamma_{j^{0}}\),
-i.e.~\(\gamma_j^*|\gamma_{j}^{0}, \theta_j\). Secondly, while the
-proposed model addresses a great deal of analytic problem, analyzing the
-time-to-event outcome remains unsolved. Our current effort resides on
-expanding GAM to Cox proportional hazard models. An naive approach would
-be convert a time-to-event outcome to a Poisson outcome following
-Whitehead \citep{Whitehead1980}. However, it would be more efficient to
-directly fit Cox models via penalized pseudo likelihood function
-\citep{Simon2011}. Last but not least, we plan to expand the proposed
-model to integrate external biology information. The main motivation for
-the integrative model is that biologically informed grouping of weak
-effects increases the power of detecting true associations between
-features and the outcome \citep{Peterson2016}, and stabilizes the
-analysis results for reproducibility purpose. Such integration can be
-achieved by setting up a structural hyperprior on the inclusion
+i.e.~\(\gamma_j^*|\gamma_{j}^{0}, \theta_j\). Secondly, the
+computational time for fitting a BHAM model with EM-IWLS algorithms can
+be improved. Current implementation of the EM-IWLS algorithm jointly
+updates all coefficients in each iteration, which requires a lot
+computation resources. This jointly updating procedure can be enhanced
+by adapting a backfitting step \citep{Hastie1987} where each smoothing
+function are updated individually. Thirdly, when using the proposed
+model in real data analysis where a screening procedure is implemented
+before joint predictive modeling. we recommend to include the screening
+procedure in the cross-validation during model selection.
+\citep{Friedman2017} For the sake of model comparison, we fit the models
+using the same pool of predictors in Section \ref{sec:ECB}.
+
+Our future efforts direct to modeling survival outcomes and integrative
+analysis. While the proposed model addresses a great deal of analytic
+problem, analyzing the time-to-event outcome remains unsolved. An naive
+approach would be convert a time-to-event outcome to a Poisson outcome
+following Whitehead \citep{Whitehead1980}. However, it would be more
+efficient to directly fit Cox models via penalized pseudo likelihood
+function \citep{Simon2011}. Meanwhile, with growing understanding of
+biological structure within -omics field, it is appealing to integrate
+external biology information in the modeling process. The main
+motivation for integrative models is that biologically informed grouping
+of weak effects increases the power of detecting true associations
+between features and the outcome \citep{Peterson2016}, and stabilizes
+the analysis results for reproducibility purpose. Such integration can
+be achieved by setting up a structural hyperprior on the inclusion
 indicator of the smoothing function null space
 \(\boldsymbol{\gamma}^0\). The similar strategy has been used in Ferrari
 and Dunson \citep{Ferrari2020}.
+
+\newpage
 
 \bibliography{bibfile.bib}
 
@@ -1159,7 +1169,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 
 \end{tikzpicture}
 
-\caption{Directed acyclic graph of BHAM-SSL model with parameter expansion. Elliposes are stochastic nodes, rectangles and are deterministic nodes. }
+\caption{Directed acyclic graph of the proposed Bayesian hierarchical additive model with parameter expansion. Elliposes are stochastic nodes, rectangles and are deterministic nodes. }
 \label{fig:SSprior}
 \end{figure}
 
@@ -1182,8 +1192,6 @@ P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\
 \label{tab:gaus}
 \end{table}
 
-\newpage
-
 \begin{table}[ht]
 \centering
 \begin{tabular}{rllllll}
@@ -1202,93 +1210,28 @@ P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\
 \end{table}
 
 \newpage
-\providecommand{\docline}[3]{\noalign{\global\setlength{\arrayrulewidth}{#1}}\arrayrulecolor[HTML]{#2}\cline{#3}}
 
-\setlength{\tabcolsep}{2pt}
-
-\renewcommand*{\arraystretch}{1.5}
-
-\begin{longtable}[c]{|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}}
-
-\caption{The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.\label{tab:time_sim}}\\
-
-\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}-}
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Distribution}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{P}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{BHAM-IWLS}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{BHAM-CD}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{COSSO}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Adaptive\ COSSO}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{mgcv}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{SB-GAM}}} \\
-
-\noalign{\global\setlength{\arrayrulewidth}{2pt}}\arrayrulecolor[HTML]{666666}\cline{1-8}
-
-\endfirsthead
-
-\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}-}
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Distribution}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{P}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{BHAM-IWLS}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{BHAM-CD}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{COSSO}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Adaptive\ COSSO}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{mgcv}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{SB-GAM}}} \\
-
-\noalign{\global\setlength{\arrayrulewidth}{2pt}}\arrayrulecolor[HTML]{666666}\cline{1-8}\endhead
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{5.88\ (1.01)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{6.96\ (1.76)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{2.97\ (0.82)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{4.60\ (2.32)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{0.18\ (0.04)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{343.24\ (88.37)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{10}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{14.01\ (1.86)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{7.65\ (1.25)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{7.95\ (2.70)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{10.01\ (3.56)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3.51\ (12.03)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{543.13\ (133.51)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{50}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{185.26\ (17.44)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{53.83\ (6.26)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{109.72\ (24.31)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{128.13\ (23.26)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{670.01\ (151.28)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{1630.42\ (193.61)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{100}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{1106.93\ (356.73)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{48.41\ (5.84)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{715.15\ (170.55)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{718.63\ (193.53)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{-}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{2783.99\ (235.31)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\multirow[c]{-5}{*}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Binomial}}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{200}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{6923.62\ (1911.59)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{99.98\ (7.05)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{5572.51\ (1295.18)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{4958.69\ (1970.46)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{-}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{4780.10\ (488.66)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{4.22\ (1.51)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{2.51\ (0.20)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{0.79\ (0.11)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{0.67\ (0.07)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{0.05\ (0.00)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{36.02\ (3.02)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{10}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{17.59\ (5.77)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{33.32\ (3.50)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3.49\ (0.70)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3.47\ (0.71)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{0.32\ (0.34)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{72.93\ (9.52)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{50}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{329.83\ (44.57)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{334.53\ (22.33)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{35.54\ (9.15)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{35.44\ (9.02)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{73.33\ (71.24)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{373.42\ (34.93)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{100}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{1706.19\ (225.92)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{446.98\ (79.31)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{150.58\ (46.72)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{152.82\ (45.07)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{-}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{684.05\ (67.80)}}} \\
-
-
-
-
-
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\multirow[c]{-5}{*}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{Gaussian}}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedleft}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{200}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{16379.27\ (4825.56)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{303.73\ (87.27)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{591.11\ (147.88)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{569.92\ (107.45)}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{-}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\raggedright}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{1314.12\ (137.85)}}} \\
-
-\noalign{\global\setlength{\arrayrulewidth}{2pt}}\arrayrulecolor[HTML]{666666}\cline{1-8}
-
-
-
-\end{longtable}
+\begin{sidewaystable}[!h]
+\centering
+\begin{tabular}{lrllllll}
+  \hline
+Distribution & P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\ 
+  \hline
+Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (0.04) & 343.24 (88.37) \\ 
+  Binomial & 10.00 & 14.01 (1.86) & 7.65 (1.25) & 7.95 (2.70) & 10.01 (3.56) & 3.51 (12.03) & 543.13 (133.51) \\ 
+  Binomial & 50.00 & 185.26 (17.44) & 53.83 (6.26) & 109.72 (24.31) & 128.13 (23.26) & 670.01 (151.28) & 1630.42 (193.61) \\ 
+  Binomial & 100.00 & 1106.93 (356.73) & 48.41 (5.84) & 715.15 (170.55) & 718.63 (193.53) & - & 2783.99 (235.31) \\ 
+  Binomial & 200.00 & 6923.62 (1911.59) & 99.98 (7.05) & 5572.51 (1295.18) & 4958.69 (1970.46) & - & 4780.10 (488.66) \\ 
+  Gaussian & 4.00 & 4.22 (1.51) & 2.51 (0.20) & 0.79 (0.11) & 0.67 (0.07) & 0.05 (0.00) & 36.02 (3.02) \\ 
+  Gaussian & 10.00 & 17.59 (5.77) & 33.32 (3.50) & 3.49 (0.70) & 3.47 (0.71) & 0.32 (0.34) & 72.93 (9.52) \\ 
+  Gaussian & 50.00 & 329.83 (44.57) & 334.53 (22.33) & 35.54 (9.15) & 35.44 (9.02) & 73.33 (71.24) & 373.42 (34.93) \\ 
+  Gaussian & 100.00 & 1706.19 (225.92) & 446.98 (79.31) & 150.58 (46.72) & 152.82 (45.07) & - & 684.05 (67.80) \\ 
+  Gaussian & 200.00 & 16379.27 (4825.56) & 303.73 (87.27) & 591.11 (147.88) & 569.92 (107.45) & - & 1314.12 (137.85) \\ 
+   \hline
+\end{tabular}
+\caption{The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.} 
+\label{tab:time_sim}
+\end{sidewaystable}
 
 \newpage
 
@@ -1334,7 +1277,7 @@ P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\
 
 
 
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{WLM}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{483.1}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{5.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{488.1}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,116.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{32.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,148.7}}} \\
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{WLM}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{483.1}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{7.6}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{490.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,116.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{32.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,148.7}}} \\
 
 \noalign{\global\setlength{\arrayrulewidth}{2pt}}\arrayrulecolor[HTML]{666666}\cline{1-7}
 

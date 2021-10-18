@@ -32,6 +32,7 @@ output:
 header-includes: 
   - \usepackage{tikz}
   - \usepackage{pgfplots}
+  - \usepackage{pdflscape}
 ---
 
 <!-- \usepackage{tikz} -->
@@ -90,6 +91,8 @@ tar_load(tab_time)
 ```{r child="05-Discussion.Rmd"}
 ```
 
+\newpage
+
 \bibliography{bibfile.bib}
 
 \newpage
@@ -143,7 +146,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 
 \end{tikzpicture}
 
-\caption{Directed acyclic graph of BHAM-SSL model with parameter expansion. Elliposes are stochastic nodes, rectangles and are deterministic nodes. }
+\caption{Directed acyclic graph of the proposed Bayesian hierarchical additive model with parameter expansion. Elliposes are stochastic nodes, rectangles and are deterministic nodes. }
 \label{fig:SSprior}
 \end{figure}
 
@@ -177,9 +180,6 @@ tab_gaus %>%
 ```
 
 
-\newpage
-
-
 ```{r, results = "asis"}
 tab_binom$mgcv[4] <- "-"
 tab_binom$mgcv[5] <- "-"
@@ -198,19 +198,31 @@ tab_binom %>%
 ```
 
 \newpage
-```{r}
+<!-- \begin{landscape} -->
+```{r results = "asis"}
 tab_time %>% 
   select(dist, p, `BHAM-IWLS`,`BHAM-CD`, cosso, acosso, mgcv, `SB-GAM`) %>% 
   rename(Distribution = dist,
          P = p,
          COSSO = cosso,
          `Adaptive COSSO` = acosso) %>% 
+   xtable(
+    caption = "The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    label = "tab:time_sim",
+    booktabs = TRUE
+  ) %>% 
+  print(comment = FALSE, include.rownames = FALSE,
+       floating.environment = "sidewaystable",# caption.placement = "top"
+       table.placement = "!h"
+        )
   
-  flextable::flextable() %>% 
-    merge_v(j = 1) %>% 
-  flextable::set_caption(caption = "The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.\\label{tab:time_sim}")
+  # flextable::flextable() %>% 
+    # merge_v(j = 1) %>% 
+  # width(j=1, width=1) %>% 
+  # autofit() %>%
+  # flextable::set_caption(caption = "The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.\\label{tab:time_sim}")
 ```
-
+<!-- \end{landscape} -->
 \newpage
 
 ```{r}
@@ -263,5 +275,5 @@ rbind(
         )
   # flextable() %>% 
   # flextable::autofit() %>% 
-  # flextable::set_caption(caption = "Measures of optimal BHAM-SSL and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
+  # flextable::set_caption(caption = "Measures of optimal BHAM and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
 ```
