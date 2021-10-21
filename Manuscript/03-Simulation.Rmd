@@ -24,8 +24,6 @@ Gaussian outcomes requires specification of dispersion, where we set the dispers
 To evaluate the predictive performance of the models, the statistics, $R^2$ for Gaussian model and AUC for binomial model calculated based on the testing dataset, are averaged <!--and deviance are calculated for Poisson model,--> across 50 simulations. Computation time for model selection, final model fitting and prediction are recorded for all simulations.
 
 
-
-The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.
 \begin{center}
 Table \ref{tab:gaus} here\\
 Table \ref{tab:bin_auc} here\\
@@ -47,8 +45,7 @@ targets::tar_load(poisson_plot)
 poisson_plot
 ```
 
-The predictive performances have a consistent pattern across the three distributions of outcomes. Across all the scenarios, COSSO and adaptive COSSO have the least favorable performance among the applicable methods examined. To note, mgcv doesn't support high-dimensional analysis when the number of coefficients are greater than the sample size. mgcv predicts well when $p$ is small or moderate (p = 4, 10), and deteriorate when the number of predictors increase. Among the three fast-computing Bayesian hierarchical models, the proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when the dimension of are small, moderate, and high. However, in the hyper high dimensional case, SB-GAM has better performance. Among the proposed methods, BHAM-IWLS performs consistently better than BHAM-CD.
-
+The predictive performances have a consistent pattern across the two distributions of outcomes. Across all the scenarios, COSSO and adaptive COSSO have the least favorable performance among the applicable methods examined (See Table \ref{tab:gaus} and \ref{tab:bin_auc}). To note, mgcv doesn't support high-dimensional analysis, i.e. the number of coefficients are greater than the sample size, and hence not evaluated when $p=100, 200$. mgcv predicts well when $p$ is small or moderate ($p = 4, 10$), and deteriorate when the number of predictors increase. Among the three fast-computing Bayesian hierarchical models, the proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when the dimension of are moderate (p=4, 10, 50). Particularly, BHAM-IWLS performs as good as mgcv if not better. However, in high dimensional case where we mimic the situation the signals are extremely sparse, SB-GAM has better performance than the proposed method. However, the BHAM-CD has extreme computational advantage over SB-GAM (see Table \ref{tab:time_sim}) without sacrificing much of the prediction accuracy. 
 
 
 

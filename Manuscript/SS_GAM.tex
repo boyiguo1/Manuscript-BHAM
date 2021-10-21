@@ -930,25 +930,27 @@ on the testing dataset, are averaged across 50 simulations. Computation
 time for model selection, final model fitting and prediction are
 recorded for all simulations.
 
-The results are tabulated in Table \ref{tab:gaus}, \ref{tab:bin_auc}.
-
 \begin{center}
 Table \ref{tab:gaus} here\\
 Table \ref{tab:bin_auc} here\\
 \end{center}
 
-The predictive performances have a consistent pattern across the three
+The predictive performances have a consistent pattern across the two
 distributions of outcomes. Across all the scenarios, COSSO and adaptive
 COSSO have the least favorable performance among the applicable methods
-examined. To note, mgcv doesn't support high-dimensional analysis when
-the number of coefficients are greater than the sample size. mgcv
-predicts well when \(p\) is small or moderate (p = 4, 10), and
-deteriorate when the number of predictors increase. Among the three
-fast-computing Bayesian hierarchical models, the proposed models,
-BHAM-IWLS and BHAM-CD predicts better than SB-GAM when the dimension of
-are small, moderate, and high. However, in the hyper high dimensional
-case, SB-GAM has better performance. Among the proposed methods,
-BHAM-IWLS performs consistently better than BHAM-CD.
+examined (See Table \ref{tab:gaus} and \ref{tab:bin_auc}). To note, mgcv
+doesn't support high-dimensional analysis, i.e.~the number of
+coefficients are greater than the sample size, and hence not evaluated
+when \(p=100, 200\). mgcv predicts well when \(p\) is small or moderate
+(\(p = 4, 10\)), and deteriorate when the number of predictors increase.
+Among the three fast-computing Bayesian hierarchical models, the
+proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when
+the dimension of are moderate (p=4, 10, 50). Particularly, BHAM-IWLS
+performs as good as mgcv if not better. However, in high dimensional
+case where we mimic the situation the signals are extremely sparse,
+SB-GAM has better performance than the proposed method. However, the
+BHAM-CD has extreme computational advantage over SB-GAM (see Table
+\ref{tab:time_sim}) without sacrificing much of the prediction accuracy.
 
 ~
 
@@ -961,9 +963,8 @@ In this section, we apply the proposed models BHAM, fitted with the
 EM-CD algorithm, to analyze two real-world metabolomics datasets where
 the outcomes are binary and continuous respectively. We demonstrate the
 improved prediction performance compared to the other Bayesian
-hierarchical additive model, SB-GAM \citep{Bai2021}. Computation time
-for cross-validation and optimal model fitting steps are recorded and
-presented in Table \ref{tab:time_real_data}.
+hierarchical additive model, SB-GAM \citep{Bai2021}, while being
+computationally efficient (see Table \ref{tab:time_real_data}).
 
 \begin{center}
 Table \ref{tab:time_real_data} here
@@ -995,7 +996,7 @@ misclassication error defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)\) are
 calculated. BHAM-CD obtains superior AUC, Brier score, and
 misclassification error in the out-of-bag samples compared to SB-GAM
-(Table \ref{tab:ECB_res}).
+(see Table \ref{tab:ECB_res}).
 
 \begin{center}
 Table \ref{tab:ECB_res} here
@@ -1029,7 +1030,7 @@ samples are used for prediction performance evaluation, where deviance,
 absolute error (MAE) defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}|y_i - \hat y_i|\) are calculated.
 BHAM-CD obtains superior \(R^2\), MSE, and MAE in the out-of-bag samples
-compared to SB-GAM (Table \ref{tab:WLM_res}).
+compared to SB-GAM (see Table \ref{tab:WLM_res}).
 
 \begin{center}
 Table \ref{tab:WLM_res} here
