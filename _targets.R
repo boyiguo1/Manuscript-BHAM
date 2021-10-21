@@ -23,7 +23,7 @@ tar_plan(
   #  Simulations Studies -----------------------------------------------------
   #* Main Simulation Study ####
   tar_files(sim_main_path,
-            list.files("~/Downloads/main/", recursive = T, full.names = T)),
+            list.files("Simulation/main/", recursive = T, full.names = T)),
 
   success_rate = create_success_rate_table(sim_main_path),
   # 
