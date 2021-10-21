@@ -166,14 +166,14 @@ tar_plan(
   # measure.bh(bglm_mdl_fnl),
   WLM_bamlasso_var = bamlasso_var_selection(WLM_bamlasso_fnl),
   
-  # ** BHAM-IWLS --------------------------------------------------------------
-  WLM_bgam_raw = bgam(out_HOMA_std~.-out_HOMA_std, 
-                      data = data.frame(out_HOMA_std =  WLM_train_dat$out_HOMA_std, WLM_bgam_dat$train_dat),
-                      family = "gaussian",
-                              prior = mde(),
-                              group = WLM_bgam_dat$group),
-  
-  WLM_bgam_cv = tune.bgam(WLM_bgam_raw,s0 = seq(0.005, 0.1, 0.01)),
+  # # ** BHAM-IWLS --------------------------------------------------------------
+  # WLM_bgam_raw = bgam(out_HOMA_std~.-out_HOMA_std, 
+  #                     data = data.frame(out_HOMA_std =  WLM_train_dat$out_HOMA_std, WLM_bgam_dat$train_dat),
+  #                     family = "gaussian",
+  #                             prior = mde(),
+  #                             group = WLM_bgam_dat$group),
+  # 
+  # WLM_bgam_cv = tune.bgam(WLM_bgam_raw,s0 = seq(0.005, 0.1, 0.01)),
   
   # ** SB_GAM ---------------------------------------------------------------
   
