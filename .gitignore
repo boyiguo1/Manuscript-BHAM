@@ -42,7 +42,7 @@ _targets/
 *.html
 
 # renv via capsule
-renv/
+# renv/
 
 
 # Customized
