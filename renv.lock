@@ -1051,9 +1051,7 @@
     "sparseGAM": {
       "Package": "sparseGAM",
       "Version": "1.0.99",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "bce8f6b5853ab7c0c34a7760d8ad6ab3"
+      "Source": "renv/local/sparseGAM_1.0.99.tar.gz"
     },
     "stringi": {
       "Package": "stringi",
