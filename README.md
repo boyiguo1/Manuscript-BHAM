@@ -19,4 +19,8 @@ This is the repository for the manuscript _Spike-and-Slab Generalized Additive M
     * To root down the difference, check out `cv.SSGL.output` in the function `cv.SSGL`
     * The modified version (v1.0.99) is located at `renv\local\sparseGAM_1.0.99.tar.gz`
 
-  * For Windows users with limited choices of compilers, there might be packages needs compilation from source, e.g. `xfun` package. In this case, I encourage you to install the binary version of the package locally and use `renv::hydrate()` to cache the necessary packages from your library.
+  * For Windows users with limited choices of compilers, there might be packages needs compilation from source, e.g. `xfun` package. In this case, I encourage you to install the binary version of the package locally and use `renv::hydrate()` before `renv::restore()`to cache the necessary packages from your library.
+  ```
+  renv::hydrate()
+  renv::restore()
+  ```
