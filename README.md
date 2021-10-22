@@ -2,12 +2,11 @@
 
 This is the repository for the manuscript _Spike-and-Slab Generalized Additive Models and Scalable Algorithms for High-Dimensional Data_. The repository is set up using the R workflow package [`targets`](https://cran.r-project.org/web/packages/targets/index.html), and can be reproduced easily via `targets` syntax. 
 
-## Reproducibility
+## How to run
 
-To reproduce the manuscript, including real data analyses, tables and figures, simply run
-```
-targets::tar_make()
-``` 
+1. Install the necessary workflow packages [`targets`](https://cran.r-project.org/web/packages/targets/index.html) and [`renv`](https://rstudio.github.io/renv/articles/renv.html) if you don't already have
+2. Open the R console and call `renv::restore()` to install the required R packages. Please give permission to install the necessary packages. This will mirror the version of packages used in the creation of the manuscript exactly.
+3. call the `tar_make()` function to run the pipeline.
 
 ## Notes
   * The repo contains the raw results for the simulations described in the manuscript. The simulation computation was conducted separately on [a high-performance super computer](https://www.uab.edu/it/home/research-computing/cheaha), and hence not included in the current workflow. You can find the code to replicate the simulation process in the folder [`Simulation\Code`](https://github.com/boyiguo1/Manuscript-Spike_Slab_HD_GAM/tree/main/Simulation/Code).
