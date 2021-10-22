@@ -6,7 +6,8 @@ library(dotenv)
 tar_option_set(
   packages = c("tidyverse", "dplyr", "rticles", "gtsummary", "mgcv", #"here", 
                "broom", "unglue", "knitr", "ggpubr", "xtable", "janitor", 
-               "flextable", "BHAM", "BhGLM", "sparseGAM", "cosso", "glmnet"
+               "flextable", "BHAM", "BhGLM", "sparseGAM", "cosso", "glmnet",
+               "rmarkdown"
   ),
   imports = c( "BHAM", "BhGLM", "sparseGAM")
 )
