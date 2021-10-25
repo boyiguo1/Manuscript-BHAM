@@ -1,4 +1,7 @@
 source("renv/activate.R")
+
+if(!require(conflicted)) install.packages("conflicted")
+
 library(conflicted)
 
 conflict_prefer("filter", "dplyr")
