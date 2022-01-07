@@ -1,0 +1,19 @@
+We sincerely thank you for the valuable comments. We have carefully addressed all the comments. A point-by-point response is given below, where each of your comments is quoted in _italics_. __For a summary of major changes, please see our response to the Associate Editor.__
+
+\bigskip
+
+_Comments to the Authors_
+
+_In this paper, the authors proposed a novel Bayesian hierarchical generalized additive model (BHAM) for high dimensional data analysis. Specifically, they incorporated smoothing penalties in the model via re-parameterization of smoothing function to avoid overly shrinking basis function coefficients. Incorporating the smoothing penalty allows the separation of the linear space of a smoothing function from the nonlinear space. Then they added a new two-part spike-and-slab spline prior on the smoothing functions for bi-level selection such that the linear and nonlinear spaces of smoothing functions can be selected separately. Two scalable optimization algorithms, EM-Coordinate Descent (EM-CD) algorithm and EM-Iterative weighted least square (EM-IWLS) algorithm, are developed and implemented._
+
+_The proposed framework, BHAM, provides computational convenience using independent mixture double exponential distribution during model fitting by using optimization algorithms instead of intensive sampling algorithms and addresses the incapability of bi-level selection._
+
+_Here are some comments._
+
+_1. In the real data study, it is very important to establish the correlation between response variables and explanatory variables with appropriate models. The authors should add the comparison of linear models to illustrate that whether using non-linear was better. In addition, except expertise knowledge, are there metrics to judge whether a model is suitable for building model with non-linear part?_
+
+_2. In Weight Loss Maintenance Cohort, R2 was very small by the two GAM methods.  I may think whether the data pretreatment and noise reduction process is appropriate._
+
+_3. In the paper, several priors were mentioned. How to choose the prior in different situations? What is the advantage of the spike-and-slab double exponential prior?_
+
+_4. How to detect the necessary before using the proposed model._

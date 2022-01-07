@@ -1,0 +1,62 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+\hrule
+\vspace*{0.02cm}
+\hrule
+\vspace*{1cm}
+\Large __Response to Reviewers' Comments__
+\vspace*{1cm}
+\hrule
+\vspace*{0.5cm}
+\begin{tabular}{llp{11.5cm}}
+Manuscript No. & : & SIM-21-0956 \\
+Title & : & Spike-and-Slab Generalized Additive Models and Scalable Algorithms for High-Dimensional Data\\
+\end{tabular}
+\vspace*{0.5cm}
+\hrule
+\vspace*{0.02cm}
+\hrule
+
+\vspace*{1cm}
+
+
+First, we would like to thank you for handling this paper and thank the AE and both reviewers for their valuable comments. We have carefully addressed all the comments. Point-by-point responses are given below, where each comment is quoted in _italics_.
+
+\bigskip
+
+# Response to Associate Editor
+_Comments to the authors:_
+
+_Please follow carefully the comments, criticisms and suggestions of the three referees._
+
+__Response__: We summarize the major changes of our manuscript as a response to address the comments from the referees:
+\begin{itemize}
+    \item xxx
+    \item yyy
+    \item zzz
+\end{itemize}
+
+\newpage
+# Response to Reviewer \#1
+```{r reviewer1, child="01-reviewer_1.Rmd"}
+```
+
+
+\newpage
+# Response to Reviewer \#2
+```{r reviewer2, child="02-reviewer_2.Rmd"}
+```
+
+\newpage
+# Response to Reviewer \#4
+```{r reviewer4, child="03-reviewer_4.Rmd"}
+```
+
+\newpage
+# Reference
