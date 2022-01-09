@@ -7,24 +7,43 @@ _Comments to the Authorss_
 _This paper introduces a new way to impose group sparse regularization in high-dimensional generalized additive models (GAMs). Specifically, this work proposes a re-parametrization, which allows separating the predictor space into linear/nonlinear ones. A spike-and-slab LASSO prior is then imposed on the coefficients for the re-parametrized predictors. The authors further uses EM algorithm to fit this model, where the M-step can be solved with either coordinate-descent or iteratively reweighted least squares. Simulation results and metabolomics data analysis are presented._
 
 _The authors claim that the proposed model has the advantage of_
-_(1) does not induce excess shrinkage while still estimating a smooth function,_
-_(2) allow us to deal with linear/non-linear terms separately and understand if nonlinear terms are necessary_
-_(3) more scalable than previous algorithms which require MCMC for model fitting_
+
+  1. _does not induce excess shrinkage while still estimating a smooth function,_
+  2. _allow us to deal with linear/non-linear terms separately and understand if nonlinear terms are necessary_
+  3. _more scalable than previous algorithms which require MCMC for model fitting_
 
 _While targeting an important question, the novelty of the solution provided by the authors seem a little bit limited. In addition, the key and most significant step is the re-parametrization, yet there are a few points which I do not completely understand and might need further clarification from the authors:_
+
 _(1) It seems that after re-parametrization, the authors do not further consider the smoothing penalty (Equation (1)) and only include the spike-and-slab LASSO prior. I wonder how does this affect the smoothness of the fitted function and how does it resolves the issue of excess shrinkage._
+
+__Response__:
+\bigskip
+
 _(2) I was wondering why the authors choose spike-and-slab LASSO prior in particular. It is claimed in the paper that this prior yields a fast coordinate-descent algorithm, yet coordinate-descent seems also available to other priors as well. I think more discussion on the properties of SSL should be helpful here._
+
+__Response__:
+\bigskip
+
 _(3) Since the authors have already separated linear and nonlinear effects, and we might expect linear effects to enter the model first, I wonder why the authors does not incorporate this explicitly into their model by, say, changing the prior for gamma’s to impose different sparsity._
 
+__Response__:
+\bigskip
 
-_Besides, some writing of this paper should better be polished and some typos corrected. For example:
-(1) In page 3, line 31, what does "in the prior density function" mean?
-(2) Same page, line 43 to line 45, the notation here is a little bit confusing.
-(3) Page 5, line 17-18, how shall we understand this statement and any explanations?
-(4) Page 5 line 37 and page 6 line 21-22, the implication seems to be ‘SSL is not a continuous prior’, which is not true.
-(5) Page 6, line 16, missing a period at the end.
-(6) Page 6, line 30, there are duplicate "the’".
-(7) Page 6, line 56, ‘converge’ should be ‘converges’.
-(8) Page 9, line 24-25, there seems to be duplicated "variance-covariance matrix".
-(9) page 11, line 8, there are some problems with the table reference.
-(10) In section 4, what is definition for the "deviance"?_
+\em
+Besides, some writing of this paper should better be polished and some typos corrected. For example:
+\begin{enumerate}
+\item In page 3, line 31, what does "in the prior density function" mean?
+\item Same page, line 43 to line 45, the notation here is a little bit confusing.
+\item Page 5, line 17-18, how shall we understand this statement and any explanations?
+\item Page 5 line 37 and page 6 line 21-22, the implication seems to be ‘SSL is not a continuous prior’, which is not true.
+\item Page 6, line 16, missing a period at the end.
+\item Page 6, line 30, there are duplicate "the’".
+\item Page 6, line 56, ‘converge’ should be ‘converges’.
+\item Page 9, line 24-25, there seems to be duplicated "variance-covariance matrix".
+\item page 11, line 8, there are some problems with the table reference.
+\item In section 4, what is definition for the "deviance"?
+\end{enumerate}
+\em
+
+__Response__:
+\bigskip

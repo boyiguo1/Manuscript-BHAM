@@ -8,12 +8,26 @@ _In this paper, the authors proposed a novel Bayesian hierarchical generalized a
 
 _The proposed framework, BHAM, provides computational convenience using independent mixture double exponential distribution during model fitting by using optimization algorithms instead of intensive sampling algorithms and addresses the incapability of bi-level selection._
 
+\bigskip
+
 _Here are some comments._
 
 _1. In the real data study, it is very important to establish the correlation between response variables and explanatory variables with appropriate models. The authors should add the comparison of linear models to illustrate that whether using non-linear was better. In addition, except expertise knowledge, are there metrics to judge whether a model is suitable for building model with non-linear part?_
 
+__Response__:
+
+\bigskip
+
 _2. In Weight Loss Maintenance Cohort, R2 was very small by the two GAM methods.  I may think whether the data pretreatment and noise reduction process is appropriate._
+
+__Response__:
+\bigskip
 
 _3. In the paper, several priors were mentioned. How to choose the prior in different situations? What is the advantage of the spike-and-slab double exponential prior?_
 
+__Response__:
+\bigskip
+
 _4. How to detect the necessary before using the proposed model._
+
+__Response__:
