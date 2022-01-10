@@ -8,6 +8,8 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{pdflscape}
+\usepackage{color}
+\usepackage{soul}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{colortbl}
@@ -87,6 +89,7 @@ Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility}
 \newcommand{\pr}{\text{Pr}}
 \newcommand{\repa}{\text{repa}}
 \newcommand{\simiid}{\overset{\text{iid}}{\sim}}
+\newcommand{\bg}[1]{\textcolor{red}{#1}}
 
 \hypertarget{introduction}{%
 \section{Introduction}\label{introduction}}
@@ -422,18 +425,25 @@ distribution of one trial. The two indicators of the \(j\)th predictor,
 \(\theta_j\), \[
 \begin{aligned}
 &\gamma_{j} | \theta_j \sim Bin(1, \theta_j) & & 
-&\gamma_{j}^*| \theta_j \sim Bin(1, \theta_j).
+&\gamma_{j}^*| \textcolor{red}{\gamma_{j}, } \theta_j \sim Bin(1, \textcolor{red}{\gamma_{j}}\theta_j).
 \end{aligned}
-\] This is to leverage the fact that the probability of selecting the
-bases of a smoothing function should be similar, while allowing
-different penalty on the linear space and non-linear space of the
-smoothing function. The hyper prior of \(\gamma_{j}\) decides the
-sparsity of the model at the functional selection level, while that of
-\(\gamma_{j}^*\) decides the smoothness of the spline function at basis
-function level. Meanwhile, we specify that \(\gamma_{j}\) and
-\(\gamma_{j}^*\) are independently distributed for analytic simplicity.
-We further specify the parameter \(\theta_j\) follows a beta
-distribution with given shape parameters \(a\) and \(b\), \[
+\]
+\textcolor{red}{Equivalently, we can derive the marginal distribution of $\gamma_{j}^*$ by integrate out $\gamma_j$ (Supplement 1), 
+$$
+\gamma_{j}^*| \theta_j \sim Bin(1, \theta_j^2).
+$$
+}
+
+This is to leverage the fact that the probability of selecting the bases
+of a smoothing function should be similar, while allowing different
+penalty on the linear space and non-linear space of the smoothing
+function. The hyper prior of \(\gamma_{j}\) decides the sparsity of the
+model at the functional selection level, while that of \(\gamma_{j}^*\)
+decides the smoothness of the spline function at basis function level.
+Meanwhile, we specify that \(\gamma_{j}\) and \(\gamma_{j}^*\) are
+independently distributed for analytic simplicity. We further specify
+the parameter \(\theta_j\) follows a beta distribution with given shape
+parameters \(a\) and \(b\), \[
 \theta_j \sim Beta(a, b).
 \] The beta distribution is a conjugate prior for the binomial
 distribution and hence provides some computation convenience. For
@@ -638,9 +648,10 @@ depends on the value of the vector \(\boldsymbol{\beta}^*_{j}\) and
 the equations below. \begin{align*}
 p_{j} &= \frac{\text{Pr}(\gamma_{j} = 1|\theta_j)f(\beta_{j}|\gamma_{j}=1, s_1) }{\text{Pr}(\gamma_{j} = 1|\theta_j)f(\beta_{j}|\gamma_{j}=1, s_1) + \text{Pr}(\gamma_{j} = 0|\theta_j)f(\beta_{j}|\gamma_{j}=0, s_0)}\\
 p^*_{j} &= \frac{\text{Pr}(\gamma^{*}_{j} = 1|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{*}_{j}=1, s_1) }{\text{Pr}(\gamma^{*}_{j} = 1|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{*}_{j}=1, s_1) + \text{Pr}(\gamma^{*}_{j} = 0|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{*}_{j}=0, s_0)}
-\end{align*} and
-\(\text{Pr}(\gamma_{j}^{0} = 1|\theta_j) = \text{Pr}(\gamma_{j}^*= 1|\theta_j) = \theta_j\),
-\(\text{Pr}(\gamma_{j}^{0} = 0|\theta_j) = \text{Pr}(\gamma_{j}^*= 0|\theta_j) = 1-\theta_j\),
+\end{align*} and \(\text{Pr}(\gamma_{j}^{0} = 1|\theta_j) = \theta_j\),
+\(\text{Pr}(\gamma_{j}^{0} = 0|\theta_j) = 1-\theta_j\),
+\(\textcolor{red}{\text{Pr}(\gamma_{j}^*= 1|\theta_j) = \theta_j^2}\),
+\(\textcolor{red}{\text{Pr}(\gamma_{j}^*= 0|\theta_j) = 1-\theta^2_j}\),
 \(f(\beta|\gamma=1, s_1) = \text{DE}(\beta|0 , s_1)\),
 \(f(\beta|\gamma=0, s_0) = \text{DE}(\beta|0 , s_0)\). It is trivial to
 show \begin{align}\label{eq:exp_scale}
@@ -1138,7 +1149,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
   \node (linearBeta) [outCome] { $\beta_j \sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)$};\\
 };
 \matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (penGamma) [outCome] { $\gamma_{j}^*\sim Bin(1, \theta_j)$ };\\
+  \node (penGamma) [outCome] { $\gamma_{j}^*\sim Bin(1, \textcolor{red}{\gamma_{j}}\theta_j)$ };\\
   \node (penBeta) [outCome] { $\beta_{jk}^*\sim  DE(0,(1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1)$};\\
 };
 
@@ -1153,6 +1164,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \draw[->] (Theta) -- (penGamma);
 \draw[->] (linearGamma) -- (linearBeta) ;
 \draw[->] (penGamma) -- (penBeta);
+\draw[->, draw = red] (linearGamma) -- (penGamma);
 \draw[->] (ab) -- (Theta);
 \draw[->] (s) -- (linearBeta) ;
 \draw[->] (s) -- (penBeta);

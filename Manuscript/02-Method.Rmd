@@ -59,9 +59,15 @@ The rest of the hierarchical prior follows the traditional SSL prior: we set up 
 $$
 \begin{aligned}
 &\gamma_{j} | \theta_j \sim Bin(1, \theta_j) & & 
-&\gamma_{j}^\tp | \theta_j \sim Bin(1, \theta_j).
+&\gamma_{j}^\tp | \bg{\gamma_{j}, } \theta_j \sim Bin(1, \bg{\gamma_{j}}\theta_j).
 \end{aligned}
 $$
+\bg{Equivalently, we can derive the marginal distribution of $\gamma_{j}^\tp$ by integrate out $\gamma_j$ (Supplement 1), 
+$$
+\gamma_{j}^\tp | \theta_j \sim Bin(1, \theta_j^2).
+$$
+}
+
 This is to leverage the fact that the probability of selecting the bases of a smoothing function should be similar, while allowing different penalty on the linear space and non-linear space of the smoothing function. The hyper prior of $\gamma_{j}$ decides the sparsity of the model at the functional selection level, while that of $\gamma_{j}^\tp$ decides the smoothness of the spline function at basis function level. Meanwhile, we specify that $\gamma_{j}$ and $\gamma_{j}^\tp$ are independently distributed for analytic simplicity. We further specify the parameter $\theta_j$ follows a beta distribution with given shape parameters $a$ and $b$,
 $$
 \theta_j \sim Beta(a, b).
@@ -158,7 +164,7 @@ where $S_{j} = (1-\gamma^{0}_{j}) s_0 + \gamma^{0}_{j} s_1$ and $S^\tp_{j} = (1-
 p_{j} &= \frac{\pr(\gamma_{j} = 1|\theta_j)f(\beta_{j}|\gamma_{j}=1, s_1) }{\pr(\gamma_{j} = 1|\theta_j)f(\beta_{j}|\gamma_{j}=1, s_1) + \pr(\gamma_{j} = 0|\theta_j)f(\beta_{j}|\gamma_{j}=0, s_0)}\\
 p^\tp_{j} &= \frac{\pr(\gamma^{\tp}_{j} = 1|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{\tp}_{j}=1, s_1) }{\pr(\gamma^{\tp}_{j} = 1|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{\tp}_{j}=1, s_1) + \pr(\gamma^{\tp}_{j} = 0|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{\tp}_{j}=0, s_0)}
 \end{align*}
-and $\pr(\gamma_{j}^{0} = 1|\theta_j) = \pr(\gamma_{j}^\tp = 1|\theta_j) = \theta_j$, $\pr(\gamma_{j}^{0} = 0|\theta_j) = \pr(\gamma_{j}^\tp = 0|\theta_j) = 1-\theta_j$, $f(\beta|\gamma=1, s_1) = \text{DE}(\beta|0 , s_1)$, $f(\beta|\gamma=0, s_0) = \text{DE}(\beta|0 , s_0)$. It is trivial to show
+and $\pr(\gamma_{j}^{0} = 1|\theta_j) = \theta_j$, $\pr(\gamma_{j}^{0} = 0|\theta_j) = 1-\theta_j$, $\bg{\pr(\gamma_{j}^\tp = 1|\theta_j) = \theta_j^2}$, $\bg{\pr(\gamma_{j}^\tp = 0|\theta_j) = 1-\theta^2_j}$, $f(\beta|\gamma=1, s_1) = \text{DE}(\beta|0 , s_1)$, $f(\beta|\gamma=0, s_0) = \text{DE}(\beta|0 , s_0)$. It is trivial to show
 \begin{align}\label{eq:exp_scale}
 &E(\gamma_{j})  = p_{j} & &E(\gamma^{\tp}_{j}) = p_{j}^{\tp}\nonumber\\
 &E({S}^{-1}_{j}) = \frac{1-p_{j}}{s_0} + \frac{p_{j}}{s_1} & &E({S^\tp}^{-1}_{j}) = \frac{1-p_{j}^{\tp}}{s_0} + \frac{p_{j}^{\tp}}{s_1}.

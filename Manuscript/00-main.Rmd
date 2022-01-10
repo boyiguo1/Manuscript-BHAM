@@ -33,6 +33,8 @@ header-includes:
   - \usepackage{tikz}
   - \usepackage{pgfplots}
   - \usepackage{pdflscape}
+  - \usepackage{color}
+  - \usepackage{soul}
 ---
 
 <!-- \usepackage{tikz} -->
@@ -43,6 +45,8 @@ header-includes:
 \newcommand{\pr}{\text{Pr}}
 \newcommand{\repa}{\text{repa}}
 \newcommand{\simiid}{\overset{\text{iid}}{\sim}}
+\newcommand{\bg}[1]{\textcolor{red}{#1}}
+<!-- \newcommand{\st}[1]{} -->
 
 
 ```{r setup, include=FALSE}
@@ -112,7 +116,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
   \node (linearBeta) [outCome] { $\beta_j \sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)$};\\
 };
 \matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j)$ };\\
+  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \bg{\gamma_{j}}\theta_j)$ };\\
   \node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^\tp_{j}) s_0 + \gamma^\tp_{j} s_1)$};\\
 };
 
@@ -127,6 +131,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \draw[->] (Theta) -- (penGamma);
 \draw[->] (linearGamma) -- (linearBeta) ;
 \draw[->] (penGamma) -- (penBeta);
+\draw[->, draw = red] (linearGamma) -- (penGamma);
 \draw[->] (ab) -- (Theta);
 \draw[->] (s) -- (linearBeta) ;
 \draw[->] (s) -- (penBeta);
@@ -277,3 +282,4 @@ rbind(
   # flextable::autofit() %>% 
   # flextable::set_caption(caption = "Measures of optimal BHAM and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
 ```
+

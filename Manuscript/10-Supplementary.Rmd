@@ -1,0 +1,23 @@
+---
+title: "Supplementary File"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+\newcommand{\tp}{*}
+\newcommand{\pr}{\text{Pr}}
+
+## Supplementary 1: Marginal Distribution of $\gamma_j^\tp$
+Given that $\gamma_{j}^\tp | \gamma_{j}, \theta_j \sim Bin(1, \gamma_{j}\theta_j)$ where $\gamma_{j} | \theta_j \sim Bin(1, \theta_j)$, we can derive the the marginal distribution of $\gamma_{j}^\tp$ with the following manipulation.
+\begin{align*}
+& \pr(\gamma_j^\tp = 1 | \theta_j)  = \pr(\gamma_j^\tp = 1, \gamma_j = 1 | \theta_j) + \pr(\gamma_j^\tp = 1 , \gamma_j = 0| \theta_j)\\
+= & \pr(\gamma_j^\tp = 1, \gamma_j = 1 | \theta_j) + 0 \qquad \text{[hierarchical structure between }\gamma^\tp \text{ and }\gamma \text{.]}\\
+= & \pr(\gamma_j^\tp = 1| \gamma_j = 1,  \theta_j)\pr(\gamma_j = 1| \theta_j)\\
+= & \theta_j^2\\
+& \pr(\gamma_j^\tp = 0 | \theta_j)  = \pr(\gamma_j^\tp = 0, \gamma_j = 1 | \theta_j) + \pr(\gamma_j^\tp = 0 , \gamma_j = 0| \theta_j)\\
+= & \pr(\gamma_j^\tp = 0, \gamma_j = 1 | \theta_j) + \pr(\gamma_j^\tp = 0, \gamma_j = 0 | \theta_j)\\
+= & \pr(\gamma_j^\tp = 0| \gamma_j = 1,  \theta_j)\pr(\gamma_j = 1| \theta_j) + \pr(\gamma_j^\tp = 0| \gamma_j = 0,  \theta_j)\pr(\gamma_j = 0| \theta_j)\\
+= & (1-\theta_j)\theta_j + 1(1-\theta_j) = 1-\theta_j^2
+\end{align*}
