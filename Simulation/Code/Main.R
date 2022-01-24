@@ -13,129 +13,259 @@ if(length(args)==0){
 # Arguments
 # n_train <- 500
 # n_test <- 1000
-# p <- 50
+# p <- 4
 # it <- 10
+# # dis <- "gaussian"
+# dis <- "binomial"
+
+# K <- 25
+K <- 10
 
 # Required Library
 library(mgcv)
 library(splines)
 library(BhGLM)
+library(BHAM)
 library(tidyverse)
 library(rlang)
 library(cosso)
+library(sparseGAM)    # Bai(2021)
 # library(HRW)
 
-source("~/bgam_nosharing/Code/helper_func.R")
+source("~/bgam/Code/helper_func.R")
 
 # Using Array ID as seed ID
 it <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
 # it <- 1
 
 set.seed(it)
+fam_fun <- dis()  
+# fam_fun <- str2expression(paste0(dis,"()")) %>% eval
+
+bamlasso_seq <- bgam_seq <- seq(0.001, 0.05, length.out = 20)
+
+# 
+# if(fam_fun$family == "binomial"){
+#   bamlasso_seq <- case_when(
+#     p == 4 ~ seq(from = 0.01, to = 0.8, length.out = 20),
+#     p == 10 ~ seq(0.01, 0.3, length.out = 20),
+#     p == 50 ~  seq(0.01, 0.3, length.out = 20),
+#     p == 100 ~ seq(0.005, 0.10, by = 0.005),
+#     p == 200 ~ seq(0.005, by = 0.0025, length.out = 20)
+#   )
+#   
+#   bgam_seq <- case_when(
+#     p == 4 ~ seq(from = 0.005, to = 0.1, length.out = 20),
+#     p == 10 ~ seq(from = 0.005, to = 0.1, length.out = 20),
+#     p == 50 ~ seq(0.005, 0.05, length.out = 20),
+#     p == 100 ~ seq(0.005, 0.05, length.out = 20),
+#     p == 200 ~ seq(0.005, 0.02, length.out = 20)
+#   )
+#   
+#   
+#   
+# } else if(fam_fun$family == "gaussian"){
+#   bamlasso_seq <- case_when(
+#     p == 4 ~ seq(from = 0.08, to = 0.25, length.out = 20),
+#     p == 10 ~ seq(0.005, 0.03, length.out = 20),
+#     p == 50 ~ seq(0.0005, 0.01, length.out = 20),
+#     p == 100 ~ seq(0.0005, 0.0075, length.out = 20),
+#     p == 200 ~ seq(0.00025, to=0.0025, length.out = 20)
+#   )
+#   
+#   bgam_seq <- case_when(
+#     p == 4 ~ seq(from = 0.05, to = 0.1, length.out = 20),
+#     p == 10 ~ seq(from = 0.005, to = 0.1, length.out = 20),
+#     p == 50 ~ seq(0.01, 0.06, length.out = 20),
+#     p == 100 ~ seq(0.01, 0.075, length.out = 20),
+#     p == 200 ~ seq(0.015, 0.05, length.out = 20)
+#   )
+#   
+# } else {
+#   stop("seq is not specified yet")
+# }
+
+
+
 
 
 # Train Data
-tmp <- sim_Bai_logistic(n_train, p)
+tmp <- sim_Bai(n_train, p, family = fam_fun)
 dat <- tmp$dat %>% data.frame
 theta <- tmp$theta
 
 # Test Data
-test_tmp <- sim_Bai_logistic(n_test, p)
+test_tmp <- sim_Bai(n_test, p, family = fam_fun)
 test_dat <- test_tmp$dat %>% data.frame
-test_theta <- test_tmp$theta
+test_theta <- tmp$theta
 
 
 mgcv_df <- data.frame(
   Var = setdiff(names(dat), "y"),
   Func = "s",
-  Args ="bs='cr', k=27"
+  Args = paste0("bs='cr', k=", K)
 )
 
 
 #### mgcv_mdl ####
 
-mgcv_start <- Sys.time()
+mgcv_time <- system.time({
 mgcv_mdl <- tryCatch({
   gam(create_HD_formula(y~1, spl_df = mgcv_df), 
-      data=dat %>% data.frame(), family=binomial)
+      data=dat %>% data.frame(), family=fam_fun)
 },
 error = function(err) {
   mgcv_mdl <- NULL
   return(NULL)
 }
 )
-mgcv_end <- Sys.time()
+})
+# mgcv_end <- Sys.time()
 
-mgcv_time <- mgcv_end - mgcv_start
+# mgcv_time <- mgcv_end - mgcv_start
 
 
 mgcv_sum <- NULL
-mgcv_train <- data.frame(deviance = NA, auc = NA, mse = NA, mae = NA, misclassification = NA)
-mgcv_test <- data.frame(deviance = NA, auc = NA, mse = NA, mae = NA, misclassification = NA)
+mgcv_train <- make_null_res(fam_fun$family)
+mgcv_test <- make_null_res(fam_fun$family)
 
 
 if(!is.null(mgcv_mdl)){
   mgcv_sum <- summary(mgcv_mdl)$s.table[,"p-value"]
   
-  mgcv_train <- measure.glm(mgcv_mdl$y, mgcv_mdl$fitted.values, family = binomial())
+  
+  mgcv_train <- measure.glm(mgcv_mdl$y, predict(mgcv_mdl, type = "response"), family = fam_fun$family)
   
   
   mgcv_pred <- predict(mgcv_mdl, newdata=test_dat, type = "response")
-  mgcv_test <- measure.glm(test_dat$y, mgcv_pred, family = binomial())
+  mgcv_test <- measure.glm(test_dat$y, mgcv_pred, family = fam_fun$family)
 }
 
 
 
 #### BGAMs ####
-train_sm_dat <- Construct_Smooth_Data(mgcv_df, dat)
+train_sm_dat <- BHAM::construct_smooth_data(mgcv_df, dat)
 train_smooth <- train_sm_dat$Smooth
 train_smooth_data <- train_sm_dat$data
-test_sm_dat <- make_predict_dat(train_sm_dat$Smooth, dat = test_dat)
+test_sm_dat <- BHAM::make_predict_dat(train_sm_dat$Smooth, dat = test_dat)
 
 
 #### Fit BH Models ####
 
-func_list <- list(bglm, bglm, bmlasso, bglm, bglm, bmlasso,
-                  bglm_spline)
-group_list <- list(NULL, NULL, NULL, 
-                   make_group(names(train_smooth_data)), make_group(names(train_smooth_data)), make_group(names(train_smooth_data)),
-                   make_group(names(train_smooth_data)))
-prior <- list(mt(df=Inf), mde(), NULL,
-              mt(df=Inf), mde(), NULL,
-              mt(df=Inf))
+func_list <- list(
+  # "bglm", "bglm", "bmlasso", 
+  # "bglm", "bglm", "bmlasso",
+  # "bgam", 
+  "bgam", "bamlasso"#,
+  # bgam
+)
 
+group_list <- list(
+  # NULL, NULL, NULL, 
+  # make_group(names(train_smooth_data)), make_group(names(train_smooth_data)), make_group(names(train_smooth_data)),
+  # make_group(names(train_smooth_data)), 
+  make_group(names(train_smooth_data)), make_group(names(train_smooth_data))#,
+  # make_group(names(train_smooth_data))
+)
+
+prior <- list(
+  # mt(df=Inf), mde(), NULL,
+  # mt(df=Inf), mde(), NULL,
+  # mt(df=Inf),
+  mde(), NULL#,
+  # mt(df=Inf)
+)
+
+# s0_seq <- seq(0.005, 0.1, 0.005)
+# if(p==4){
+#   s0_seq <- seq(0.04, 1, 0.05); names(s0_seq) <- s0_seq
+# }
+# .fun <- "bamlasso"
+# .group <- make_group(names(train_smooth_data))
 
 mdls <- pmap(list(func_list, group_list, prior), .f = function(.fun, .group, .prior){
-  if(identical(.fun , bmlasso))
-    .fun(x = train_smooth_data, y = dat$y, family = "binomial", group = .group)
-  else
-    .fun(y~.-y,
-         data = data.frame(train_smooth_data, y = dat$y), family = binomial(), prior=.prior,
-         group = .group)
+  cv_time <- system.time({
+    if(.fun == "bmlasso" || .fun == "bamlasso"){
+      
+      mdl <- call(.fun, x = train_smooth_data, y = dat$y, family = fam_fun$family, group = .group) %>% eval
+      cv_res <- tune.bgam(mdl, nfolds = 5, s0= bamlasso_seq, verbose = FALSE)
+    } else {
+      mdl <- call(.fun, formula = y~.-y,
+                  data = data.frame(train_smooth_data, y = dat$y), family = fam_fun$family,
+                  prior=.prior, group = .group) %>% eval
+      
+      cv_res <- tune.bgam(mdl, nfolds = 5, s0= bgam_seq, verbose = FALSE)
+    }
+  })
+  
+  
+  # mdl <- call(.fun, x = train_smooth_data, y = dat$y, family = fam_fun$family, group = .group,
+  #             ss = c(0.0011, 0.5)) %>% eval
+  
+  
+  s0_min <- cv_res$s0[which.min(cv_res$deviance)]
+  
+  final_time <- system.time({
+    if(.fun == "bmlasso" || .fun == "bamlasso"){
+      mdl <- call(.fun, x = train_smooth_data, y = dat$y, family = fam_fun$family, group = .group,
+                  ss = c(s0_min, 0.5)) %>% eval
+      
+    } else {
+      tmp_prior <- if(.prior$prior == "mt") mt(s0 = s0_min,df = Inf)
+      else if(.prior$prior == "mde") mde(s0 = s0_min)
+      mdl <- call(.fun, formula = y~.-y,
+                  data = data.frame(train_smooth_data, y = dat$y), family = fam_fun$family,
+                  prior=tmp_prior, group = .group) %>% eval
+    }
+  })
+  
+  
+  return(list(mdl = mdl, cv_time = cv_time, final_time = final_time))
 })
 
-names(mdls) <- c("bglm_t", "bglm_de", "blasso",
-                 "bglm_spline_t", "bglm_spline_de", "blasso_spline",
-                 "bglm_share_t")
+names(mdls) <- c(
+  # "bglm_t", "bglm_de", "blasso",
+  # "bglm_t_group", "bglm_de_group", "blasso_group",
+  # "bglm_spline_t", 
+  "bglm_spline_de", "blasso_spline"#,
+  # "bglm_share_t"
+)
+
+
+bham_time <- imap_dfr(mdls, .f = function(.mdl, .y){
+  # browser()
+  # suppressMessages({
+  ret <- rbind(
+    .mdl$cv_time %>% print %>% c,
+    .mdl$final_time %>% print %>% c
+  ) 
+  # })
+  
+  rownames(ret) <- paste(.y, c("cv", "final"), sep = "_")
+  
+  return(data.frame(ret))
+})
+
 
 # tmp <- bmlasso(x = train_smooth_data, y = dat$y, family = "binomial", offset = NULL)
 
 train_res <- map_dfr(mdls, .f = function(.mdl){
   
-  if("glmnet" %in% class(.mdl))
-    measure.glm(.mdl$y, .mdl$linear.predictors, family = binomial())
-  else 
-    measure.glm(.mdl$y, .mdl$fitted.values, family = binomial())
+  measure.bh(.mdl$mdl)
+  # if("glmnet" %in% class(.mdl))
+  # measure.glm(.mdl$y, .mdl$linear.predictors, family = fam_fun$family)
+  # else 
+  # measure.glm(.mdl$y, .mdl$fitted.values, family = fam_fun$family)
 },.id = "mdl") %>% 
   column_to_rownames("mdl")
 
 
 test_res <- map_dfr(mdls, .f = function(.mdl){
-  if("glmnet" %in% class(.mdl))
-    measure.bh(.mdl, test_sm_dat, test_dat$y)
+  if("glmnet" %in% class(.mdl$mdl))
+    measure.bh(.mdl$mdl, test_sm_dat, test_dat$y)
   else{
-    pred <- predict.glm(.mdl, newdata = test_sm_dat, type = "response")
-    measure.glm(test_dat$y, pred, family = binomial()) 
+    pred <- predict.glm(.mdl$mdl, newdata = test_sm_dat, type = "response")
+    measure.glm(test_dat$y, pred, family = fam_fun$family) 
   }
 },.id = "mdl") %>% 
   column_to_rownames("mdl")
@@ -143,101 +273,128 @@ test_res <- map_dfr(mdls, .f = function(.mdl){
 
 
 #### Fit bmlaso_spline Model ####
-EM_CD <- bmlasso_spline(x = train_smooth_data, y = dat$y, family = "binomial", group = make_group(names(train_smooth_data)))
-measure.glm(EM_CD$y, EM_CD$linear.predictors, family = binomial())
-measure.bh(EM_CD, test_sm_dat, test_dat$y)
+# EM_CD <- bamlasso(x = train_smooth_data, y = dat$y, family = fam_fun$family, group = make_group(names(train_smooth_data)))
+# 
+# # TODO: change this to measure.bh
+# measure.glm(EM_CD$y, EM_CD$linear.predictors, family = fam_fun$family)
+# measure.bh(EM_CD, test_sm_dat, test_dat$y)
 
 #### Fit COSSO Models ####
-
-cosso.mdl <- tryCatch({
-  cosso(dat[,-ncol(dat)], dat$y, family = "Binomial", scale = F, nbasis=25)
-},
-error = function(err) {
-  cosso.mdl <- NULL
-  return(NULL)
-}
-)
-
-if(!is.null(cosso.mdl)){
-  tn_mdl <- tryCatch({
-    tune.cosso(acosso.mdl)
+cosso.time <- system.time({
+  cosso.mdl <- tryCatch({
+    cosso(dat[,-ncol(dat)], dat$y, family = str_to_title(fam_fun$family), scale = F, nbasis=K)
   },
   error = function(err) {
+    cosso.mdl <- NULL
     return(NULL)
   }
   )
-
+  
+  if(!is.null(cosso.mdl)){
+    tn_mdl <- tryCatch({
+      tune.cosso(cosso.mdl)
+    },
+    error = function(err) {
+      return(NULL)
+    }
+    )
+  }
+})
+if(!is.null(cosso.mdl)){  
   cosso.train.res <- predict.cosso(cosso.mdl, xnew=dat[,-ncol(dat)],M=ifelse(!is.null(tn_mdl), tn_mdl$OptM, 2), type = "fit")
-  cosso_train_msr <- measure.glm(cosso.mdl$y, cosso.train.res, family = binomial())
+  cosso_train_msr <- measure.glm(cosso.mdl$y, fam_fun$linkinv(cosso.train.res), family = fam_fun$family)
   
   cosso.test.res <- predict.cosso(cosso.mdl, xnew=test_dat[,-ncol(test_dat)], M=ifelse(!is.null(tn_mdl), tn_mdl$OptM, 2), type = "fit")
-  cosso_test_msr <- measure.glm(test_dat$y, cosso.test.res, family = binomial()) 
+  cosso_test_msr <- measure.glm(test_dat$y, fam_fun$linkinv(cosso.test.res), family = fam_fun$family) 
 } else{
-  cosso_train_msr <- data.frame(deviance = NA, auc = NA, mse = NA, mae = NA, misclassification = NA)
-  cosso_test_msr <- data.frame(deviance = NA, auc = NA, mse = NA, mae = NA, misclassification = NA)
+  cosso_train_msr <- make_null_res(fam_fun$family)
+  cosso_test_msr <- make_null_res(fam_fun$family)
 }
 
 
 #### Fit ACOSSO Models ####
 
 
-
-acosso.mdl <- tryCatch({
-  
-  Binomial.wt <- SSANOVAwt(dat[,-ncol(dat)], dat$y,family="Bin", nbasis=25)
-  cosso(dat[,-ncol(dat)], dat$y, wt= Binomial.wt, family = "Binomial", scale = F)
-},
-error = function(err) {
-  acosso.mdl <- NULL
-  return(NULL)
-}
-)
-
-if(!is.null(acosso.mdl)){
-  tn_amdl <- tryCatch({
-    tune.cosso(acosso.mdl)
+acosso.time <- system.time({
+  acosso.mdl <- tryCatch({
+    
+    Binomial.wt <- SSANOVAwt(dat[,-ncol(dat)], dat$y,family=str_to_title(fam_fun$family), nbasis=K)
+    cosso(dat[,-ncol(dat)], dat$y, wt= Binomial.wt, family = str_to_title(fam_fun$family), scale = F, nbasis=K)
   },
   error = function(err) {
+    acosso.mdl <- NULL
     return(NULL)
   }
   )
   
+  if(!is.null(acosso.mdl)){
+    tn_amdl <- tryCatch({
+      tune.cosso(acosso.mdl)
+    },
+    error = function(err) {
+      return(NULL)
+    }
+    )
+  }
   
-  
+})
+
+
+if(!is.null(acosso.mdl)){  
   acosso.train.res <- predict.cosso(acosso.mdl, xnew=dat[,-ncol(dat)],
                                     M=ifelse(!is.null(tn_amdl), tn_amdl$OptM, 2), type = "fit")
-  acosso_train_msr <- measure.glm(acosso.mdl$y, acosso.train.res, family = binomial())
+  acosso_train_msr <- measure.glm(acosso.mdl$y, fam_fun$linkinv(acosso.train.res), family = fam_fun$family)
   
   acosso.test.res <- predict.cosso(acosso.mdl, xnew=test_dat[,-ncol(test_dat)],
                                    M=ifelse(!is.null(tn_amdl), tn_amdl$OptM, 2), type = "fit")
-  acosso_test_msr <- measure.glm(test_dat$y, acosso.test.res, family = binomial()) 
+  acosso_test_msr <- measure.glm(test_dat$y, fam_fun$linkinv(acosso.test.res), family = fam_fun$family) 
 } else{
-  acosso_train_msr <- data.frame(deviance = NA, auc = NA, mse = NA, mae = NA, misclassification = NA)
-  acosso_test_msr <- data.frame(deviance = NA, auc = NA, mse = NA, mae = NA, misclassification = NA)
+  acosso_train_msr <- make_null_res(fam_fun$family)
+  acosso_test_msr <- make_null_res(fam_fun$family)
 }
+#### Fit SB-GAM Models ####
+
+bai_cv_time <- system.time({cv_bai_mdl <- cv.SBGAM(y = dat$y, X = dat[,-ncol(dat)], df=K, family=fam_fun$family, a = 1, b = 1,
+                                                   max.iter=100, tol = 1e-6)})
 
 
+bai_final_time <- system.time({bai_mdl <- SBGAM(dat$y, dat[,-ncol(dat)], X.test = test_dat[,-ncol(test_dat)], df=K, family=fam_fun$family,
+                                                lambda0 = cv_bai_mdl$lambda0.min, a = 1, b = 1,
+                                                max.iter=100, tol = 1e-6, print.iter=FALSE)})
+
+
+bai_train_msr <- make_null_res(fam_fun$family)
+bai_test_msr <- measure.glm(test_dat$y, bai_mdl$mu.pred, family = fam_fun$family) 
+
+#### Result Reporting ####
 ret <- list(
   train = rbind(mgcv = mgcv_train,
                 cosso = cosso_train_msr,
                 acosso = acosso_train_msr,
-                train_res),
+                train_res,
+                SB_GAM = bai_train_msr),
   test = rbind(mgcv = mgcv_test,
                cosso = cosso_test_msr,
                acosso = acosso_test_msr,
-               test_res)
+               test_res,
+               SB_GAM = bai_test_msr),
   # var_sel = rbind(mgcv = mgcv_sum,
   #                 bgam = bgam_sum,
   #                 bglm = bglm_sum),
-  # time = rbind(mgcv = mgcv_time,
-  #              bgam_global = bgam_global_time,
-  #              bgam_local = bgam_local_time,
-  #              bgam_share = bgam_shared_time)
+  time = rbind(mgcv = mgcv_time %>% print %>% c,
+               # bgam_global = bgam_global_time,
+               # bgam_local = bgam_local_time,
+               # bgam_share = bgam_shared_time,
+               bham_time,
+               cosso = cosso.time %>% print %>% c,
+               acosso = acosso.time %>% print %>% c,
+               bai_cv = bai_cv_time %>% print %>% c,
+               bai_final = bai_final_time %>% print %>% c)
 )
 
 
 job_name <- Sys.getenv('SLURM_JOB_NAME')
 saveRDS(ret, 
-        paste0("/data/user/boyiguo1/bgam_nosharing/Res/", job_name,"/it_",it,".rds"))
+        paste0("/data/user/boyiguo1/bgam/sim_res/main/", job_name,"/it_",it,".rds"))
 
 

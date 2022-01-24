@@ -1,0 +1,40 @@
+#!/bin/bash
+#SBATCH --share
+# SBATCH --partition=express
+#SBATCH --partition=short
+# SBATCH --partition=medium
+#
+# Set your error and output files
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --array=1-10
+#
+#
+# SBATCH --time=2:00:00
+#SBATCH --time=12:00:00
+# SBATCH --time=50:00:00
+#SBATCH --mem-per-cpu=5000
+#
+#
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=boyiguo1@uab.edu
+
+
+module load R/3.6.2-foss-2018a-X11-20180131-bare
+module load GLPK
+
+# module list
+
+resPath=/data/user/boyiguo1/bgam/sim_res/main/$SLURM_JOB_NAME/
+logPath=/data/user/boyiguo1/bgam/log/main/$SLURM_JOB_NAME/
+
+ulimit -v 20000000
+
+
+mkdir -p $resPath
+mkdir -p $logPath
+cd $resPath
+
+
+R CMD BATCH  --vanilla "--args n_train=$ntrain n_test=$ntest p=$p dis=$dist" /home/boyiguo1/bgam/Code/Main.R $logPath${SLURM_ARRAY_TASK_ID}.out
