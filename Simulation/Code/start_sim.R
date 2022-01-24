@@ -2,11 +2,11 @@ library(dplyr)
 
 sim_prmt <- expand.grid(
   p = c(4, 10, 50, 100, 200),
-  n_train = c(500),
-  n_test = c(10000),
-  dis = c("gaussian", "binomial")#, "poisson")
-) %>%
-  data.frame()
+  # n_train = c(500),
+  # n_test = c(10000),
+  dis = c("gaussian", "binomial")
+) %>% slice(1)
+  # data.frame()
 
 # A wrapper function to set up each job
 start.sim <- function(
@@ -24,7 +24,7 @@ start.sim <- function(
   #                   # ntest.name, 
   #                   sep="-")
   
-  job.name <- paste("bgam_main_", dis.name, p.name,
+  job.name <- paste("bgam_", dis.name, p.name,
                     # ntrain.name,
                     # ntest.name, 
                     sep="-")
@@ -35,18 +35,23 @@ start.sim <- function(
   
   out.flag <- paste0("--output=",job.name,".out")
   
-  arg.flag <- paste0("--export=ntrain=", n_train, ",",
-                     "ntest=", n_test, ",",
+  arg.flag <- paste0("--export=",
+                     # ,"ntrain=", n_train, ",",
+                     #"ntest=", n_test, ",",
                      "p=", p,",",
                      "dist=", dis )
   
   system(
-    paste("sbatch", job.flag, err.flag, out.flag, arg.flag,"bgam_sim.job")
+    paste("sbatch", job.flag, err.flag, out.flag, arg.flag,"~/GitHub/Manuscript-BHAM/Simulation/Code/bgam_sim.job")
   )
 }
 
+# Delete Previous Log Files
+unlink("/data/user/boyiguo1/bgam/log/", recursive = TRUE)
+unlink("/data/user/boyiguo1/bgam/sim_res/main/", recursive = TRUE)
+
+
 
 for(i in 1:NROW(sim_prmt)){
-  # i <- 8
   do.call(start.sim, sim_prmt[i,])
 }

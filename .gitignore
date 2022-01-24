@@ -53,3 +53,6 @@ _targets/
 *.pag
 *.pdf
 *Manuscript/SS_GAM.docx
+*.err
+*.out
+*.Rout

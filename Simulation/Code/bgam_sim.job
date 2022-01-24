@@ -1,18 +1,18 @@
 #!/bin/bash
 #SBATCH --share
-# SBATCH --partition=express
-#SBATCH --partition=short
+#SBATCH --partition=express
+# SBATCH --partition=short
 # SBATCH --partition=medium
 #
 # Set your error and output files
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --array=1-10
+#SBATCH --array=1-50
 #
 #
-# SBATCH --time=2:00:00
-#SBATCH --time=12:00:00
+#SBATCH --time=2:00:00
+# SBATCH --time=12:00:00
 # SBATCH --time=50:00:00
 #SBATCH --mem-per-cpu=5000
 #
@@ -37,4 +37,4 @@ mkdir -p $logPath
 cd $resPath
 
 
-R CMD BATCH  --vanilla "--args n_train=$ntrain n_test=$ntest p=$p dis=$dist" /home/boyiguo1/bgam/Code/Main.R $logPath${SLURM_ARRAY_TASK_ID}.out
+R CMD BATCH  --vanilla "--args p=$p dis=$dist" ~/GitHub/Manuscript-BHAM/Simulation/Code/Main.R $logPath${SLURM_ARRAY_TASK_ID}.out
