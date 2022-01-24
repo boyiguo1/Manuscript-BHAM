@@ -27,6 +27,8 @@ tar_plan(
             list.files("/data/user/boyiguo1/bgam/sim_res_3270a96/main", recursive = T, full.names = T)),
 
   success_rate = create_success_rate_table(sim_main_path),
+  
+  mdl_fail = create_mdl_fail_rate(success_rate),
   # 
   tab_binom = make_sim_main_table(success_rate,
                                   dist = "binomial",
