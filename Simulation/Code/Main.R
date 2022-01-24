@@ -26,6 +26,8 @@ library(tidyverse)
 library(rlang)
 library(cosso)
 library(sparseGAM)    # Bai(2021)
+library(glmnet)
+library(spikeSlabGAM)
 
 
 # Helper functions
@@ -59,6 +61,14 @@ mgcv_df <- data.frame(
   Args = paste0("bs='cr', k=", K)
 )
 
+
+#### Linear Lasso ####
+lasso_mdl <- cv.glmnet(x = data.matrix(dat %>% select(-y)),
+                       y = data.matrix(dat %>% pull(y)),
+                       nfolds = 5, family = fam_fun$family
+                      )
+lasso_train <- measure.glm(dat$y, predict(lasso_mdl, newx = data.matrix(dat %>% select(-y)), type = "response", s = "lambda.min"), family = fam_fun$family)
+lasso_test <- measure.glm(test_dat$y, predict(lasso_mdl, newx = data.matrix(test_dat %>% select(-y)), type = "response", s = "lambda.min"), family = fam_fun$family)
 
 #### mgcv_mdl ####
 
@@ -319,18 +329,60 @@ bai_final_time <- system.time({bai_mdl <- SBGAM(dat$y, dat[,-ncol(dat)], X.test 
 bai_train_msr <- make_null_res(fam_fun$family)
 bai_test_msr <- measure.glm(test_dat$y, bai_mdl$mu.pred, family = fam_fun$family) 
 
+
+# SpikeSlabGAM ------------------------------------------------------------
+
+ssGAM_formula <- grep("x", names(dat), value = TRUE) %>% 
+  map_chr(.f = function(var_name){
+    glue::glue("lin({var_name}) + sm({var_name}, K={K})")
+  }) %>% 
+  paste(collapse = " + ") %>% 
+  paste0("y ~ ", .)
+
+ssGAM_train_dat <- dat
+# ssGAM_test_dat <- test_dat
+
+if(fam_fun$family == "gaussian"){
+  # Rescale the y
+  ssGAM_train_dat <-  ssGAM_train_dat %>% 
+    mutate(y = scale(y))
+  
+} 
+
+rescale_ssGAM_pred <- function(response, family, y){
+  if(family == "gaussian"){
+    response <- attr(y, "scaled:center") + response*attr(y, "scaled:scale")
+  }
+  
+  return (response)
+}
+
+ssGAM_time <- system.time({
+  ssGAM_mdl <- spikeSlabGAM(formula = as.formula(ssGAM_formula), data = ssGAM_train_dat, family=fam_fun$family)
+})
+ssGAM_train_msr <- measure.glm(dat$y, 
+                               predict(ssGAM_mdl, type = "response") %>% rescale_ssGAM_pred(family = fam_fun$family, y=ssGAM_train_dat$y),
+                               family = fam_fun$family)
+ssGAM_test_msr <- measure.glm(test_dat$y, 
+                              predict(ssGAM_mdl, newdata = test_dat, type = "response") %>% rescale_ssGAM_pred(family = fam_fun$family, y=ssGAM_train_dat$y),
+                              family = fam_fun$family)
+
 #### Result Reporting ####
 ret <- list(
-  train = rbind(mgcv = mgcv_train,
+  train = rbind(lasso = lasso_train,
+                mgcv = mgcv_train,
                 cosso = cosso_train_msr,
                 acosso = acosso_train_msr,
                 train_res,
-                SB_GAM = bai_train_msr),
-  test = rbind(mgcv = mgcv_test,
+                SB_GAM = bai_train_msr,
+                ssGAM = ssGAM_train_msr),
+  test = rbind(lasso = lasso_test,
+               mgcv = mgcv_test,
                cosso = cosso_test_msr,
                acosso = acosso_test_msr,
                test_res,
-               SB_GAM = bai_test_msr),
+               SB_GAM = bai_test_msr,
+               ssGAM = ssGAM_test_msr),
   # var_sel = rbind(mgcv = mgcv_sum,
   #                 bgam = bgam_sum,
   #                 bglm = bglm_sum),
@@ -342,7 +394,8 @@ ret <- list(
                cosso = cosso.time %>% print %>% c,
                acosso = acosso.time %>% print %>% c,
                bai_cv = bai_cv_time %>% print %>% c,
-               bai_final = bai_final_time %>% print %>% c)
+               bai_final = bai_final_time %>% print %>% c,
+               ssGAM = ssGAM_time %>% print %>% c)
 )
 
 
