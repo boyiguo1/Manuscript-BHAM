@@ -24,7 +24,7 @@ tar_plan(
   #  Simulations Studies -----------------------------------------------------
   #* Main Simulation Study ####
   tar_files(sim_main_path,
-            list.files("Simulation/main/", recursive = T, full.names = T)),
+            list.files("/data/user/boyiguo1/bgam/sim_res_3270a96/main", recursive = T, full.names = T)),
 
   success_rate = create_success_rate_table(sim_main_path),
   # 
