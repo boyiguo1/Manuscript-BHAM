@@ -2,7 +2,6 @@
 library(BHAM)
 library(BhGLM)
 library(broom)
-library(cosso)
 library(dplyr)
 library(flextable)
 library(ggpubr)

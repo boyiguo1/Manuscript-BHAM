@@ -67,8 +67,8 @@ tar_load(sim_path)
 tar_load(real_data_path)
 tar_load(disc_path)
 
-tar_load(tab_binom)
-tar_load(tab_gaus)
+tar_load(sim_binom_tab)
+tar_load(sim_gaus_tab)
 
 tar_load(WLM_train_dat)
 # tar_load(tbl_one)
@@ -77,7 +77,7 @@ tar_load(ECB_SBGAM_cv)
 tar_load(WLM_bamlasso_cv)
 tar_load(WLM_SBGAM_cv)
 tar_load(tbl_real_time)
-tar_load(tab_time)
+tar_load(sim_tim_tab)
 ```
 
 ```{r child="01-Intro.Rmd"}
@@ -160,9 +160,9 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 
 
 ```{r, results = "asis"}
-tab_gaus$mgcv[4] <- "-"
-tab_gaus$mgcv[5] <- "-"
-tab_gaus %>% 
+sim_gaus_tab$mgcv[4] <- "-"
+sim_gaus_tab$mgcv[5] <- "-"
+sim_gaus_tab %>% 
   mutate(p = as.integer(p)) %>% 
   rename(
     "P" = p,
@@ -186,9 +186,9 @@ tab_gaus %>%
 
 
 ```{r, results = "asis"}
-tab_binom$mgcv[4] <- "-"
-tab_binom$mgcv[5] <- "-"
-tab_binom %>% 
+sim_binom_tab$mgcv[4] <- "-"
+sim_binom_tab$mgcv[5] <- "-"
+sim_binom_tab %>% 
   mutate(p = as.integer(p)) %>% 
   rename(
     "P" = p,
@@ -205,7 +205,7 @@ tab_binom %>%
 \newpage
 <!-- \begin{landscape} -->
 ```{r results = "asis"}
-tab_time %>% 
+sim_tim_tab %>% 
   select(dist, p, `BHAM-IWLS`,`BHAM-CD`, cosso, acosso, mgcv, `SB-GAM`) %>% 
   rename(Distribution = dist,
          P = p,

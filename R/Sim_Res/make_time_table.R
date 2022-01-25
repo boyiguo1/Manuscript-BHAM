@@ -2,23 +2,26 @@ make_time_table <- function(success_rate){
   total_dat <- success_rate %>% 
     # filter(dist==dist, n_success!=0) %>% 
     # filter(dist=={{dist}}, n_success!=0) %>%
+    filter(n_success!=0) %>% 
     pull(path) %>% 
     map_dfr( .f = function(sim){
       
       
       sim.df <- unglue_data(sim, 
-                            "{}/bgam_{study}_-dis_{dist}-p_{p}") %>% 
+                            "{}/{}-dis_{dist}-p_{p}") %>% 
         mutate( p = as.numeric(p))
       fls <- list.files(sim, full.names = TRUE) 
       fls <- fls[grep(".rds", x=fls)]
-      n <- length(fls)
-      
-      
-      if(n == 0)
-        return(data.frame(NULL))
+      # n <- length(fls)
+      # 
+      # 
+      # if(n == 0)
+      #   return(data.frame(NULL))
       
       # .file <- fls[1]
-      ret <- fls %>%
+      # ret <- fls 
+      list.files(sim, full.names = TRUE) %>%
+        grep(".rds", x=., value = TRUE) %>%
         map_dfr(.f = function(.file){
           it <- unglue_data(.file, "{whatever}/it_{it}.rds") %>% pull(it) %>% as.numeric
           ret <- data.frame(

@@ -6,8 +6,8 @@ library(dotenv)
 tar_option_set(
   packages = c("tidyverse", "dplyr", "rticles", "gtsummary", "mgcv", #"here", 
                "broom", "unglue", "knitr", "ggpubr", "xtable", "janitor", 
-               "flextable", "BHAM", "BhGLM", "sparseGAM", "cosso", "glmnet",
-               "rmarkdown"
+               "flextable", "BHAM", "BhGLM", "sparseGAM",  "glmnet",
+               "rmarkdown"#, "cosso",
   ),
   imports = c( "BHAM", "BhGLM", "sparseGAM")
 )
@@ -24,24 +24,21 @@ tar_plan(
   #  Simulations Studies -----------------------------------------------------
   #* Main Simulation Study ####
   tar_files(sim_main_path,
-            list.files("/data/user/boyiguo1/bgam/sim_res_3270a96/main", recursive = T, full.names = T)),
+            list.files("/data/user/boyiguo1/bgam/sim_res/main", recursive = T, full.names = T)),
 
-  success_rate = create_success_rate_table(sim_main_path),
+  sim_success_rate = create_success_rate_table(sim_main_path),
   
-  mdl_fail = create_mdl_fail_rate(success_rate),
-  # 
-  tab_binom = make_sim_main_table(success_rate,
+  sim_mdl_fail = create_mdl_fail_rate(sim_success_rate),
+
+  sim_binom_tab = make_sim_main_table(sim_success_rate,
                                   dist = "binomial",
                                   measures = "auc"),
-  # 
-  tab_gaus = make_sim_main_table(success_rate,
+
+  sim_gaus_tab = make_sim_main_table(sim_success_rate,
                                  dist = "gaussian",
                                  measures = "R2"),
-  tab_time = make_time_table(success_rate),
-  # 
-  # tab_pois = make_sim_main_table(success_rate,
-  #                                dist = "poisson",
-  #                                measures = "mse"),
+  
+  sim_tim_tab = make_time_table(sim_success_rate),
   
   
   #  Real Data Analysis -----------------------------------------------------

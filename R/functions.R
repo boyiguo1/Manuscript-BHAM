@@ -31,45 +31,6 @@ gam_screen <- function(dat, nrow = 200){
 }
 
 
-create_success_rate_table <- function(path_list){
-
-  # sims <- list.files(path,full.names =TRUE)
-  # browser()
-  unglue_data(path_list[str_ends(path_list, ".rds")],
-              "{path}/it_{}") %>% 
-    group_by(path) %>% 
-    summarize(n_success = n()) %>% 
-    unglue_unnest(
-      col = path,
-      patterns = "{}/bgam_{study}_-dis_{dist}-p_{p}",
-      remove = FALSE
-    ) %>% 
-    mutate( p = as.numeric(p)) %>% 
-    arrange(dist, p) %>% 
-    select(dist, p, n_success, path)
-  #   head()
-  # 
-  # 
-  # success_rate <- map_dfr(path_list, 
-  #                         .f = function(sim_file){
-  #                           browser()
-  #   sim.df <- unglue_data(sim_file, 
-  #                         "{}/bgam_{study}_-dis_{dist}-p_{p}/{}", 
-  #                         kee) %>% 
-  #     mutate( p = as.numeric(p)) %>% 
-  #     group_by(dist)
-  #     summarize()
-  #   fls <- list.files(sim_file, full.names = TRUE) 
-  #   fls <- fls[grep(".rds", x=fls)]
-  #   n <- length(fls)
-  #   
-  #   data.frame(sim.df, n_success = n, path = sim)
-  # }) %>% 
-  #   arrange(p) 
-
-  # return(success_rate)  
-}
-
 
 make_sim_main_plots <- function(success_rate, dist, measures){
   total_dat <- success_rate %>% 
@@ -78,7 +39,7 @@ make_sim_main_plots <- function(success_rate, dist, measures){
     pull(path) %>% 
     map_dfr( .f = function(sim){
       sim.df <- unglue_data(sim, 
-                            "{}/bgam_{study}_-dis_{dist}-p_{p}") %>% 
+                            "{}/{}_-dis_{dist}-p_{p}") %>% 
         mutate( p = as.numeric(p))
       fls <- list.files(sim, full.names = TRUE) 
       fls <- fls[grep(".rds", x=fls)]
