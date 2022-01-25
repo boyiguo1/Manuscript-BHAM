@@ -5,8 +5,8 @@ sim_prmt <- expand.grid(
   # n_train = c(500),
   # n_test = c(10000),
   dis = c("gaussian", "binomial")
-) %>% slice(1)
-  # data.frame()
+) %>% filter(p==200)
+   # data.frame()
 
 # A wrapper function to set up each job
 start.sim <- function(
@@ -24,7 +24,7 @@ start.sim <- function(
   #                   # ntest.name, 
   #                   sep="-")
   
-  job.name <- paste("bgam_", dis.name, p.name,
+  job.name <- paste("bgam", dis.name, p.name,
                     # ntrain.name,
                     # ntest.name, 
                     sep="-")
@@ -47,8 +47,8 @@ start.sim <- function(
 }
 
 # Delete Previous Log Files
-unlink("/data/user/boyiguo1/bgam/log/", recursive = TRUE)
-unlink("/data/user/boyiguo1/bgam/sim_res/main/", recursive = TRUE)
+# unlink("/data/user/boyiguo1/bgam/log/", recursive = TRUE)
+# unlink("/data/user/boyiguo1/bgam/sim_res/main/", recursive = TRUE)
 
 
 

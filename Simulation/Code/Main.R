@@ -190,7 +190,7 @@ names(mdls) <- c(
   # "bglm_t", "bglm_de", "blasso",
   # "bglm_t_group", "bglm_de_group", "blasso_group",
   # "bglm_spline_t", 
-  "bglm_spline_de", "blasso_spline"#,
+  "bgam", "bamlasso"#,
   # "bglm_share_t"
 )
 
