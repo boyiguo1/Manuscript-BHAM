@@ -38,7 +38,7 @@ source("~/GitHub/Manuscript-BHAM/Simulation/Code/sim_pars_funs.R")
 
 # Using Array ID as seed ID
 it <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
-# it <- 1
+# it <- 2
 
 set.seed(it)
 fam_fun <- dis()  
@@ -67,8 +67,16 @@ lasso_mdl <- cv.glmnet(x = data.matrix(dat %>% select(-y)),
                        y = data.matrix(dat %>% pull(y)),
                        nfolds = 5, family = fam_fun$family
                       )
+lasso_fnl_mdl <- glmnet(x = data.matrix(dat %>% select(-y)),
+                        y = data.matrix(dat %>% pull(y)),
+                        family = fam_fun$family, lambda = lasso_mdl$lambda.min)
+
+# predict(lasso_fnl_mdl, type = "nonzero")
+
 lasso_train <- measure.glm(dat$y, predict(lasso_mdl, newx = data.matrix(dat %>% select(-y)), type = "response", s = "lambda.min"), family = fam_fun$family)
 lasso_test <- measure.glm(test_dat$y, predict(lasso_mdl, newx = data.matrix(test_dat %>% select(-y)), type = "response", s = "lambda.min"), family = fam_fun$family)
+
+lasso_vs <- ((lasso_fnl_mdl$beta %>% as.vector())!=0) %>% `names<-`(setdiff(names(dat), "y"))
 
 #### mgcv_mdl ####
 
@@ -91,10 +99,11 @@ error = function(err) {
 mgcv_sum <- NULL
 mgcv_train <- make_null_res(fam_fun$family)
 mgcv_test <- make_null_res(fam_fun$family)
+mgcv_vs <- rep(NA, length(lasso_vs)) %>% `names<-`(setdiff(names(dat), "y"))
 
 
 if(!is.null(mgcv_mdl)){
-  mgcv_sum <- summary(mgcv_mdl)$s.table[,"p-value"]
+  mgcv_vs <- (summary(mgcv_mdl)$s.table[,"p-value"] < 0.05) %>% `names<-`(setdiff(names(dat), "y"))
   
   
   mgcv_train <- measure.glm(mgcv_mdl$y, predict(mgcv_mdl, type = "response"), family = fam_fun$family)
@@ -210,7 +219,13 @@ bham_time <- imap_dfr(mdls, .f = function(.mdl, .y){
 })
 
 
-# tmp <- bmlasso(x = train_smooth_data, y = dat$y, family = "binomial", offset = NULL)
+# TODO: insert here
+# 1) find which one is the bamlasso.
+bamlasso_vs_part <- bamlasso_var_selection(mdls[["bamlasso"]]$mdl)
+bamlasso_vs <- rep(FALSE, length(lasso_vs)) %>% `names<-`(setdiff(names(dat), "y"))
+bamlasso_vs[bamlasso_vs_part$`Non-parametric`$Variable] <- TRUE
+
+
 
 train_res <- map_dfr(mdls, .f = function(.mdl){
   
@@ -234,14 +249,6 @@ test_res <- map_dfr(mdls, .f = function(.mdl){
   column_to_rownames("mdl")
 
 
-
-#### Fit bmlaso_spline Model ####
-# EM_CD <- bamlasso(x = train_smooth_data, y = dat$y, family = fam_fun$family, group = make_group(names(train_smooth_data)))
-# 
-# # TODO: change this to measure.bh
-# measure.glm(EM_CD$y, EM_CD$linear.predictors, family = fam_fun$family)
-# measure.bh(EM_CD, test_sm_dat, test_dat$y)
-
 #### Fit COSSO Models ####
 cosso.time <- system.time({
   cosso.mdl <- tryCatch({
@@ -263,7 +270,12 @@ cosso.time <- system.time({
     )
   }
 })
+
+cosso_vs <- rep(NA, length(lasso_vs)) %>% `names<-`(setdiff(names(dat), "y"))
 if(!is.null(cosso.mdl)){  
+  cosso_vs <- rep(FALSE, length(lasso_vs)) %>% `names<-`(setdiff(names(dat), "y"))
+  cosso_vs[predict.cosso(cosso.mdl, M=ifelse(!is.null(tn_mdl), tn_mdl$OptM, 2), type = "nonzero")] <- TRUE
+  
   cosso.train.res <- predict.cosso(cosso.mdl, xnew=dat[,-ncol(dat)],M=ifelse(!is.null(tn_mdl), tn_mdl$OptM, 2), type = "fit")
   cosso_train_msr <- measure.glm(cosso.mdl$y, fam_fun$linkinv(cosso.train.res), family = fam_fun$family)
   
@@ -272,6 +284,7 @@ if(!is.null(cosso.mdl)){
 } else{
   cosso_train_msr <- make_null_res(fam_fun$family)
   cosso_test_msr <- make_null_res(fam_fun$family)
+  cosso_vs <- rep(NA, length(lasso_vs))
 }
 
 
@@ -303,7 +316,10 @@ acosso.time <- system.time({
 })
 
 
+acosso_vs <- rep(NA, length(lasso_vs)) %>% `names<-`(setdiff(names(dat), "y"))
 if(!is.null(acosso.mdl)){  
+  acosso_vs <- rep(FALSE, length(lasso_vs)) %>% `names<-`(setdiff(names(dat), "y"))
+  acosso_vs[predict.cosso(acosso.mdl, M=ifelse(!is.null(tn_amdl), tn_amdl$OptM, 2), type = "nonzero")] <- TRUE
   acosso.train.res <- predict.cosso(acosso.mdl, xnew=dat[,-ncol(dat)],
                                     M=ifelse(!is.null(tn_amdl), tn_amdl$OptM, 2), type = "fit")
   acosso_train_msr <- measure.glm(acosso.mdl$y, fam_fun$linkinv(acosso.train.res), family = fam_fun$family)
@@ -314,6 +330,7 @@ if(!is.null(acosso.mdl)){
 } else{
   acosso_train_msr <- make_null_res(fam_fun$family)
   acosso_test_msr <- make_null_res(fam_fun$family)
+
 }
 #### Fit SB-GAM Models ####
 
@@ -325,12 +342,14 @@ bai_final_time <- system.time({bai_mdl <- SBGAM(dat$y, dat[,-ncol(dat)], X.test 
                                                 lambda0 = cv_bai_mdl$lambda0.min, a = 1, b = 1,
                                                 max.iter=100, tol = 1e-6, print.iter=FALSE)})
 
-
+bai_vs <- as.logical(bai_mdl$classifications) %>% `names<-`(setdiff(names(dat), "y"))
 bai_train_msr <- make_null_res(fam_fun$family)
 bai_test_msr <- measure.glm(test_dat$y, bai_mdl$mu.pred, family = fam_fun$family) 
 
 
 # SpikeSlabGAM ------------------------------------------------------------
+
+options(mc.cores = 1)
 
 ssGAM_formula <- grep("x", names(dat), value = TRUE) %>% 
   map_chr(.f = function(var_name){
@@ -360,6 +379,22 @@ rescale_ssGAM_pred <- function(response, family, y){
 ssGAM_time <- system.time({
   ssGAM_mdl <- spikeSlabGAM(formula = as.formula(ssGAM_formula), data = ssGAM_train_dat, family=fam_fun$family)
 })
+
+
+
+ssGAM_vs <- (summary(ssGAM_mdl)$trmSummary) %>% data.frame() %>% rownames_to_column("part") %>% 
+select(part, prob = `P.gamma...1.`) %>% 
+  filter(str_detect(part, "x")) %>% 
+  unglue::unglue_unnest(part, "{}({var})", remove = FALSE) %>% 
+  group_by(var) %>% 
+  summarize(ssGAM = any(prob>0.5)) %>% 
+  column_to_rownames("var") %>% as.vector
+
+
+ssGAM_vs_part <- (summary(ssGAM_mdl)$trmSummary) %>% data.frame() %>% rownames_to_column("part") %>% 
+  select(part, prob = `P.gamma...1.`) %>% 
+  filter(str_detect(part, "x")) 
+
 ssGAM_train_msr <- measure.glm(dat$y, 
                                predict(ssGAM_mdl, type = "response") %>% rescale_ssGAM_pred(family = fam_fun$family, y=ssGAM_train_dat$y),
                                family = fam_fun$family)
@@ -383,9 +418,20 @@ ret <- list(
                test_res,
                SB_GAM = bai_test_msr,
                ssGAM = ssGAM_test_msr),
-  # var_sel = rbind(mgcv = mgcv_sum,
-  #                 bgam = bgam_sum,
-  #                 bglm = bglm_sum),
+  var_sel = data.frame(
+    lasso = lasso_vs,
+    mgcv = mgcv_vs,
+    bamlasso = bamlasso_vs,
+    cosso = cosso_vs,
+    acosso = acosso_vs,
+    SB_GAM = bai_vs,
+    ssGAM = ssGAM_vs),
+  
+  var_part = list(
+    bamlasso = bamlasso_vs_part,
+    ssGAM = ssGAM_vs_part
+  ),
+  
   time = rbind(mgcv = mgcv_time %>% print %>% c,
                # bgam_global = bgam_global_time,
                # bgam_local = bgam_local_time,
