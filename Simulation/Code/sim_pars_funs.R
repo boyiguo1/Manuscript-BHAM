@@ -6,6 +6,9 @@ K <- 10               # Smoothing function degrees
 n_train <- 500        # Training set sample size
 n_test <- 10000       # Testing set sample size
 
+# * Derived Parameters
+n_total <- n_train + n_test
+
 bamlasso_seq <- bgam_seq <- seq(0.001, 0.05, length.out = 20)
 
 

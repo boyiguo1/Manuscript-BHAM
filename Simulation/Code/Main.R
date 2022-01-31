@@ -11,10 +11,10 @@ if(length(args)==0){
 # Arguments
 # n_train <- 500
 # n_test <- 1000
-# p <- 4
+# p <- 5
 # it <- 10
-# # dis <- "gaussian"
-# dis <- "binomial"
+# dis <- "gaussian"
+# # dis <- "binomial"
 
 
 # Required Library
@@ -38,21 +38,37 @@ source("~/GitHub/Manuscript-BHAM/Simulation/Code/sim_pars_funs.R")
 
 # Using Array ID as seed ID
 it <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
-# it <- 2
+# it <- 1
 
 set.seed(it)
 fam_fun <- dis()  
 # fam_fun <- str2expression(paste0(dis,"()")) %>% eval
 
-# Train Data
-tmp <- sim_Bai(n_train, p, family = fam_fun)
-dat <- tmp$dat %>% data.frame
-theta <- tmp$theta
+x_all <- sim.x(n=n_total, m=p, corr=0)
+yy <-  sim.y(x = x_all[, 1:5], mu = 0, coefs = c(0.362, 0.395, -0.418, -0.431, 0.467))
 
-# Test Data
-test_tmp <- sim_Bai(n_test, p, family = fam_fun)
-test_dat <- test_tmp$dat %>% data.frame
-test_theta <- tmp$theta
+
+dat_all <- with(data = yy,
+                data.frame(x_all,
+                           # eta = eta,
+                           y = if(fam_fun$family=="gaussian") y.normal else y.ordinal)
+)
+
+train_eta <- yy$eta[1:n_train, ]
+test_eta <- yy$eta[(n_train+1):n_total, ]
+
+dat <- dat_all[1:n_train, ] %>% data.frame
+test_dat <- dat_all[(n_train+1):n_total, ] %>% data.frame
+
+# # Train Data
+# tmp <- sim_Bai(n_train, p, family = fam_fun)
+# dat <- tmp$dat %>% data.frame
+# theta <- tmp$theta
+# 
+# # Test Data
+# test_tmp <- sim_Bai(n_test, p, family = fam_fun)
+# test_dat <- test_tmp$dat %>% data.frame
+# test_theta <- tmp$theta
 
 
 mgcv_df <- data.frame(
@@ -447,6 +463,6 @@ ret <- list(
 
 job_name <- Sys.getenv('SLURM_JOB_NAME')
 saveRDS(ret, 
-        paste0("/data/user/boyiguo1/bgam/sim_res/main/", job_name,"/it_",it,".rds"))
+        paste0("/data/user/boyiguo1/bgam/sim_res/main_lnr/", job_name,"/it_",it,".rds"))
 
 

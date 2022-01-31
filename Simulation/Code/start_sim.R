@@ -1,11 +1,11 @@
 library(dplyr)
 
 sim_prmt <- expand.grid(
-  p = c(4, 10, 50, 100, 200),
+  p = c(5, 10, 50, 100, 200),
   # n_train = c(500),
   # n_test = c(10000),
   dis = c("gaussian", "binomial")
-) %>% filter(p==200)
+) %>% filter(p==100)
    # data.frame()
 
 # A wrapper function to set up each job
