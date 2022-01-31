@@ -33,10 +33,16 @@ tar_plan(
   sim_binom_tab = make_sim_main_table(sim_success_rate,
                                   dist = "binomial",
                                   measures = "auc"),
+  
+  sim_binom_var_select = make_sim_var_select_table(sim_success_rate,
+                                                   dist = "binomial"),
 
   sim_gaus_tab = make_sim_main_table(sim_success_rate,
                                  dist = "gaussian",
                                  measures = "R2"),
+  
+  sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
+                                                   dist = "gaussian"),
   
   sim_tim_tab = make_time_table(sim_success_rate),
   
