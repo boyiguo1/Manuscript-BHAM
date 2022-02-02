@@ -6,7 +6,7 @@ library(dotenv)
 tar_option_set(
   packages = c("tidyverse", "dplyr", "rticles", "gtsummary", "mgcv", #"here", 
                "broom", "unglue", "knitr", "ggpubr", "xtable", "janitor", 
-               "flextable", "BHAM", "BhGLM", "sparseGAM",  "glmnet",
+               "flextable", "BHAM", "BhGLM", "sparseGAM",  "glmnet", "yardstick",
                "rmarkdown"#, "cosso",
   ),
   imports = c( "BHAM", "BhGLM", "sparseGAM")
@@ -34,15 +34,30 @@ tar_plan(
                                   dist = "binomial",
                                   measures = "auc"),
   
-  sim_binom_var_select = make_sim_var_select_table(sim_success_rate,
-                                                   dist = "binomial"),
+  sim_binom_var_select_raw = sim_var_select_raw(sim_success_rate,
+                                                       dist = "binomial"),
+  # plot_var_select(sim_binom_var_select_raw[[1]])
+  sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
+                                                dist = "binomial"),
 
+  # plot_comp_select(sim_binom_comp_select_raw[[4]])
+      
+  # sim_binom_var_select = make_sim_var_select_table(sim_success_rate,
+  #                                                  dist = "binomial"),
+
+  
+  
   sim_gaus_tab = make_sim_main_table(sim_success_rate,
                                  dist = "gaussian",
                                  measures = "R2"),
   
-  sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
-                                                   dist = "gaussian"),
+  sim_gaus_var_select_raw = sim_var_select_raw(sim_success_rate,
+                                                dist = "gaussian"),
+  # plot_var_select(sim_gaus_var_select_raw[[3]])
+  sim_gaus_comp_select_raw = sim_comp_select_raw(sim_success_rate,
+                                                  dist = "gaussian"),
+  # sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
+  #                                                  dist = "gaussian"),
   
   sim_tim_tab = make_time_table(sim_success_rate),
   

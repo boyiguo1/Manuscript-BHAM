@@ -8,7 +8,7 @@ make_sim_main_table <- function(success_rate, dist, section = "test" , measures)
       # browser()
       sim.df <- unglue_data(sim, 
                             "{}/{}-dis_{dist}-p_{p}") %>% 
-        mutate( p = as.numeric(p))
+        mutate(p = as.numeric(p))
       
       # fls <- 
         list.files(sim, full.names = TRUE) %>% 
