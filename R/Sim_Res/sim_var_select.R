@@ -76,7 +76,7 @@ plot_var_select <- function(var_select, show_null = TRUE){
     pivot_wider(names_from = Measure, values_from = value)
   
   # browser()
-
+  
   if(show_null){
     pos_ind <- plot_dat$Variable %in% paste0("x", 1:4)
     pos_vars <- plot_dat[pos_ind, ,drop = FALSE]
@@ -90,19 +90,19 @@ plot_var_select <- function(var_select, show_null = TRUE){
       plot_dat <- rbind(
         pos_vars %>% select(-sd),
         tmp
-        )
-        
+      )
+      
     }
   }
   
   
   ggplot(plot_dat) +
     # geom_jitter(aes(x = Variable, y = mean, color = Method))#+
-  geom_bar(aes(x = Variable, y = mean, fill = Method), stat="identity",
-           position=position_dodge())
-    # geom_errorbar(aes(x = Variable, color = Method, ymin=mean-sd, ymax=mean+sd), width=.1,
-    #               # position=position_dodge(.9)
-    #               )
+    geom_bar(aes(x = Variable, y = mean, fill = Method), stat="identity",
+             position=position_dodge())
+  # geom_errorbar(aes(x = Variable, color = Method, ymin=mean-sd, ymax=mean+sd), width=.1,
+  #               # position=position_dodge(.9)
+  #               )
   
 }
 
@@ -155,59 +155,61 @@ plot_comp_select <- function(comp_select, show_null = TRUE){
 }
 
 
-var_select_metrics <- function(res, truth){
-  stop("Not Implemented")
-}
+# var_select_metrics <- function(res, truth){
+#   tibble(
+#     recall = recall_vec(truth = truth, estimate = res),
+#     precsion = precision_vec( truth = truth, estimate = res),
+#     # ppv(dat, truth = truth, estimate = bamlasso),
+#     mcc = mcc_vec(truth = truth, estimate = res)
+#   )
+# }
 
 
 
-make_sim_var_select_table <- function(success_rate,
-                                      dist = "binomial"){
-  stop("Not Implemented")
+make_sim_var_metric_raw <- function(var_select){
   # browser()
-  total_dat <- success_rate %>% 
-    filter(dist=={{dist}}, n_success!=0) %>%
-    pull(path) %>% 
-    map_dfr( .f = function(sim){
-      sim.df <- unglue_data(sim, 
-                            "{}/{}-dis_{dist}-p_{p}") %>% 
-        mutate( p = as.numeric(p))
-      
-      list.files(sim, full.names = TRUE) %>% 
-        grep(".rds", x=., value = TRUE) %>%
-        map_dfr(.f = function(.file){
-          browser()
-          it <- unglue_data(.file, "{whatever}/it_{it}.rds") %>% pull(it) %>% as.numeric
-          
-          # Each column vector is the variable seleciton results from each method
-          var_select_res <- read_rds(.file) %>% `[[`("var_sel")   
-          truth_vec <- rep(FALSE, nrow(var_select_res)) 
-          truth_vec[1:4] <- TRUE
-          
-          # TODO (boyiguo1): calculate variable selection metrics, via a wrapper funciton
-          
-          # TODO (boyiguo1): Column wise apply to the var_select_res
-          
-          # TODO (boyiguo1): return a 3*n matrix where the first column is method, second column is measure, and the third column is the value
-          
-          comp_res <- read_rds(.file) %>% `[[`("var_part")
-          # TODO (boyiguo1): summarize ssGAM and bamlasso performance.
-          
-          # TODO (boyiguo1): Extract the var_part results, by creating a var_slect_res vector by parts (lnr and nonlinr)
-          
-          # TODO(boyiguo1): construct 
-          
-          
-          
-          
-          ret <- data.frame(
-            it = it,
-            # TODO (boyiguo1): Insert each method results.
-            
-          )
-        }) %>%
-        arrange(it)
-    }) 
+  p <- var_select$p
+  
+  # TODO (boyiguo1): check if some method, return NA for variable selection, and how does that affect constructing the iteration level var_select metrics
+  var_select$var_select %>% 
+    rename(SBGAM = SB_GAM) %>% 
+    # mutate(across(bamlasso:ssGAM, factor))
+    mutate(
+      # TODO: check if truth is correct when p > 4
+      truth = case_when(
+        Variable %in% paste0("x", 1:4) ~ TRUE,
+        TRUE ~ FALSE),
+      across(c(lasso:ssGAM, truth), factor, levels=c(TRUE, FALSE), labels = c("Positive", "Negative"))) %>% 
+    group_split(It, .keep=TRUE) %>% # Doesn't matter if .keep = TRUE/FALSE
+    imap_dfr(.f = function(dat, it){
+      # browser()
+      # If need to use a wrapper function to calculate variable selection metrics, see var_select_metrics
+      # Currently use across funciton to calculate the metrics
+      dat %>% 
+        summarize(
+          across(lasso:ssGAM, 
+                 list(recall = recall_vec,
+                      precesion = precision_vec,
+                      mcc = mcc_vec), 
+                 truth=.$truth)) %>% 
+        pivot_longer(cols = lasso_recall:ssGAM_mcc,
+                     names_to = c("Method", "Metric"),
+                     names_sep = "_") %>% 
+        mutate(It = it)
+    })
+  
+  
+  
+  
+  
+  
+  # TODO (boyiguo1): return a 3*n matrix where the first column is method, second column is measure, and the third column is the value
+  
+  
+  
+  
+  
+  
   
   # TODO(boyiguo1): organize the data for an output format
   # total_dat %>% 

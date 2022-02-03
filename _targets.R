@@ -41,10 +41,20 @@ tar_plan(
                                                 dist = "binomial"),
 
   # plot_comp_select(sim_binom_comp_select_raw[[4]])
-      
-  # sim_binom_var_select = make_sim_var_select_table(sim_success_rate,
-  #                                                  dist = "binomial"),
+  
+  # Visual Presentation of Var Selection
+  # make_sim_var_metric_raw(sim_binom_var_select_raw[[4]]) %>% 
+  # ggplot() + 
+  #   geom_boxplot(aes(x = Method, y = value)) +
+  #   theme(axis.text.x = element_text( angle = 90))+
+  #   facet_wrap(~Metric, ncol = 3, nrow = 1, scales = "free"),
 
+  # Table Presentation of Var Selection
+  # make_sim_var_metric_raw(sim_binom_var_select_raw[[4]]) %>% 
+  #   group_by(Method, Metric) %>% 
+  #   summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
+  #             ) %>% 
+  #   pivot_wider(names_from = Method, values_from = mean),
   
   
   sim_gaus_tab = make_sim_main_table(sim_success_rate,
