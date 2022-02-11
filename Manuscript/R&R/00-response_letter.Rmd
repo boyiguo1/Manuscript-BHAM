@@ -1,10 +1,15 @@
 ---
-output: pdf_document
-keep_tex: TRUE
+output: 
+  pdf_document:
+    keep_tex: FALSE
+    citation_package: biblatex
+bibliography: reply_ref.bib
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(targets)
+tar_load(RR_path)
 ```
 
 \hrule

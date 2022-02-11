@@ -235,8 +235,16 @@ tar_plan(
   tar_render(manu, "Manuscript/00-main.Rmd",
              output_file = "SS_GAM.pdf"),
   
-  # tar_render(manu_ENAR, "Manuscript/00-main_ENAR.Rmd",
-  #            output_file = "SS_GAM-ENAR.pdf"),
+  # R & R Letter --------------------------------------------------------------
+  tar_target(RR_path,
+             c("Manuscript/R&R/01-reviewer_1.Rmd",
+               "Manuscript/R&R/02-reviewer_2.Rmd",
+               "Manuscript/R&R/03-reviewer_4.Rmd",
+               "Manuscript/R&R/reply_ref.bib"
+             ),
+             format = "file"),
   
+  tar_render(RR, "Manuscript/R&R/00-response_letter.Rmd",
+             output_file = "response_SS_GAM.pdf"),
 )
 

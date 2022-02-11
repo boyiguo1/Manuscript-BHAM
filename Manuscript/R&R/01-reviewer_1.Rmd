@@ -14,7 +14,8 @@ _Here are some comments._
 
 _1. In the real data study, it is very important to establish the correlation between response variables and explanatory variables with appropriate models. The authors should add the comparison of linear models to illustrate that whether using non-linear was better. In addition, except expertise knowledge, are there metrics to judge whether a model is suitable for building model with non-linear part?_
 
-__Response__:
+__Response__: Thank you for the comment. We expanded our simulation study from two perspectives: 1) we added linear lasso models and spikeSlabGAM models, where linear lasso models serve as the reference to benchmark the performance of linear models; 2) we added new scenarios where the the functional form of each predictors are linear, to demonstrate the robustness of the proposed, regarding prediction and variable selection performances, when the non-linear assumption no longer holds. Please see the changes and conclusion in \emph{Section 3: SIMULATION STUDY}. To conclude, we observed [TODO: REPLACE HERE WITH CONCLUSION]. Hence, the proposed models perform better than linear models when functional are non-linear and as good as linear model when functions are linear. The expanded simulation study also demonstrates that the proposed model is flexible to model both linear and non-linear effects and broadly applicable in high-dimensional modeling without much constraints, which deems to be an additional strength.
+
 
 \bigskip
 
