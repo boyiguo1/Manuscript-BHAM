@@ -12,6 +12,8 @@ library(targets)
 tar_load(RR_path)
 ```
 
+\newcommand{\tp}{*}
+
 \hrule
 \vspace*{0.02cm}
 \hrule
@@ -43,10 +45,16 @@ _Please follow carefully the comments, criticisms and suggestions of the three r
 
 __Response__: We summarize the major changes of our manuscript as a response to address the comments from the referees:
 \begin{itemize}
-    \item xxx
-    \item yyy
-    \item zzz
+    \item According to Reviewer \#2's and Reviewer \#4's comments, we modified the prior distribution of the non-linear effects inclusion indicator such that the strong hierarchy for bi-level selection is enforced. 
+    \item According to Reviewer \#1's and Reviewer \#4's comments, we added linear lasso model and spikeSlabGAM model among the models to be compared. 
+    \item According to Reviewer \#1's and Reviewer \#4's comments, we added a new set of simulation scenarios where the functions of predictors are linear.  
+    \item According to Reviewer \#4's comment, we summarized the variable selection performance for all models of comparison and bi-level selection performance for the models that is capable, i.e. the proposed model and spikeSlabGAM.
+    \item According to Reviewer \#4's comment, we recorded the computation performance of spikeSlabGAM.
+    \item All existing figure and tables were updated to reflect the methodology change and simulation design change. Figures were added according to Reviewer \#4's comment.  [TODO: think what figures are needed]
+    \item We fixed the additional typos and grammar errors according to Review \#2.The revision of the manuscript is marked in red [TODO: change this color to red]. Deletions are not highlighted.
 \end{itemize}
+
+
 
 \newpage
 # Response to Reviewer \#1

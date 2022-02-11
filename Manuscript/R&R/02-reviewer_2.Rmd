@@ -26,7 +26,8 @@ __Response__:
 
 _(3) Since the authors have already separated linear and nonlinear effects, and we might expect linear effects to enter the model first, I wonder why the authors does not incorporate this explicitly into their model by, say, changing the prior for gamma’s to impose different sparsity._
 
-__Response__:
+__Response__: Thank you for the comment. We changed the prior distribution of the non-linear effects inclusion indicator to be $\gamma^\tp|\gamma, \theta \sim Bin(1, \gamma\theta)$ (See Equation ([TODO: add the equation number])), in comparison to $\gamma^\tp| \theta \sim Bin(1, \theta)$ previously. This prior formulation is motivated by effect forcing discussed in (Chipman, 2004). Now, the inclusion of the nonlinear effects is strictly dependent on the inclusion of the linear effects, and hence, reflects the hierarchy of bi-level selection. The modification of the prior doesn't complicate the model fitting algorithm. The $\gamma$ can be analytically integrated out of the density function (See Equation ([TODO: add the equation number]) and appendix) and requires minimum change of the proposed algorithms. In other words, the proposed model remain feasible for high-dimensional data analysis and retains the claimed computational advantages.
+
 \bigskip
 
 \em
