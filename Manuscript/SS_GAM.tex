@@ -723,17 +723,18 @@ In this section, we compare the performance of the proposed models to
 four alternative models: component selection and smoothing operator
 (COSSO) \citep{Zhang2006GAM}, adaptive COSSO \citep{Storlie2011},
 generalized additive models with automatic smoothing \citep{Wood2011},
-SB-GAM \citep{Bai2021}. COSSO is one of the earliest smoothing spline
-models that consider sparsity-smoothness penalty. Adaptive COSSO
-improved upon COSSO by using adaptive weight for penalties such that the
-penalty of each functional component are different for extra
-flexibility. Generalized additive models with automatic smoothing,
-hereafter \textit{mgcv}, is one of the most popular models for nonlinear
-effect interpolation and prediction. SB-GAM is the first spike-and-slab
-lasso GAM. We implement COSSO and adaptive COSSO with R package
-\texttt{cosso 2.1-1}, generalized additive models with automatic
-smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R package
-\texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide
+SB-GAM \citep{Bai2021}\textcolor{red}{}, linear lasso model and
+spikeSlabGAM {[}TODO: add citation here{]}\}. COSSO is one of the
+earliest smoothing spline models that consider sparsity-smoothness
+penalty. Adaptive COSSO improved upon COSSO by using adaptive weight for
+penalties such that the penalty of each functional component are
+different for extra flexibility. Generalized additive models with
+automatic smoothing, hereafter \textit{mgcv}, is one of the most popular
+models for nonlinear effect interpolation and prediction. SB-GAM is the
+first spike-and-slab lasso GAM. We implement COSSO and adaptive COSSO
+with R package \texttt{cosso 2.1-1}, generalized additive models with
+automatic smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R
+package \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide
 flexibility to define smoothing functions, and hence use the default
 choices. Both mgcv and proposed models allow customized smoothing
 functions and we choose the cubic regression spline. We controll the
@@ -777,20 +778,20 @@ same data generating process, serving as the testing data. We generate
 prediction performance of the chosen models, where training datasets are
 used to fit the models and testing datasets used to calculate assessment
 measures.
+\textcolor{red}{In addition, we considered the data generating process where the all the functional forms of the predictors are linear while keeping the rest of simulation parameters keep the same. These additional sets of simulations are designed to investigate the flexibility of the proposed model when non-linear assumptions are not met.}
 
 To evaluate the predictive performance of the models, the statistics,
 \(R^2\) for Gaussian model and AUC for binomial model calculated based
-on the testing dataset, are averaged across 50 simulations. Computation
-time for model selection, final model fitting and prediction are
-recorded for all simulations.
+on the testing dataset, are averaged across 50 simulations.
+\textcolor{red}{To evaluate the variable selection performance of the models, we record the set of variables each model selects and calculate the averaged false discover rate (FDR), false negative rate(FNR), and Matthews correlation coefficient (MCC). For method that doesn't automatically achieve variable selection, we set alpha level at 0.05 for mgcv that relies on hypothesis testing for variable selection, and soft-threshold at 0.5 for spikeSlabGAM given the marginal inclusion probabilities. For the two methods, BHAM and spikeSlabGAM, that are capable of bi-level selection, we record the probability that the linear and nonlinear components of each predictors are selected in the models.}
 
 \begin{center}
 Table \ref{tab:gaus} here\\
 Table \ref{tab:bin_auc} here\\
 \end{center}
 
-\subsection{Simulation Results}
-\subsubsection{Prediction Performance}
+\textcolor{red}{\subsection{Simulation Results}}
+\textcolor{red}{\subsubsection{Prediction Performance}}
 
 The predictive performances have a consistent pattern across the two
 distributions of outcomes. Across all the scenarios, COSSO and adaptive
@@ -809,9 +810,7 @@ SB-GAM has better performance than the proposed method. However, the
 BHAM-CD has extreme computational advantage over SB-GAM (see Table
 \ref{tab:time_sim}) without sacrificing much of the prediction accuracy.
 
-\subsubsection{Variable Selection Performance}
-
-~
+\textcolor{red}{\subsubsection{Variable Selection Performance}}
 
 \section{Metabolomics Data Analysis}
 \label{sec:real_data}
