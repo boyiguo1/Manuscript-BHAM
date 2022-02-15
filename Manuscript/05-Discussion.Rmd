@@ -1,4 +1,4 @@
-# Discussion
+\section{Discussion}
 \label{sec:concl}
 In the paper, we described a novel generalized additive model using Bayesian hierarchical priors, particularly the proposed spike-and-slab spline prior for bi-level functional selection. Meanwhile, we introduced two optimization based algorithms for model fitting. The algorithms can be easily scale up to address high-dimensional data analysis in a computational efficient manner. Via simulations, we demonstrated that the proposed model provides as good, if not better, prediction performance compared to some state-of-the-art non-linear modeling devices. 
 

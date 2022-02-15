@@ -95,11 +95,11 @@ tar_load(tab_time)
 ```{r child="05-Discussion.Rmd"}
 ```
 
-\newpage
+\clearpage
 
 \bibliography{bibfile.bib}
 
-\newpage
+\clearpage
 
 \begin{figure}
 \centering
@@ -156,7 +156,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \end{figure}
 
 
-\newpage
+\clearpage
 
 
 ```{r, results = "asis"}
@@ -183,7 +183,7 @@ tab_gaus %>%
   # flextable::autofit() %>% 
   # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measures for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). \\label{tab:gaus}")
 ```
-
+\clearpage
 
 ```{r, results = "asis"}
 tab_binom$mgcv[4] <- "-"
@@ -202,7 +202,7 @@ tab_binom %>%
   print(comment = FALSE, include.rownames = FALSE)
 ```
 
-\newpage
+\clearpage
 <!-- \begin{landscape} -->
 ```{r results = "asis"}
 tab_time %>% 
@@ -228,14 +228,14 @@ tab_time %>%
   # flextable::set_caption(caption = "The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.\\label{tab:time_sim}")
 ```
 <!-- \end{landscape} -->
-\newpage
+\clearpage
 
 ```{r}
 tbl_real_time %>% 
   flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\\label{tab:time_real_data}")
 ```
 
-\newpage
+\clearpage
 
 ```{r results = "asis"}
 rbind(
@@ -257,7 +257,7 @@ rbind(
 ```
 
 
-\newpage
+\clearpage
 
 
 ```{r results = "asis"}

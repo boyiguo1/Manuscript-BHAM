@@ -1,4 +1,4 @@
-# Bayesian Hierarchical Additive Models (BHAMs)
+\section{Bayesian Hierarchical Additive Models (BHAMs)}
 \label{sec:BHAM}
 
 Following the GLM notation introduced in Section \ref{sec:intro}, we have a generalized additive model with link function $g(\cdot)$ and linear predictor
@@ -23,7 +23,7 @@ where the coefficients $\bs \beta_j \equiv \begin{bmatrix} \beta_j : \bs \beta^\
 
 The re-parameterization step sets up the foundation of the proposed model and provides three benefits. First of all, the re-parameterization integrates the smoothing penalty into the design matrix, and encourages models to properly smooth the nonlinear function in addition to the sparse penalty for functional selection. Secondly, the eigendecomposition of the smoothing penalty allows the isolation of the linear space from the nonlinear space, improving the feasibility of bi-level functional selection. The eigendecomposition facilitates the construction of orthonormal design matrix, which makes imposing independent priors on the coefficients possible. This reduces the computational complexity compared to using a multivariate priors, and greatly broadens the choices of priors and further model choices. Last but not least, the scaling step of $\bs X^\tp$ further simplifies the choice of priors, from column-specific priors to a unified prior. 
 
-## Spike-and-Slab Spline Priors
+\subsection{Spike-and-Slab Spline Priors}
 
 The family of spike-and-slab (SS) regression models is one of most commonly used models in high-dimensional data analysis for its utility in outcome prediction and variable selection. We defer to Bai et al. [@Bai2021Review] for an in-depth introduction to spike-and-slab priors. To summarize, spike-and-slab priors are a family of mixture distributions that comprises a skinny spike density $f_{\text{spike}}(\cdot)$ for weak signals and a flat slab density $f_{\text{slab}}(\cdot)$ for strong signals, mathematically
 $$
@@ -44,7 +44,7 @@ Given that both double exponential distributions have a mean of 0 and the latent
 \end{equation}
 with the scale parameter $S = (1-\gamma)s_0 + \gamma s_1$. The SSL also mitigates the problem of EMVS where the weak signals are not shrink to zero, and hence is preferred in high-dimensional data analysis. We notice that Bai [@Bai2021] is the first to apply spike-and-slab lasso prior in the GAM framework, where the densities of the spike and slab components take the group lasso density [@Xu2015] and limits to an "all-in-all-out" strategy for functional selection.
 
-### Two-part Spike-and-Slab Lasso Prior
+\subsubsection{Two-part Spike-and-Slab Lasso Prior}
 
 We introduce a novel prior for GAMs, particularly for high-dimensional nonlinear modeling with bi-level selection. The proposed prior extends from the spike-and-slab lasso prior described in Equation (\ref{eq:ssl}). Given the re-parameterized design matrix $\bs X_j = \begin{bmatrix} X^0_j : \bs X_j^\tp \end{bmatrix}$ for the $j$th variable, we impose a two-part SSL prior to the coefficients $\bs \beta_j = \begin{bmatrix} \beta_j : \bs \beta_j^\tp \end{bmatrix}$. Specifically, we impose independent group priors on the linear space coefficients and on the nonlinear space coefficients respectively, 
 \begin{align}\label{eq:bham_ssl}
@@ -77,7 +77,7 @@ The beta distribution is a conjugate prior for the binomial distribution and hen
 Figure \ref{fig:SSprior} here
 \end{center}
 
-### Other Priors
+\subsubsection{Other Priors}
 
 With the re-parameterization step of the basis function matrix $\bs X$, it is possible to generalized the SSL prior to other priors, for example normal priors for ridge-type regularization and mixture normal prior for spike-and-slab regularization. These priors would work better in low and medium dimensional settings where the sparse assumption is not necessary. Here we elaborate the mixture normal prior as a demonstration of applying continuous spike-and-slab prior in BHAM.
 
@@ -88,7 +88,7 @@ A spike-and-slab mixture normal spline prior can be expressed as
 \end{align*}
 Similar to the spike-and-slab spline prior in Equation (\ref{eq:bham_ssl}), $0 < s_0 < s_1$ are tuning parameters and can be optimized via cross-validation. One of the critics received by the spike-and-slab mixture normal prior is that the tails of a normal distribution diminishes to zero too fast, which causes problems when estimating the large effects. Distributions with heavier tails can be used as an alternative, for example mixture Student's $t$ distribution with small degree of freedom. 
 
-## Algorithms for Fitting BHAMs
+\subsection{Algorithms for Fitting BHAMs}
 
 The proposed models can be fitted with MCMC algorithms. Nevertheless, the computational burden of MCMC algorithms creates scalability issues. George and McCulloch[@George1997] examined the computation speed for various MCMC algorithms with spike-and-slab mixture normal priors, and suggested MCMC algorithms works well for medium size ($p$=25) of predictors with only linear effects. However, it is not feasible for high-dimensional data analysis where the number of predictors easily exceeds 100. Specific to additive models, each predictor would expand to multiple new "predictors" via basis functions, creating greater computational demands. Scheipl et al. [@Scheipl2013] demonstrated the computational demands of a MCMC algorithm for fitting spike-and-slab GAM grow exponentially as $p$ increases modestly via simulation studies. Hence, we feel compelled to develop scalable algorithms for fitting Bayesian hierarchical additive models in high-dimensional settings. 
 
@@ -110,7 +110,7 @@ In this section, we extend the two EM-based algorithms, EM-CD and EM-IWLS algori
 
 <!-- The main difference between Bai's work and the proposed models are two-folded: 1) the proposed models are feasible to answer the question if the nonlinear effects are necessary for the predictors, while Bai's work can't due to the "all-in-all-out" approach; 2) the proposed models can provide uncertainly measures in addition to the point estimates of the coefficients, while Bai's work can't not due to the model fitting algorithm. One of the exception is Bai (in progress), who a grouped spike-and-slab LASSO prior [@Rockova2018] to address the grouping structure of spline bases.  -->
 
-### EM algorithms
+\subsubsection{EM algorithms}
 
 EM algorithm is an iterative algorithm to find MAP estimates or the maximum likelihood estimates. It is commonly used when some necessary data to establish the likelihood function are missing. Instead of maximizing the the likelihood function, the algorithm maximizes the expectation of the likelihood function with respect to the "missing" data. 
 
@@ -146,7 +146,7 @@ $$Q_2 \equiv Q_2(\bs\gamma,\bs\theta) = \sum\limits_{j=1}^{p} \left[ (\gamma_j+\
 $Q_1$ and $Q_2$ are respectively the log posterior density of the coefficients $\bs \beta$ and the log posterior density of the probability parameters $\bs \theta$ conditioning on $\bs \gamma$. Meanwhile, conditioning on $\bs \gamma$, $Q_1$ and $Q_2$ are independent and can be maximized separately for $\bs \beta, \phi$ and $\bs \theta$. Depending on the choice of coefficient priors, $Q_1$ can be treated as penalized likelihood function and maximization of $E(Q_1)$ can be solved via CD algorithm or IWLS algorithm in each iteration. Maximization of $E(Q_2)$ can be solved via closed form equations following the beta-binomial conjugate relationship. 
 
 
-### EM-Coordinate Descent
+\subsubsection{EM-Coordinate Descent}
 \label{sec:EMCD}
 
 When the prior distribution of the coefficients is set to mixture double exponential, coordinate descent algorithm can be used to estimate the parameters in the M-step. Coordinate descent is an optimization algorithm that offers extreme computational advantage, and famous for its application in optimizing the $l_1$ penalized likelihood function.
@@ -219,6 +219,6 @@ We assess convergence by the criterion: $|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\ep
 <!-- $10^{-5}$). -->
 
 
-## Selecting Optimal Scale Values
+\subsection{Selecting Optimal Scale Values}
 \label{sec:tune}
 Our proposed models, BHAM, require two preset scale parameters ($s_0$, $s_1$). Hence, we need to find the optimal values for the scale parameters such that the model reaches its best prediction performance regarding a criteria of preference. This would be achieved by constructing a two dimensional grid, consists of different pairs of ($s_0$, $s_1$) value. However, previous research suggested the value of slab scale $s_1$ have less impact on the final model and is recommended to be set as a generally large value, e.g. $s_1 = 1$, that provides no or weak shrinkage. [@Rockova2018] As a result, we focus on examining different values of spike scale $s_0$. Instead of the 2-D grid, We consider a sequence of $L$ decreasing values $\{s_0^l\}: 0 < s_0^1 < s_0^2 < \dots < s_0^L < s_1$. Increasing the spike scale $s_0$ tends to include more non-zero coefficients in the model. A measure of preference calculated with cross-validations (CV), e.g. deviance, area under the curve (AUC), mean squared error, can be used to facilitate the selection of a final model. The procedure is similar to the Lasso implemented in the widely used R package `glmnet`, which quickly fits Lasso models over a list of values of regularization parameters $\lambda$ , giving a sequence of models for users to choose from.

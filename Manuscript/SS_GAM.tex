@@ -91,9 +91,7 @@ Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility}
 \newcommand{\simiid}{\overset{\text{iid}}{\sim}}
 \newcommand{\bg}[1]{\textcolor{red}{#1}}
 
-\hypertarget{introduction}{%
-\section{Introduction}\label{introduction}}
-
+\section{Introduction}
 \label{sec:intro}
 
 Many modern biomedical research, e.g.~sequencing data analysis, electric
@@ -221,10 +219,7 @@ studies. Analyses of two metabolomics datasets are presented in Section
 \ref{sec:real_data}. Conclusion and discussions are given in Section
 \ref{sec:concl}.
 
-\hypertarget{bayesian-hierarchical-additive-models-bhams}{%
-\section{Bayesian Hierarchical Additive Models
-(BHAMs)}\label{bayesian-hierarchical-additive-models-bhams}}
-
+\section{Bayesian Hierarchical Additive Models (BHAMs)}
 \label{sec:BHAM}
 
 Following the GLM notation introduced in Section \ref{sec:intro}, we
@@ -319,9 +314,7 @@ but not least, the scaling step of \(\boldsymbol{X}^*\) further
 simplifies the choice of priors, from column-specific priors to a
 unified prior.
 
-\hypertarget{spike-and-slab-spline-priors}{%
-\subsection{Spike-and-Slab Spline
-Priors}\label{spike-and-slab-spline-priors}}
+\subsection{Spike-and-Slab Spline Priors}
 
 The family of spike-and-slab (SS) regression models is one of most
 commonly used models in high-dimensional data analysis for its utility
@@ -372,9 +365,7 @@ GAM framework, where the densities of the spike and slab components take
 the group lasso density \citep{Xu2015} and limits to an
 ``all-in-all-out'' strategy for functional selection.
 
-\hypertarget{two-part-spike-and-slab-lasso-prior}{%
-\subsubsection{Two-part Spike-and-Slab Lasso
-Prior}\label{two-part-spike-and-slab-lasso-prior}}
+\subsubsection{Two-part Spike-and-Slab Lasso Prior}
 
 We introduce a novel prior for GAMs, particularly for high-dimensional
 nonlinear modeling with bi-level selection. The proposed prior extends
@@ -459,8 +450,7 @@ in Figure \ref{fig:SSprior}.
 Figure \ref{fig:SSprior} here
 \end{center}
 
-\hypertarget{other-priors}{%
-\subsubsection{Other Priors}\label{other-priors}}
+\subsubsection{Other Priors}
 
 With the re-parameterization step of the basis function matrix
 \(\boldsymbol{X}\), it is possible to generalized the SSL prior to other
@@ -484,9 +474,7 @@ estimating the large effects. Distributions with heavier tails can be
 used as an alternative, for example mixture Student's \(t\) distribution
 with small degree of freedom.
 
-\hypertarget{algorithms-for-fitting-bhams}{%
-\subsection{Algorithms for Fitting
-BHAMs}\label{algorithms-for-fitting-bhams}}
+\subsection{Algorithms for Fitting BHAMs}
 
 The proposed models can be fitted with MCMC algorithms. Nevertheless,
 the computational burden of MCMC algorithms creates scalability issues.
@@ -543,8 +531,7 @@ that SB-GAM uses a block CD algorithm for their group prior, while the
 proposed prior is pairwise independent requiring no special treatment in
 the CD algorithm.
 
-\hypertarget{em-algorithms}{%
-\subsubsection{EM algorithms}\label{em-algorithms}}
+\subsubsection{EM algorithms}
 
 EM algorithm is an iterative algorithm to find MAP estimates or the
 maximum likelihood estimates. It is commonly used when some necessary
@@ -617,9 +604,7 @@ of \(E(Q_1)\) can be solved via CD algorithm or IWLS algorithm in each
 iteration. Maximization of \(E(Q_2)\) can be solved via closed form
 equations following the beta-binomial conjugate relationship.
 
-\hypertarget{em-coordinate-descent}{%
-\subsubsection{EM-Coordinate Descent}\label{em-coordinate-descent}}
-
+\subsubsection{EM-Coordinate Descent}
 \label{sec:EMCD}
 
 When the prior distribution of the coefficients is set to mixture double
@@ -707,154 +692,14 @@ We assess convergence by the criterion:
 is the estimate of deviance at the \(t\)th iteration, and \(\epsilon\)
 is a small value (say \(10^{-5}\)).
 
-\hypertarget{em-iwls}{%
-\subsubsection{EM-IWLS}\label{em-iwls}}
+\subsection{Selecting Optimal Scale Values}
+\label{sec:tune}
 
-Similar to the EM-CD algorithm, the EM-IWLS algorithm is an iterative
-EM-based algorithm where the iterative weighted least squares algorithm
-is used to find the estimate of \(\boldsymbol{\beta}, \phi\) that
-maximizes \(E(Q_1)\). The iterative weighted least squares algorithm was
-originally proposed to fit the classical generalized linear models, and
-generalized to fit some Bayesian hierarchical models.\citep{Gelman2013}
-Yi and Ma \citep{Yi2012} formulated Student's t-distribution and double
-exponential distribution as hierarchical normal distributions such that
-generalized linear models with shrinkage priors can be easily fitted
-using IWLS in combination with EM algorithm. In this work, we adapt the
-EM-IWLS paradigm to fit BHAM with spike-and-slab spline prior .
-
-A double exponential prior, \(\beta|S \sim DE(0, S)\) can be formulated
-as a hierarchical normal prior with unknown variance \(\tau^2\)
-integrated out: \begin{align*}
-  \beta|\tau^2 &\sim N(0, \tau^2)\\
-  \tau^2|S & \sim Gamma(1, 1/(2S^2)), 
-\end{align*} For the mixture double exponential priors, we can define
-the scale parameter \(S = (1-\gamma)s_0 + \gamma s_1\) following
-Equation (\ref{eq:ssl}). The change in the prior formulation in turn
-leads to the change in the log posterior density function, as \(Q_1\)
-needs to account for the hyperprior of \(\tau^2\):
-\begin{equation}\label{eq:Q1_IWLS}
-Q_1(\boldsymbol{\beta}, \phi) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) + \sum\limits_{j=1}^p\left[\log f(\beta_j|{\tau}^2_j) + \log f({\tau}^2_j| S_j)+\sum\limits_{k=1}^{K_j} \{\log f(\beta^{*}_{jk}|{\tau^{*}}^2_{jk})+\log f({\tau^*}^2_{jk}| S^*_j)\}\right].
-\end{equation} Since \(\boldsymbol{\tau}^2\) are not of our primary
-interest, we treat them as the ``missing'' data in addition to the
-latent indicators \(\boldsymbol{\gamma}\), and hence construct the
-expectation
-\(E_{\boldsymbol{\gamma}, \boldsymbol{\tau}^2|\Theta^{(t-1)}}(Q_1)\) in
-the E-step. To note, unlike the same latent indicator \(\gamma^*_j\)
-which is shared by the coefficients of the non-linear terms
-\(\beta^*_{jk}\) for \(k = 1, \dots, K_j\) , \(\tau^2_{jk}\) is
-coefficient specific for \(\beta^*_{jk}\).
-\(E({S_j}^{-1}|\beta_j, s_0, s_1), E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1), E({\tau}^2_{j}|S_j, \beta_j) \text{ and } E({\tau^*}^2_{jk}|S_j^*, \beta^*_{jk})\)
-needs to be calculated to formulate \(E(Q_1)\). As neither
-\(E({S_j}^{-1}|\beta_j, s_0, s_1)\) nor
-\(E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1)\) depends on
-\(\tau^2\)s, they can be derived using Equation (\ref{eq:exp_scale}). On
-the other hand, \(\tau^{2}\), following gamma distributions, is a
-conjugate prior for the normal variance, and the conditional posterior
-density of \(\tau^{-2}\) is an inverse Gaussian distribution.
-\(E({\tau}^{-2}_{j})\) and \(E({\tau^*}^{-2}_{jk})\) are calculated
-using the closed form equation \begin{align*}
- E({\tau}^{-2}_{j}|S_j, \beta_j) ={S_j}^{-1}/|\beta_j| \qquad E({\tau^*}^{-2}_{jk}|S_j^*, \beta^*_{jk})={S_j^*}^{-1}/|\beta^*_{jk}|,
-\end{align*} where \(S_j\) and \(S_j^*\) are replaced by the expectation
-and \(\beta\)s are replaced with \(\beta^{(t-1)}\). With simplification
-(up to constant additive terms), we have
-\begin{equation}\label{eq:EQ1_IWLS}
-E(Q_1) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) - \sum\limits_{j=1}^p\left[ {2E({\tau_j}^{-2})}{\beta_j}^2 +\sum\limits_{k=1}^{K_j} {2E({\tau_{jk}^*}^{-2})}{\beta_{jk}^*}^2\right].
-\end{equation} \(2E({\tau}^{-2})\beta^2\) can be seen as the kernel of a
-normal density with mean 0 and variance \(E(\tau^{2})\), and we can
-formulate the coefficients \(\boldsymbol{\beta}\) as a multivariate
-normal distribution with means \(\boldsymbol{0}\) and variance
-covariance matrix \(\boldsymbol{\Sigma}_{\tau^2}\), where
-\(\boldsymbol{\Sigma}_{\tau^2}\) is a diagonal matrix with
-\(E(\tau^2)\)s on the diagonal, \[
-\boldsymbol{\beta }\sim \text{MVN}(0, \boldsymbol{\Sigma}_{\tau^2}).
-\]
-
-Meanwhile, following the classical IWLS, we can approximate the
-generalized model likelihood at each iteration with a weighted normal
-likelihood: \[
-f(\textbf{y}|\boldsymbol{\beta}, \phi) \approx \text{MVN}(\textbf{z}|\boldsymbol{X} \boldsymbol{\beta}, \phi\boldsymbol{\Sigma })
-\] where the `normal response' \(z_i\) and `weight' \(w_i\) are called
-the pseudo-response and pseudo-weight respectively. The pseudo-response
-and the pseudo-weight are calculated by \[
-\begin{aligned}
-z_i &= \hat\eta_i - \frac{L^{'}(y_i|\hat\eta_i)}{L^{''}(y_i|\hat\eta_i)}& w_i &= - L^{''}(y_i|\hat\eta_i),
-\end{aligned}
-\] where \(\hat\eta_i = (\boldsymbol{X} {\hat{\boldsymbol{\beta}}})_i\),
-\(L^{'}(y_i|\hat\eta_i, \hat \phi)\) and
-\(L^{''}(y_i|\hat\eta_i, \hat \phi)\) are the first and second
-derivative of the log density,
-\(\log f(\textbf{y}_i|\boldsymbol{\beta}, \phi)\) with respect to
-\(\eta_i\).
-
-With
-\(\boldsymbol{z}\sim \text{MVN}(\boldsymbol{X} \boldsymbol{\beta}, \phi \boldsymbol{\Sigma})\)
-and
-\(\boldsymbol{\beta }\sim \text{MVN}(0, \phi \boldsymbol{\Sigma}_{\tau^2})\),
-we can augment the two multivariate normal distributions and update the
-estimates for \(\boldsymbol{\beta}\) and \(\phi\) via least squares in
-each iteration of the EM algorithm. We create the augmented response,
-augmented data, and augmented variance-covariance matrix following
-\begin{align*}
-& \boldsymbol{z}_* = \begin{bmatrix} \boldsymbol{z}\\ \boldsymbol{0}\end{bmatrix} &&
-  \boldsymbol{X}_* = \begin{bmatrix} \boldsymbol{X} \\ \boldsymbol{I} \end{bmatrix} &&
-  \boldsymbol{\Sigma}_* = \begin{bmatrix} \boldsymbol{\Sigma }& \boldsymbol{0}  \\ \boldsymbol{0} & \boldsymbol{\Sigma}_{\tau^2}/\phi \end{bmatrix}, &
-\end{align*} such that \[
-\boldsymbol{z}_* \sim \text{MVN}(\boldsymbol{X}_* \boldsymbol{\beta }, \phi \Sigma_*).
-\] Using the least squares estimators to update \(\boldsymbol{\beta}\)
-and \(\phi\), we have \begin{align*}
-& \boldsymbol{\beta}^{(t)} = (\boldsymbol{X}_*^T \boldsymbol{\Sigma}^{-1} \boldsymbol{X}_*)^{-1}\boldsymbol{X}_*^T \boldsymbol{\Sigma}^{-1} \boldsymbol{z}_* && \phi^{(t)} = \frac{1}{n}(\boldsymbol{z}_*-X_*\boldsymbol{\beta}^{(t)})^T\boldsymbol{\Sigma}^{-1}(\boldsymbol{z}_*-X_*\boldsymbol{\beta}^{(t)}).&
-\end{align*} To note, the variance-covariance matrix of the coefficient
-estimates variance-covariance matrix can be derived in the EM-IWLS
-algorithm and in turn can be used for statistical inferences, \[
-  \text{Var}(\boldsymbol{\beta}^{(t)}) = (\boldsymbol{X}_*^T\boldsymbol{\Sigma}^{-1} \boldsymbol{X}_*)^{-1}\phi^{(t)}.
-\]
-
-Totally, the proposed EM-IWLS algorithm is summarized as follows:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi})}
-\item
-  Choose a starting value \(\boldsymbol{\beta}^{(0)}\) and
-  \(\boldsymbol{\theta}^{(0)}\) for \(\boldsymbol{\beta}\) and
-  \(\boldsymbol{\theta}\). For example, we can initialize
-  \(\boldsymbol{\beta}^{(0)} = \boldsymbol{0}\) and
-  \(\boldsymbol{\theta}^{(0)} = \boldsymbol{0}.5\)
-\item
-  Iterate over the E-step and M-step until convergence
-
-  E-step: calculate \(E(\gamma_{j})\), \(E(\gamma^*_{j})\) and
-  \(E(\tau^{-2}_{j})\), \(E({\tau^*}^{-2}_{jk})\) with the estimates
-  \(\Theta^{(t-1)}\) from the previous iteration
-
-  M-step:
-
-  \begin{enumerate}
-  \def\labelenumii{\alph{enumii})}
-  \tightlist
-  \item
-    Based on the current value of \(\beta\), calculate the pseudo-data
-    \(z_i^{(t)}\) and the pseudo-weights \(w_i^{(t)}\)
-  \item
-    Update \(\boldsymbol{\beta}^{(t)}\) by runing the augmented weighted
-    least squared
-  \item
-    If \(\phi\) is present, update \(\phi\)
-  \end{enumerate}
-\end{enumerate}
-
-Similar to EM-CD, we assess convergence by the criterion,
-\(|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon\), where \(\epsilon\) is
-a small value (say \(10^{-5}\)).
-
-\hypertarget{selecting-optimal-scale-values}{%
-\subsection{Selecting Optimal Scale
-Values}\label{selecting-optimal-scale-values}}
-
-\label{sec:tune} Our proposed models, BHAM, require two preset scale
-parameters (\(s_0\), \(s_1\)). Hence, we need to find the optimal values
-for the scale parameters such that the model reaches its best prediction
-performance regarding a criteria of preference. This would be achieved
-by constructing a two dimensional grid, consists of different pairs of
+Our proposed models, BHAM, require two preset scale parameters (\(s_0\),
+\(s_1\)). Hence, we need to find the optimal values for the scale
+parameters such that the model reaches its best prediction performance
+regarding a criteria of preference. This would be achieved by
+constructing a two dimensional grid, consists of different pairs of
 (\(s_0\), \(s_1\)) value. However, previous research suggested the value
 of slab scale \(s_1\) have less impact on the final model and is
 recommended to be set as a generally large value, e.g.~\(s_1 = 1\), that
@@ -871,9 +716,7 @@ similar to the Lasso implemented in the widely used R package
 of regularization parameters \(\lambda\) , giving a sequence of models
 for users to choose from.
 
-\hypertarget{simulation-study}{%
-\section{Simulation Study}\label{simulation-study}}
-
+\section{Simulation Study}
 \label{sec:sim}
 
 In this section, we compare the performance of the proposed models to
@@ -912,9 +755,7 @@ simulation study because of demonstrated inferior predictive performance
 compared to mgcv and scalability issues with increased number of
 predictors. \citep{Scheipl2013}
 
-\hypertarget{monte-carlo-simulation-study}{%
-\subsection{Monte Carlo Simulation
-Study}\label{monte-carlo-simulation-study}}
+\subsection{Monte Carlo Simulation Study}
 
 We follow the data generating process described in Bai \citep{Bai2021}.
 We first generate \(n=500\) training data points with
@@ -948,6 +789,9 @@ Table \ref{tab:gaus} here\\
 Table \ref{tab:bin_auc} here\\
 \end{center}
 
+\subsection{Simulation Results}
+\subsubsection{Prediction Performance}
+
 The predictive performances have a consistent pattern across the two
 distributions of outcomes. Across all the scenarios, COSSO and adaptive
 COSSO have the least favorable performance among the applicable methods
@@ -965,11 +809,11 @@ SB-GAM has better performance than the proposed method. However, the
 BHAM-CD has extreme computational advantage over SB-GAM (see Table
 \ref{tab:time_sim}) without sacrificing much of the prediction accuracy.
 
+\subsubsection{Variable Selection Performance}
+
 ~
 
-\hypertarget{metabolomics-data-analysis}{%
-\section{Metabolomics Data Analysis}\label{metabolomics-data-analysis}}
-
+\section{Metabolomics Data Analysis}
 \label{sec:real_data}
 
 In this section, we apply the proposed models BHAM, fitted with the
@@ -983,27 +827,26 @@ computationally efficient (see Table \ref{tab:time_real_data}).
 Table \ref{tab:time_real_data} here
 \end{center}
 
-\hypertarget{emory-cardiovascular-biobank}{%
-\subsection{Emory Cardiovascular
-Biobank}\label{emory-cardiovascular-biobank}}
+\subsection{Emory Cardiovascular Biobank}
+\label{sec:ECB}
 
-\label{sec:ECB} We use the proposed models BHAM to analyze a metabolic
-dataset from a recently published research \citep{Mehta2020} studying
-plasma metabolomic profile on the three-year all-cause mortality among
-patients undergoing cardiac catheterization. The dataset is publicly
-available via \textit{Dryad} \citep{Mehta2020_data}. It contains in
-total of 776 subjects from two cohorts. As there is a large number of
-non-overlapping features among the two cohorts, we use the cohort with
-larger sample size (N=454). There are initially 6796 features in the
-dataset, which is too large to be practically meaningful to analyze.
-Hence, we perform a univariate screening procedure on the features, via
-GAM implemented in \texttt{mgcv}, and choose the the top 200 features
-with smallest p-values. We use 5-knot spline additive models for binary
-outcome using two different models, the proposed BHAM and the SB-GAM.
-10-Fold CV are used to choose the optimal tuning parameters of each
-framework with respect to the default selection criterion implemented in
-the software. Out-of-bag samples are used for prediction performance
-evaluation, where deviance, AUC, Brier score defined as
+We use the proposed models BHAM to analyze a metabolic dataset from a
+recently published research \citep{Mehta2020} studying plasma
+metabolomic profile on the three-year all-cause mortality among patients
+undergoing cardiac catheterization. The dataset is publicly available
+via \textit{Dryad} \citep{Mehta2020_data}. It contains in total of 776
+subjects from two cohorts. As there is a large number of non-overlapping
+features among the two cohorts, we use the cohort with larger sample
+size (N=454). There are initially 6796 features in the dataset, which is
+too large to be practically meaningful to analyze. Hence, we perform a
+univariate screening procedure on the features, via GAM implemented in
+\texttt{mgcv}, and choose the the top 200 features with smallest
+p-values. We use 5-knot spline additive models for binary outcome using
+two different models, the proposed BHAM and the SB-GAM. 10-Fold CV are
+used to choose the optimal tuning parameters of each framework with
+respect to the default selection criterion implemented in the software.
+Out-of-bag samples are used for prediction performance evaluation, where
+deviance, AUC, Brier score defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2\), and
 misclassication error defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)\) are
@@ -1015,9 +858,7 @@ misclassification error in the out-of-bag samples compared to SB-GAM
 Table \ref{tab:ECB_res} here
 \end{center}
 
-\hypertarget{weight-loss-maintenance-cohort}{%
-\subsection{Weight Loss Maintenance
-Cohort}\label{weight-loss-maintenance-cohort}}
+\subsection{Weight Loss Maintenance Cohort}
 
 We use the proposed models BHAM to analyze metabolomics data from a
 recently published study \citep{Bihlmeyer2021} on the association
@@ -1049,18 +890,18 @@ compared to SB-GAM (see Table \ref{tab:WLM_res}).
 Table \ref{tab:WLM_res} here
 \end{center}
 
-\hypertarget{discussion}{%
-\section{Discussion}\label{discussion}}
+\section{Discussion}
+\label{sec:concl}
 
-\label{sec:concl} In the paper, we described a novel generalized
-additive model using Bayesian hierarchical priors, particularly the
-proposed spike-and-slab spline prior for bi-level functional selection.
-Meanwhile, we introduced two optimization based algorithms for model
-fitting. The algorithms can be easily scale up to address
-high-dimensional data analysis in a computational efficient manner. Via
-simulations, we demonstrated that the proposed model provides as good,
-if not better, prediction performance compared to some state-of-the-art
-non-linear modeling devices.
+In the paper, we described a novel generalized additive model using
+Bayesian hierarchical priors, particularly the proposed spike-and-slab
+spline prior for bi-level functional selection. Meanwhile, we introduced
+two optimization based algorithms for model fitting. The algorithms can
+be easily scale up to address high-dimensional data analysis in a
+computational efficient manner. Via simulations, we demonstrated that
+the proposed model provides as good, if not better, prediction
+performance compared to some state-of-the-art non-linear modeling
+devices.
 
 The proposed model shares many commonality with an high-dimensional
 Bayesian GAM, SB-GAM \citep{Bai2021}, independently developed around the
@@ -1128,11 +969,11 @@ indicator of the smoothing function null space
 \(\boldsymbol{\gamma}^0\). The similar strategy has been used in Ferrari
 and Dunson \citep{Ferrari2020}.
 
-\newpage
+\clearpage
 
 \bibliography{bibfile.bib}
 
-\newpage
+\clearpage
 
 \begin{figure}
 \centering
@@ -1188,7 +1029,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \label{fig:SSprior}
 \end{figure}
 
-\newpage
+\clearpage
 
 \begin{table}[ht]
 \centering
@@ -1206,6 +1047,7 @@ P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\
 \caption{The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.} 
 \label{tab:gaus}
 \end{table}
+\clearpage
 
 \begin{table}[ht]
 \centering
@@ -1224,7 +1066,7 @@ P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\
 \label{tab:bin_auc}
 \end{table}
 
-\newpage
+\clearpage
 
 \begin{sidewaystable}[!h]
 \centering
@@ -1248,7 +1090,7 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
 \label{tab:time_sim}
 \end{sidewaystable}
 
-\newpage
+\clearpage
 
 \providecommand{\docline}[3]{\noalign{\global\setlength{\arrayrulewidth}{#1}}\arrayrulecolor[HTML]{#2}\cline{#3}}
 
@@ -1301,7 +1143,7 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
 
 \end{longtable}
 
-\newpage
+\clearpage
 
 \begin{table}[ht]
 \centering
@@ -1317,7 +1159,7 @@ BHAM-CD & 455.69 & 0.74 & 0.16 & 0.21 \\
 \label{tab:ECB_res}
 \end{table}
 
-\newpage
+\clearpage
 
 \begin{table}[ht]
 \centering

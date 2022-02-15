@@ -1,4 +1,4 @@
-# Introduction
+\section{Introduction}
 \label{sec:intro}
 
 Many modern biomedical research, e.g. sequencing data analysis, electric health record data analysis, require special treatment of high-dimensionality, commonly known as $p >> n$ problem. There is extensive literature on high-dimensional linear models via penalized models or Bayesian hierarchical models, see Mallick and Yi [@Mallick2013] for review. These models are built upon a restrictive and unrealistic assumption, linearity. In classical statistical modeling, many strategies and models are proposed to relax the linearity assumption with various degrees of complexity. For example, variable categorization is a simple and common practice in epidemiology, but suffers from power and interpretation issues. More complex models to address nonlinear effects include random forest and other so-called "black box" models [@Breiman2001]. These models are useful for statistical prediction but do not estimate parameters relevant to the data generation process that one can draw inferences from. In addition, how to generalize these models to the high-dimensional setting remains unclear.
