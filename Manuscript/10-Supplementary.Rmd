@@ -8,6 +8,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 \newcommand{\tp}{*}
 \newcommand{\pr}{\text{Pr}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
 
 \subsection{Supplementary Information 1: Marginal Distribution of $\gamma_j^\tp$}
 Given that $\gamma_{j}^\tp | \gamma_{j}, \theta_j \sim Bin(1, \gamma_{j}\theta_j)$ where $\gamma_{j} | \theta_j \sim Bin(1, \theta_j)$, we can derive the the marginal distribution of $\gamma_{j}^\tp$ with the following manipulation.
@@ -24,7 +25,7 @@ Given that $\gamma_{j}^\tp | \gamma_{j}, \theta_j \sim Bin(1, \gamma_{j}\theta_j
 
 \clearpage
 
-\subsection{Supplementary Information 1: EM-IWLS Algorithm for Fitting Bayesian Hierarchical Additive Models}
+\subsection{Supplementary Information 2: EM-IWLS Algorithm for Fitting Bayesian Hierarchical Additive Models}
 
 Similar to the EM-CD algorithm, the EM-IWLS algorithm is an iterative EM-based algorithm where the iterative weighted least squares algorithm is used to find the estimate of $\bs \beta, \phi$ that maximizes $E(Q_1)$. The iterative weighted least squares algorithm was originally proposed to fit the classical generalized linear models, and generalized to fit some Bayesian hierarchical models.[@Gelman2013] Yi and Ma [@Yi2012] formulated Student's t-distribution and double exponential distribution as hierarchical normal distributions such that generalized linear models with shrinkage priors can be easily fitted using IWLS in combination with EM algorithm. In this work, we adapt the EM-IWLS paradigm to fit BHAM with spike-and-slab spline prior
 <!-- , with the full potential to adopt Student's t, double exponential and mixture Student's t priors when sparse assumption is not necessary -->
