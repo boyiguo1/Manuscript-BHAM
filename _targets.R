@@ -53,21 +53,20 @@ tar_plan(
              readr::read_csv(ECB_train_path)),
   
   # ** GAM Screening ####
-  tar_target(ECB_gam_screen,
-             gam_screen(ECB_train_dat)),
+  tar_target(ECB_var_screen,
+             var_screen(ECB_train_dat)),
   
   tar_target(ECB_cov,
              ECB_train_dat %>% 
-               select(ECB_gam_screen %>% pull(var)) %>% 
+               select(all_of(ECB_var_screen)) %>% 
                data.matrix),
   
   tar_target(ECB_outcome,
              ECB_train_dat %>% pull(death3yr)),
   
   # ** BHAM --------------------------------------------------------------- 
-  ECB_mz_names = ECB_cov %>% colnames,
   ECB_sm_df = data.frame(
-    Var = ECB_mz_names,
+    Var = ECB_cov %>% colnames,
     Func = "s",
     Args ="bs='cr', k=5"
   ),
@@ -82,7 +81,7 @@ tar_plan(
   
   ECB_bamlasso_fnl = bamlasso(ECB_dsn_mat, ECB_outcome, family = "binomial",
                           group = make_group(names(ECB_dsn_mat)),
-                          ss = c(0.095, 0.5)),
+                          ss = c(0.025, 0.5)),
   
   ECB_bamlasso_insample_msr = measure.bh(ECB_bamlasso_fnl),
   ECB_bamlasso_var = bamlasso_var_selection(ECB_bamlasso_fnl),
@@ -102,8 +101,7 @@ tar_plan(
   
   ECB_SBGAM_fnl = SBGAM(X = ECB_cov, y = ECB_outcome, family = "binomial", lambda0 = 24, a = 1, b = 1),
 
-    tar_target(ECB_SBGAM_insample_msr,
-             measure.glm(y = ECB_outcome, ECB_SBGAM_fnl$mu.pred, family = "binomial")),
+  ECB_SBGAM_insample_msr = measure.glm(y = ECB_outcome, ECB_SBGAM_fnl$mu.pred, family = "binomial"),
   
   ECB_SBGAM_var = (ECB_cov %>% colnames())[ECB_SBGAM_fnl$classifications!=0],
   
