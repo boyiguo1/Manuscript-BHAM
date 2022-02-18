@@ -11,15 +11,15 @@
   "Packages": {
     "BHAM": {
       "Package": "BHAM",
-      "Version": "0.1.0.9001",
+      "Version": "0.2.0",
       "Source": "GitHub",
       "RemoteType": "github",
       "RemoteHost": "api.github.com",
       "RemoteUsername": "boyiguo1",
       "RemoteRepo": "BHAM",
-      "RemoteRef": "408874c",
-      "RemoteSha": "408874c1e150af18c961efe22c4b8cf8f6be9b20",
-      "Hash": "2e7d61a5d54e7282fbc2cfe337a90fee"
+      "RemoteRef": "f775cd0",
+      "RemoteSha": "f775cd03072ec8724c4598eb361d8582b7e41c34",
+      "Hash": "65ccd8c6ebb9865c5f2aeca7b823596a"
     },
     "BhGLM": {
       "Package": "BhGLM",
@@ -1051,7 +1051,9 @@
     "sparseGAM": {
       "Package": "sparseGAM",
       "Version": "1.0.99",
-      "Source": "renv/local/sparseGAM_1.0.99.tar.gz"
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "bce8f6b5853ab7c0c34a7760d8ad6ab3"
     },
     "stringi": {
       "Package": "stringi",
