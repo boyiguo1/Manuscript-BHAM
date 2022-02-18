@@ -2,10 +2,10 @@
 output: 
   pdf_document:
     keep_tex: FALSE
-    citation_package: biblatex
 bibliography: reply_ref.bib
 header-includes: 
  - \usepackage{color}
+link-citations: true
 ---
 
 \newcommand{\bg}[1]{\textcolor{red}{#1}}
