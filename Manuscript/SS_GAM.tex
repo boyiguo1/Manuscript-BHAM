@@ -723,29 +723,29 @@ In this section, we compare the performance of the proposed models to
 four alternative models: component selection and smoothing operator
 (COSSO) \citep{Zhang2006GAM}, adaptive COSSO \citep{Storlie2011},
 generalized additive models with automatic smoothing \citep{Wood2011},
-SB-GAM \citep{Bai2021}\textcolor{red}{}, linear lasso model and
-spikeSlabGAM {[}TODO: add citation here{]}\}. COSSO is one of the
-earliest smoothing spline models that consider sparsity-smoothness
-penalty. Adaptive COSSO improved upon COSSO by using adaptive weight for
-penalties such that the penalty of each functional component are
-different for extra flexibility. Generalized additive models with
-automatic smoothing, hereafter \textit{mgcv}, is one of the most popular
-models for nonlinear effect interpolation and prediction. SB-GAM is the
-first spike-and-slab lasso GAM. We implement COSSO and adaptive COSSO
-with R package \texttt{cosso 2.1-1}, generalized additive models with
-automatic smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R
-package \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide
-flexibility to define smoothing functions, and hence use the default
-choices. Both mgcv and proposed models allow customized smoothing
-functions and we choose the cubic regression spline. We controll the
-dimensionality of each smoothing function, 10 bases, for all different
-choices of smoothing functions. We use 5-fold CV with the default
-selection criteria to select the final model for COSSO models, SB-GAM
-and the proposed models. 20 default candidates of tuning parameters
-(\(s_0\) in BHAM, \(\lambda_0\) in SB-GAM) are examined for SB-GAM and
-the proposed models which allow user-specification of tuning candidates.
-All computation was conducted on a high-performance 64-bit Linux
-platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680
+SB-GAM
+\citep{Bai2021}\textcolor{red}{, linear lasso model and spikeSlabGAM [TODO: add citation here]}.
+COSSO is one of the earliest smoothing spline models that consider
+sparsity-smoothness penalty. Adaptive COSSO improved upon COSSO by using
+adaptive weight for penalties such that the penalty of each functional
+component are different for extra flexibility. Generalized additive
+models with automatic smoothing, hereafter \textit{mgcv}, is one of the
+most popular models for nonlinear effect interpolation and prediction.
+SB-GAM is the first spike-and-slab lasso GAM. We implement COSSO and
+adaptive COSSO with R package \texttt{cosso 2.1-1}, generalized additive
+models with automatic smoothing with R package \texttt{mgcv 1.8-31},
+SB-GAM with R package \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do
+not provide flexibility to define smoothing functions, and hence use the
+default choices. Both mgcv and proposed models allow customized
+smoothing functions and we choose the cubic regression spline. We
+controll the dimensionality of each smoothing function, 10 bases, for
+all different choices of smoothing functions. We use 5-fold CV with the
+default selection criteria to select the final model for COSSO models,
+SB-GAM and the proposed models. 20 default candidates of tuning
+parameters (\(s_0\) in BHAM, \(\lambda_0\) in SB-GAM) are examined for
+SB-GAM and the proposed models which allow user-specification of tuning
+candidates. All computation was conducted on a high-performance 64-bit
+Linux platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680
 processors and 24G of RAM per core and R 3.6.2 \citep{R}.
 
 Other related methods for high-dimensional GAMs also exist, notably the
@@ -1131,13 +1131,13 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
 
 
 
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{ECB}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{225.2}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{228.2}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,506.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{34.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,540.7}}} \\
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{ECB}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{100.8}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3.5}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{104.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{2,659.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{20.9}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{2,679.9}}} \\
 
 
 
 
 
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{WLM}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{483.1}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{7.6}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{490.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,116.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{32.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,148.7}}} \\
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{WLM}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{365.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{6.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{371.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,116.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{32.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,148.7}}} \\
 
 \hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}-}
 
@@ -1153,8 +1153,9 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
   \hline
 Methods & Deviance & AUC & Brier & Misclass \\ 
   \hline
-BHAM-CD & 455.69 & 0.74 & 0.16 & 0.21 \\ 
-  SB-GAM & 1230.06 & 0.71 & 0.21 & 0.24 \\ 
+BHAM-CD.1 & 510.99 & 0.61 & 0.19 & 0.24 \\ 
+  BHAM-CD.2 & 510.99 & 0.61 & 0.19 & 0.24 \\ 
+  SB-GAM & 636.56 & 0.56 & 0.22 & 0.30 \\ 
    \hline
 \end{tabular}
 \caption{Prediction performance of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.} 
@@ -1169,7 +1170,7 @@ BHAM-CD & 455.69 & 0.74 & 0.16 & 0.21 \\
   \hline
 Methods & Deviance & $R^2$ & MSE & MAE \\ 
   \hline
-BHAM-CD & 665.63 & 0.07 & 0.94 & 0.75 \\ 
+BHAM-CD & 668.01 & 0.07 & 0.93 & 0.76 \\ 
   SB-GAM & 666.83 & 0.03 & 0.98 & 0.77 \\ 
    \hline
 \end{tabular}
