@@ -48,9 +48,15 @@ sim_comp_select_raw <- function(success_rate,
                         Component == "sm" ~ "Nonlinear",
                         TRUE ~ NA_character_),
                       ssGAM = prob>=0.5)
-          bamlasso_raw <- comp_res_raw$bamlasso$`Non-parametric` %>% 
-            pivot_longer(cols = ends_with("Linear"), names_to = "bamlasso") %>% 
+          # browser()
+          if(nrow(comp_res_raw$bamlasso$`Non-parametric`)!=0)
+            bamlasso_raw <- comp_res_raw$bamlasso$`Non-parametric` %>% 
+            pivot_longer(cols = ends_with("linear"), names_to = "bamlasso") %>% 
             transmute(Variable, Component = bamlasso, bamlasso = value )
+          else
+            bamlasso_raw <- data.frame(Variable = character(),
+                                       Component = character(),
+                                       bamlasso = logical())
           
           ssGAM_raw %>% left_join(bamlasso_raw) %>% 
             mutate(bamlasso = replace_na(bamlasso, FALSE)) %>% 
