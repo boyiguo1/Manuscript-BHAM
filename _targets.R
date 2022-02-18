@@ -6,8 +6,8 @@ library(dotenv)
 tar_option_set(
   packages = c("tidyverse", "dplyr", "rticles", "gtsummary", "mgcv", #"here", 
                "broom", "unglue", "knitr", "ggpubr", "xtable", "janitor", 
-               "flextable", "BHAM", "BhGLM", "sparseGAM", "cosso", "glmnet",
-               "rmarkdown"
+               "flextable", "BHAM", "BhGLM", "sparseGAM",  "glmnet", "yardstick",
+               "rmarkdown"#, "cosso",
   ),
   imports = c( "BHAM", "BhGLM", "sparseGAM")
 )
@@ -24,22 +24,52 @@ tar_plan(
   #  Simulations Studies -----------------------------------------------------
   #* Main Simulation Study ####
   tar_files(sim_main_path,
-            list.files("Simulation/main/", recursive = T, full.names = T)),
+            list.files("/data/user/boyiguo1/bgam/sim_res/main", recursive = T, full.names = T)),
 
-  success_rate = create_success_rate_table(sim_main_path),
-  # 
-  tab_binom = make_sim_main_table(success_rate,
+  sim_success_rate = create_success_rate_table(sim_main_path),
+  
+  sim_mdl_fail = create_mdl_fail_rate(sim_success_rate),
+
+  sim_binom_tab = make_sim_main_table(sim_success_rate,
                                   dist = "binomial",
                                   measures = "auc"),
-  # 
-  tab_gaus = make_sim_main_table(success_rate,
+  
+  sim_binom_var_select_raw = sim_var_select_raw(sim_success_rate,
+                                                       dist = "binomial"),
+  # plot_var_select(sim_binom_var_select_raw[[1]])
+  sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
+                                                dist = "binomial"),
+
+  # plot_comp_select(sim_binom_comp_select_raw[[4]])
+  
+  # Visual Presentation of Var Selection
+  # make_sim_var_metric_raw(sim_binom_var_select_raw[[4]]) %>% 
+  # ggplot() + 
+  #   geom_boxplot(aes(x = Method, y = value)) +
+  #   theme(axis.text.x = element_text( angle = 90))+
+  #   facet_wrap(~Metric, ncol = 3, nrow = 1, scales = "free"),
+
+  # Table Presentation of Var Selection
+  # make_sim_var_metric_raw(sim_binom_var_select_raw[[4]]) %>% 
+  #   group_by(Method, Metric) %>% 
+  #   summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
+  #             ) %>% 
+  #   pivot_wider(names_from = Method, values_from = mean),
+  
+  
+  sim_gaus_tab = make_sim_main_table(sim_success_rate,
                                  dist = "gaussian",
                                  measures = "R2"),
-  tab_time = make_time_table(success_rate),
-  # 
-  # tab_pois = make_sim_main_table(success_rate,
-  #                                dist = "poisson",
-  #                                measures = "mse"),
+  
+  sim_gaus_var_select_raw = sim_var_select_raw(sim_success_rate,
+                                                dist = "gaussian"),
+  # plot_var_select(sim_gaus_var_select_raw[[3]])
+  sim_gaus_comp_select_raw = sim_comp_select_raw(sim_success_rate,
+                                                  dist = "gaussian"),
+  # sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
+  #                                                  dist = "gaussian"),
+  
+  sim_tim_tab = make_time_table(sim_success_rate),
   
   
   #  Real Data Analysis -----------------------------------------------------
