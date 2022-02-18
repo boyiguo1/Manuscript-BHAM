@@ -51,7 +51,8 @@ The predictive performances have a consistent pattern across the two distributio
 \bg{\subsubsection{Variable Selection Performance}}
 
 
-
+\bg{\subsubsection{Bi-level Selection}
+Among the methods of comparison, there are two methods is possible for bi-level selection, i.e. the proposed BHAM and spikeSlabGAM. Hence, in this section, we further investigate the bi-level selection of the proposed models. } 
 <!-- %are calculated to assess out-of-sample estimation accuracy, -->
 
 <!-- We also calculated the area under the curve (AUC) of the receiver operating characteristic curve for $y_{new}$. We will also visually display the estimated smooth function with the smooth function of truth to compare if the models can infer the smooth function correctly, despite the prediction accuracy. -->
