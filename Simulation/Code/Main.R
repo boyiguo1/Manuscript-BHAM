@@ -127,24 +127,24 @@ test_sm_dat <- BHAM::make_predict_dat(train_sm_dat$Smooth, dat = test_dat)
 func_list <- list(
   # "bglm", "bglm", "bmlasso", 
   # "bglm", "bglm", "bmlasso",
-  # "bgam", 
-  "bgam", "bamlasso"#,
+  # "bgam", "bgam", 
+  "bamlasso"#,
   # bgam
 )
 
 group_list <- list(
   # NULL, NULL, NULL, 
   # make_group(names(train_smooth_data)), make_group(names(train_smooth_data)), make_group(names(train_smooth_data)),
-  # make_group(names(train_smooth_data)), 
-  make_group(names(train_smooth_data)), make_group(names(train_smooth_data))#,
+  # make_group(names(train_smooth_data)), make_group(names(train_smooth_data)), 
+  make_group(names(train_smooth_data))#,
   # make_group(names(train_smooth_data))
 )
 
 prior <- list(
   # mt(df=Inf), mde(), NULL,
   # mt(df=Inf), mde(), NULL,
-  # mt(df=Inf),
-  mde(), NULL#,
+  # mt(df=Inf), mde(), 
+  NULL#,
   # mt(df=Inf)
 )
 
@@ -198,8 +198,8 @@ mdls <- pmap(list(func_list, group_list, prior), .f = function(.fun, .group, .pr
 names(mdls) <- c(
   # "bglm_t", "bglm_de", "blasso",
   # "bglm_t_group", "bglm_de_group", "blasso_group",
-  # "bglm_spline_t", 
-  "bgam", "bamlasso"#,
+  # "bglm_spline_t",  "bgam", 
+  "bamlasso"#,
   # "bglm_share_t"
 )
 
