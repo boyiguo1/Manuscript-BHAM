@@ -45,7 +45,7 @@ fam_fun <- dis()
 # fam_fun <- str2expression(paste0(dis,"()")) %>% eval
 
 x_all <- sim.x(n=n_total, m=p, corr=0)
-yy <-  sim.y(x = x_all[, 1:5], mu = 0, coefs = c(0.362, 0.395, -0.418, -0.431, 0.467))
+yy <-  sim.y(x = x_all[, 1:4], mu = 0, coefs = c(0.362, 0.395, -0.418, -0.431))
 
 
 dat_all <- with(data = yy,
@@ -144,7 +144,8 @@ func_list <- list(
   # "bglm", "bglm", "bmlasso", 
   # "bglm", "bglm", "bmlasso",
   # "bgam", 
-  "bgam", "bamlasso"#,
+  # "bgam",
+  "bamlasso"#,
   # bgam
 )
 
@@ -152,7 +153,8 @@ group_list <- list(
   # NULL, NULL, NULL, 
   # make_group(names(train_smooth_data)), make_group(names(train_smooth_data)), make_group(names(train_smooth_data)),
   # make_group(names(train_smooth_data)), 
-  make_group(names(train_smooth_data)), make_group(names(train_smooth_data))#,
+  # make_group(names(train_smooth_data)), 
+  make_group(names(train_smooth_data))#,
   # make_group(names(train_smooth_data))
 )
 
@@ -160,7 +162,8 @@ prior <- list(
   # mt(df=Inf), mde(), NULL,
   # mt(df=Inf), mde(), NULL,
   # mt(df=Inf),
-  mde(), NULL#,
+  # mde(), 
+  NULL#,
   # mt(df=Inf)
 )
 
@@ -215,7 +218,8 @@ names(mdls) <- c(
   # "bglm_t", "bglm_de", "blasso",
   # "bglm_t_group", "bglm_de_group", "blasso_group",
   # "bglm_spline_t", 
-  "bgam", "bamlasso"#,
+  # "bgam",
+  "bamlasso"#,
   # "bglm_share_t"
 )
 
