@@ -24,7 +24,7 @@ tar_plan(
   #  Simulations Studies -----------------------------------------------------
   #* Main Simulation Study ####
   tar_files(sim_main_path,
-            list.files("/data/user/boyiguo1/bgam/sim_res/main", recursive = T, full.names = T)),
+            list.files("/data/user/boyiguo1/bgam/sim_res_20220220/main", recursive = T, full.names = T)),
   sim_success_rate = create_success_rate_table(sim_main_path),
   sim_mdl_fail = create_mdl_fail_rate(sim_success_rate),
   
@@ -37,6 +37,16 @@ tar_plan(
   #*** Variable Selection  ####
   sim_binom_var_select_raw = sim_var_select_raw(sim_success_rate,
                                                        dist = "binomial"),
+  
+  # Table Presentation of Var Selection
+  # make_sim_var_metric_raw(sim_binom_var_select_raw[[5]]) %>%
+  #   group_by(Method, Metric) %>%
+  #   summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
+  #             ) %>%
+  #   pivot_wider(names_from = Method, values_from = mean),
+  
+  
+  
   # plot_var_select(sim_binom_var_select_raw[[1]])
   sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
                                                 dist = "binomial"),
@@ -51,12 +61,7 @@ tar_plan(
   #   theme(axis.text.x = element_text( angle = 90))+
   #   facet_wrap(~Metric, ncol = 3, nrow = 1, scales = "free"),
 
-  # Table Presentation of Var Selection
-  make_sim_var_metric_raw(sim_binom_var_select_raw[[4]]) %>%
-    group_by(Method, Metric) %>%
-    summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
-              ) %>%
-    pivot_wider(names_from = Method, values_from = mean),
+
   
   #** Gaussian Outcome  ####
   #*** Prediction  ####
@@ -72,7 +77,7 @@ tar_plan(
   # sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
   #                                                  dist = "gaussian"),
   
-  make_sim_var_metric_raw(sim_gaus_var_select_raw[[2]]) %>%
+  make_sim_var_metric_raw(sim_gaus_var_select_raw[[4]]) %>%
     group_by(Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
     ) %>%
@@ -85,8 +90,36 @@ tar_plan(
   tar_files(sim_lnr_path,
             list.files("/data/user/boyiguo1/bgam/sim_res/main_lnr", recursive = T, full.names = T)),
   sim_lnr_success_rate = create_success_rate_table(sim_lnr_path),
-  sim_mdl_fail = create_mdl_fail_rate(sim_lnr_success_rate),
+  sim_lnr_mdl_fail = create_mdl_fail_rate(sim_lnr_success_rate),
+  #** Binomial Outcome  ####
+  #*** Prediction  ####
+  sim_lnr_binom_tab = make_sim_main_table(sim_lnr_success_rate,
+                                      dist = "binomial",
+                                      measures = "auc"),
+  #*** Variable Selection  ####
+  sim_lnr_binom_var_select_raw = sim_var_select_raw(sim_lnr_success_rate,
+                                                dist = "binomial"),
   
+  # Table Presentation of Var Selection
+  sim_lnr_binom_var_select_tab = make_sim_var_metric_raw(sim_lnr_binom_var_select_raw[[4]]) %>%
+    group_by(Method, Metric) %>%
+    summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
+              ) %>%
+    pivot_wider(names_from = Method, values_from = mean),
+  
+  #** Gaussian Outcome  ####
+  #*** Prediction  ####
+  sim_lnr_gaus_tab = make_sim_main_table(sim_lnr_success_rate,
+                                     dist = "gaussian",
+                                     measures = "R2"),
+  #*** Variable Selection  ####
+  sim_lnr_gaus_var_select_raw = sim_var_select_raw(sim_lnr_success_rate,
+                                               dist = "gaussian"),
+  sim_lnr_gaus_var_select_tab = make_sim_var_metric_raw(sim_lnr_gaus_var_select_raw[[1]]) %>%
+    group_by(Method, Metric) %>%
+    summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
+    ) %>%
+    pivot_wider(names_from = Method, values_from = mean),
   
   
   #  Real Data Analysis -----------------------------------------------------
