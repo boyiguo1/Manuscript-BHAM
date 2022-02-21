@@ -14,20 +14,29 @@ $$
 for Gaussian and binomial outcomes. Gaussian outcomes requires specification of dispersion, where we set the dispersion parameter to be 1. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active covariates, while the rest covariates are inactive, i.e. $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$, are created following the same data generating process, serving as the testing data. We generate 50 independent pairs of training and testing datasets to evaluate the prediction performance of the chosen models, where training datasets are used to fit the models and testing datasets used to calculate assessment measures. \bg{In addition, we considered the data generating process where the all the functional forms of the predictors are linear while keeping the rest of simulation parameters keep the same. These additional sets of simulations are designed to investigate the flexibility of the proposed model when non-linear assumptions are not met.}
 
 To evaluate the predictive performance of the models, the statistics, $R^2$ for Gaussian model and AUC for binomial model calculated based on the testing dataset, are averaged <!--and deviance are calculated for Poisson model,--> across 50 simulations. \bg{To evaluate the variable selection performance of the models, we record the set of variables each model selects and calculate the averaged false discover rate (FDR), false negative rate(FNR), and Matthews correlation coefficient (MCC). For method that doesn't automatically achieve variable selection, we set alpha level at 0.05 for mgcv that relies on hypothesis testing for variable selection, and soft-threshold at 0.5 for spikeSlabGAM given the marginal inclusion probabilities. For the two methods, BHAM and spikeSlabGAM, that are capable of bi-level selection, we record the probability that the linear and nonlinear components of each predictors are selected in the models.
+$$
 MCC = \frac{TP\times TN - FP \times FN}{\sqrt{(TP+FP)(TP+FN)(TN+FP)(TN+FN)}},
 $$
 where TP, TN, FP, and FN are true positives, true negatives, false positives, and false negatives, respectively.
-$$
+
 }
 \bg{\subsection{Simulation Results}}
 \bg{\subsubsection{Prediction Performance}}
 The predictive performances have a consistent pattern across the two distributions of outcomes. Across all the scenarios, COSSO and adaptive COSSO have the least favorable performance among the applicable methods examined (See Table \ref{tab:gaus} and \ref{tab:bin_auc}). To note, mgcv doesn't support high-dimensional analysis, i.e. the number of coefficients are greater than the sample size, and hence not evaluated when $p=100, 200$. mgcv predicts well when $p$ is small or moderate ($p = 4, 10$), and deteriorate when the number of predictors increase. Among the three fast-computing Bayesian hierarchical models, the proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when the dimension of are moderate (p=4, 10, 50). Particularly, BHAM-IWLS performs as good as mgcv if not better. However, in high dimensional case where we mimic the situation the signals are extremely sparse, SB-GAM has better performance than the proposed method. However, the BHAM-CD has extreme computational advantage over SB-GAM (see Table \ref{tab:time_sim}) without sacrificing much of the prediction accuracy. 
 
 \bg{
+\begin{itemize}
+  \item When the linear assumptions are violated, the linear lasso model performs extremely bad. adaptive cosso have improvement upon cosso.
+  \item To note, the drastic deteriation in the prediction of mgcv is caused by the model would not converge in those scenarios. A null model were returned as a final model. 
+  \item Within the simulations where the functional form of the predictors are linear, we see that the proposed model similar to the lasso model regardless of the type outcome, and better moderately better than the model of comparison. (See Table Lnr Gause, and supporting table Lnr_binom.) Particularly, in gaussina simulations, the proposed model shows great advantage compared to SB_GAM (numeralize the advantage), and slightly improvement compare to ssGAM (numeralize the advantage). This shows that the model can be applied without constraining to the assumption where all functional form are non-linear.
+  \item
 
+\end{itemize}
 }
 
 \bg{\subsubsection{Variable Selection Performance}
+While the main utility of the proposed work is prediction, the proposed model can also serve as variable selection/functional selection as a by-product. Hence We evaluate the variable selection performance. 
+
 \begin{itemize}
 \item If we use mcc as the measure, SBGAM has the best performance among all the method of comparison, followed by the proposed model BHAM. The pattern is consitent regardless of the type of outcomes. To note here, mgcv is not included in the performance table, as the mgcv isn't compatable with hign-dimensitonal data. Nevertheless, when the dimensionality is low, mgcv perfoms while for variable selection.
 \item If we look at the precision of the variable selection, BHAM performs better than SBGAM model particularaly when the dimensionality increases. While the recall is lower than SBGAM. This translate to the selection of BHAM is more conservative that SBGAM, such that among the selected variables, many of them are signals, however, due to the conversative selection, there are few variables are selected.

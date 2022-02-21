@@ -724,7 +724,7 @@ four alternative models: component selection and smoothing operator
 (COSSO) \citep{Zhang2006GAM}, adaptive COSSO \citep{Storlie2011},
 generalized additive models with automatic smoothing \citep{Wood2011},
 SB-GAM
-\citep{Bai2021}\textcolor{red}{, linear lasso model and spikeSlabGAM [TODO: add citation here]}.
+\citep{Bai2021}\textcolor{red}{, linear lasso model and spikeSlabGAM [TODO: add citation here].[TODO: explain about linear lasso model and spikeSlabGAM model]}.
 COSSO is one of the earliest smoothing spline models that consider
 sparsity-smoothness penalty. Adaptive COSSO improved upon COSSO by using
 adaptive weight for penalties such that the penalty of each functional
@@ -783,17 +783,12 @@ measures.
 To evaluate the predictive performance of the models, the statistics,
 \(R^2\) for Gaussian model and AUC for binomial model calculated based
 on the testing dataset, are averaged across 50 simulations.
-\textcolor{red}{To evaluate the variable selection performance of the models, we record the set of variables each model selects and calculate the averaged false discover rate (FDR), false negative rate(FNR), and Matthews correlation coefficient (MCC). For method that doesn't automatically achieve variable selection, we set alpha level at 0.05 for mgcv that relies on hypothesis testing for variable selection, and soft-threshold at 0.5 for spikeSlabGAM given the marginal inclusion probabilities. For the two methods, BHAM and spikeSlabGAM, that are capable of bi-level selection, we record the probability that the linear and nonlinear components of each predictors are selected in the models.}
-
-\begin{center}
-Table \ref{tab:gaus} here\\
-Table \ref{tab:bin_auc} here\\
-\end{center}
-
-\textcolor{red}{\subsection{Simulation Results}}
-\textcolor{red}{\subsubsection{Prediction Performance}}
-
-The predictive performances have a consistent pattern across the two
+\textcolor{red}{To evaluate the variable selection performance of the models, we record the set of variables each model selects and calculate the averaged false discover rate (FDR), false negative rate(FNR), and Matthews correlation coefficient (MCC). For method that doesn't automatically achieve variable selection, we set alpha level at 0.05 for mgcv that relies on hypothesis testing for variable selection, and soft-threshold at 0.5 for spikeSlabGAM given the marginal inclusion probabilities. For the two methods, BHAM and spikeSlabGAM, that are capable of bi-level selection, we record the probability that the linear and nonlinear components of each predictors are selected in the models.
+MCC = \frac{TP\times TN - FP \times FN}{\sqrt{(TP+FP)(TP+FN)(TN+FP)(TN+FN)}},
+$$
+where TP, TN, FP, and FN are true positives, true negatives, false positives, and false negatives, respectively.
+$$
+} The predictive performances have a consistent pattern across the two
 distributions of outcomes. Across all the scenarios, COSSO and adaptive
 COSSO have the least favorable performance among the applicable methods
 examined (See Table \ref{tab:gaus} and \ref{tab:bin_auc}). To note, mgcv
@@ -810,7 +805,18 @@ SB-GAM has better performance than the proposed method. However, the
 BHAM-CD has extreme computational advantage over SB-GAM (see Table
 \ref{tab:time_sim}) without sacrificing much of the prediction accuracy.
 
-\textcolor{red}{\subsubsection{Variable Selection Performance}}
+\textcolor{red}{
+
+}
+
+\textcolor{red}{\subsubsection{Variable Selection Performance}
+\begin{itemize}
+\item If we use mcc as the measure, SBGAM has the best performance among all the method of comparison, followed by the proposed model BHAM. The pattern is consitent regardless of the type of outcomes. To note here, mgcv is not included in the performance table, as the mgcv isn't compatable with hign-dimensitonal data. Nevertheless, when the dimensionality is low, mgcv perfoms while for variable selection.
+\item If we look at the precision of the variable selection, BHAM performs better than SBGAM model particularaly when the dimensionality increases. While the recall is lower than SBGAM. This translate to the selection of BHAM is more conservative that SBGAM, such that among the selected variables, many of them are signals, however, due to the conversative selection, there are few variables are selected.
+\item We also want to high light that in the set of linear simulation, when the outcome is cgaussina, the proposed model performed extremely while. On the contrary the SBGAM is not so well.
+\end{itemize}
+
+}
 
 \textcolor{red}{\subsubsection{Bi-level Selection}
 Among the methods of comparison, there are two methods is possible for bi-level selection, i.e. the proposed BHAM and spikeSlabGAM. Hence, in this section, we further investigate the bi-level selection of the proposed models. }
