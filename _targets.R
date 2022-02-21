@@ -81,7 +81,7 @@ tar_plan(
   
   ECB_bamlasso_fnl = bamlasso(ECB_dsn_mat, ECB_outcome, family = "binomial",
                           group = make_group(names(ECB_dsn_mat)),
-                          ss = c(0.025, 0.5)),
+                          ss = c(0.065 , 0.5)),
   
   ECB_bamlasso_insample_msr = measure.bh(ECB_bamlasso_fnl),
   ECB_bamlasso_var = bamlasso_var_selection(ECB_bamlasso_fnl),
@@ -99,7 +99,7 @@ tar_plan(
   # ggplot(ECB_SBGAM_cv_per_fold)+
   #   geom_violin(aes(x = lambda0, y = deviance)),
   
-  ECB_SBGAM_fnl = SBGAM(X = ECB_cov, y = ECB_outcome, family = "binomial", lambda0 = 24, a = 1, b = 1),
+  ECB_SBGAM_fnl = SBGAM(X = ECB_cov, y = ECB_outcome, family = "binomial", lambda0 = 40, a = 1, b = 1),
 
   ECB_SBGAM_insample_msr = measure.glm(y = ECB_outcome, ECB_SBGAM_fnl$mu.pred, family = "binomial"),
   
@@ -156,13 +156,13 @@ tar_plan(
                               ss=c(0.005, 0.5),
                               group = WLM_bgam_dat$group),
   
-  WLM_bamlasso_cv = tune.bgam(WLM_bamlasso_raw, s0 = seq(0.005, 0.1, 0.01)),
+  WLM_bamlasso_cv = tune.bgam(WLM_bamlasso_raw, s0 = seq(0.001, 0.1, 0.01)),
 
   
   WLM_bamlasso_fnl = bamlasso(WLM_bgam_dat$train_dat, WLM_train_dat$out_HOMA_std, family = "gaussian",
-                          ss=c(0.025, 0.5),
+                          ss=c(0.001, 0.5),
                           group = WLM_bgam_dat$group),
-  # measure.bh(bglm_mdl_fnl),
+  # measure.bh(WLM_bamlasso_fnl),
   WLM_bamlasso_var = bamlasso_var_selection(WLM_bamlasso_fnl),
   
   # # ** BHAM-IWLS --------------------------------------------------------------
