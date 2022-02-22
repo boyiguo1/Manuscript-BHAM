@@ -1,6 +1,7 @@
 format_predict_tbls <- function( dat, caption, label){
   dat %>% 
-    mutate(p = as.integer(p)) %>% 
+    mutate(p = as.integer(p),
+           mgcv = replace( mgcv, p %in% c(100,200) , "-")) %>% 
     select(
       "P" = p,
       "mgcv" = mgcv,
