@@ -320,19 +320,7 @@ tar_plan(
   
   # measure.glm(WLM_train_dat$out_HOMA_std, WLM_SBGAM_fnl$mu.pred, family = "gaussian"),  
   
-  # Manuscript --------------------------------------------------------------
-  tar_files(manu_path,
-            c(
-              "Manuscript/01-Intro.Rmd",
-              "Manuscript/02-Method.Rmd",
-              "Manuscript/03-Simulation.Rmd",
-              "Manuscript/04-Real_Data.Rmd",
-              "Manuscript/05-Discussion.Rmd",
-              "bibfile.bib"
-            )
-  ),
-  
-  # TODO: laocate to the real data analysis session.
+  #* Running Time ---------------------------------------------------------------
   # TODO: create a latex output
   tar_target(tbl_real_time,
              create_real_data_time_tbl(  # Introduce dependency
@@ -344,23 +332,27 @@ tar_plan(
                WLM_bamlasso_fnl,
                WLM_SBGAM_cv_raw,
                WLM_SBGAM_fnl)),
+  
+  # Manuscript --------------------------------------------------------------
+  tar_files(manu_path,
+            c("Manuscript/01-Intro.Rmd", "Manuscript/02-Method.Rmd",
+              "Manuscript/03-Simulation.Rmd", "Manuscript/04-Real_Data.Rmd",
+              "Manuscript/05-Discussion.Rmd", "Manuscript/bibfile.bib")
+  ),
+  
   tar_files(
     manu_tbs,
     list.files("Manuscript/Tabs/", full.names = TRUE)
   ),
   
-  #* Assemble Manuscript ####
   tar_render(manu, "Manuscript/00-main.Rmd",
              output_file = "SS_GAM.pdf"),
   
   # R & R Letter --------------------------------------------------------------
-  tar_target(RR_path,
-             c("Manuscript/R&R/01-reviewer_1.Rmd",
-               "Manuscript/R&R/02-reviewer_2.Rmd",
-               "Manuscript/R&R/03-reviewer_4.Rmd",
-               "Manuscript/R&R/reply_ref.bib"
-             ),
-             format = "file"),
+  tar_files(RR_path,
+            c("Manuscript/R&R/01-reviewer_1.Rmd", "Manuscript/R&R/02-reviewer_2.Rmd",
+              "Manuscript/R&R/03-reviewer_4.Rmd", "Manuscript/R&R/reply_ref.bib")
+  ),
   
   tar_render(RR, "Manuscript/R&R/00-response_letter.Rmd",
              output_file = "response_SS_GAM.pdf")

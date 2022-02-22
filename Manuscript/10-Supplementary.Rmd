@@ -1,6 +1,8 @@
 ---
 title: "Supporting Infromation"
-output: pdf_document
+output: 
+  pdf_document:
+    keep_tex: true
 ---
 
 ```{r setup, include=FALSE}
@@ -103,9 +105,10 @@ Totally, the proposed EM-IWLS algorithm is summarized as follows:
     c) If $\phi$ is present, update $\phi$
 
 Similar to EM-CD, we assess convergence by the criterion, $|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon$, where $\epsilon$ is a small value (say $10^{-5}$).
-    
-\subsection{Supplementary Information 3: Predictive Performance of Linear Simulations}
-\input{Manuscript/Tabs/sim_lnr_gaus_tab.tex}
+
 \clearpage
-\input{Manuscript/Tabs/sim_lnr_binom_tab.tex}
+
+\subsection{Supplementary Information 3: Predictive Performance of Linear Simulations}
+\input{Tabs/sim_lnr_gaus_tab.tex}
+\input{Tabs/sim_lnr_binom_tab.tex}
     
