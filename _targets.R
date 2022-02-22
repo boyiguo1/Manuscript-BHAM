@@ -27,6 +27,7 @@ tar_plan(
             list.files("/data/user/boyiguo1/bgam/sim_res_20220220/main", recursive = T, full.names = T)),
   sim_success_rate = create_success_rate_table(sim_main_path),
   sim_mdl_fail = create_mdl_fail_rate(sim_success_rate),
+  sim_pred_raw = create_raw_data(sim_success_rate),
   
   #** Binomial Outcome  ####
   #*** Prediction  ####
@@ -44,6 +45,11 @@ tar_plan(
     estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:bin_auc")%>% 
     cat(file = "Manuscript/Tabs/sim_binom_tab.tex"),
+  
+  # Percentage of change
+  sim_binom_pred_bham_lasso = sim_pred_raw %>% filter(dist == "binomial") %>%
+    compare_methods(method_1 = "bamlasso", method_2 = "lasso", measures="auc") %>% 
+    with(sprintf("%.0f%% (%.0f%%)", median*100, IQR*100)),
   
   #*** Variable Selection  ####
   sim_binom_var_select_raw = sim_var_select_raw(sim_success_rate,
@@ -90,6 +96,11 @@ tar_plan(
     whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:gaus") %>% 
     cat(file = "Manuscript/Tabs/sim_gaus_tab.tex"),
+  
+  # Percentage of change
+  sim_gaus_pred_bham_lasso = sim_pred_raw %>% filter(dist == "gaussian") %>%
+    compare_methods(method_1 = "bamlasso", method_2 = "lasso", measures="R2") %>% 
+    with(sprintf("%.0f%% (%.0f%%)", median*100, IQR*100)),
   #*** Variable Selection  ####
   sim_gaus_var_select_raw = sim_var_select_raw(sim_success_rate,
                                                dist = "gaussian"),
