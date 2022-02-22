@@ -5,6 +5,8 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+
 ```
 \newcommand{\tp}{*}
 \newcommand{\pr}{\text{Pr}}
@@ -102,5 +104,8 @@ Totally, the proposed EM-IWLS algorithm is summarized as follows:
 
 Similar to EM-CD, we assess convergence by the criterion, $|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon$, where $\epsilon$ is a small value (say $10^{-5}$).
     
-    
+\subsection{Supplementary Information 3: Predictive Performance of Linear Simulations}
+\input{Manuscript/Tabs/sim_lnr_gaus_tab.tex}
+\clearpage
+\input{Manuscript/Tabs/sim_lnr_binom_tab.tex}
     
