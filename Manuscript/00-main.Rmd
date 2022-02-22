@@ -50,7 +50,7 @@ header-includes:
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval = FALSE, echo = FALSE, warning = FALSE, message = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 library(knitr)
 library(targets)
@@ -72,7 +72,7 @@ tar_load(ECB_SBGAM_cv)
 tar_load(WLM_bamlasso_cv)
 tar_load(WLM_SBGAM_cv)
 tar_load(tbl_real_time)
-tar_load(sim_tim_tab)
+# tar_load(sim_tim_tab)
 ```
 
 ```{r child="01-Intro.Rmd"}
@@ -150,58 +150,14 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \label{fig:SSprior}
 \end{figure}
 
-
-\include{Tabs/sim_gaus_tab.tex}
-
-\include{Tabs/sim_binom_tab.tex}
-
-
-```{r, results = "asis"}
-sim_gaus_tab$mgcv[4] <- "-"
-sim_gaus_tab$mgcv[5] <- "-"
-sim_gaus_tab %>% 
-  mutate(p = as.integer(p)) %>% 
-  rename(
-    "P" = p,
-    "BHAM-IWLS" = bglm_spline_de,
-    "BHAM-CD" = blasso_spline,
-    "COSSO" = cosso,
-    "Adaptive COSSO" = acosso,
-    "SB-GAM" = SB_GAM
-  ) %>% 
-  xtable(
-    align = "cccccccc",
-    caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
-    label = "tab:gaus") %>% 
-  print(comment = FALSE, include.rownames = FALSE)
-  # flextable(
-  #   # col_keys = c("P", "BHAM-IWLS", "BHAM-CD", "COSSO", "Adaptive COSSO", "mgcv", "SB-GAM")
-  # ) %>% 
-  # flextable::autofit() %>% 
-  # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measures for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). \\label{tab:gaus}")
-```
 \clearpage
-
-```{r, results = "asis"}
-sim_binom_tab$mgcv[4] <- "-"
-sim_binom_tab$mgcv[5] <- "-"
-sim_binom_tab %>% 
-  mutate(p = as.integer(p)) %>% 
-  rename(
-    "P" = p,
-    "BHAM-IWLS" = bglm_spline_de,
-    "BHAM-CD" = blasso_spline,
-    "COSSO" = cosso,
-    "Adaptive COSSO" = acosso,
-    "SB-GAM" = SB_GAM
-  ) %>%  
-  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measures for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.", label = "tab:bin_auc") %>% 
-  print(comment = FALSE, include.rownames = FALSE)
-```
+\input{Tabs/sim_gaus_tab.tex}
+\clearpage
+\input{Tabs/sim_binom_tab.tex}
 
 \clearpage
 <!-- \begin{landscape} -->
-```{r results = "asis"}
+```{r sim_time, results = "asis", eval = F}
 sim_tim_tab %>% 
   select(dist, p, `BHAM-IWLS`,`BHAM-CD`, cosso, acosso, mgcv, `SB-GAM`) %>% 
   rename(Distribution = dist,
