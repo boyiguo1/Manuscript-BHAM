@@ -731,6 +731,7 @@ adaptive weight for penalties such that the penalty of each functional
 component are different for extra flexibility. Generalized additive
 models with automatic smoothing, hereafter \textit{mgcv}, is one of the
 most popular models for nonlinear effect interpolation and prediction.
+\textcolor{red}{mgcv doesn't support analyses where the number of parameters exceeds the sample size.}
 SB-GAM is the first spike-and-slab lasso GAM. We implement COSSO and
 adaptive COSSO with R package \texttt{cosso 2.1-1}, generalized additive
 models with automatic smoothing with R package \texttt{mgcv 1.8-31},
@@ -792,28 +793,19 @@ on the testing dataset, are averaged across 50 simulations.
 \subsection{\textcolor{red}{Simulation Results}}
 \subsubsection{\textcolor{red}{Prediction Performance}}
 
-The predictive performances have a consistent pattern across the two
-distributions of outcomes. Across all the scenarios, COSSO and adaptive
-COSSO have the least favorable performance among the applicable methods
-examined (See Table \ref{tab:gaus} and \ref{tab:bin_auc}). To note, mgcv
-doesn't support high-dimensional analysis, i.e.~the number of
-coefficients are greater than the sample size, and hence not evaluated
-when \(p=100, 200\). mgcv predicts well when \(p\) is small or moderate
-(\(p = 4, 10\)), and deteriorate when the number of predictors increase.
-Among the three fast-computing Bayesian hierarchical models, the
-proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when
-the dimension of are moderate (p=4, 10, 50). Particularly, BHAM-IWLS
-performs as good as mgcv if not better. However, in high dimensional
-case where we mimic the situation the signals are extremely sparse,
-SB-GAM has better performance than the proposed method. However, the
-BHAM-CD has extreme computational advantage over SB-GAM (see Table
-\ref{tab:time_sim}) without sacrificing much of the prediction accuracy.
+\textcolor{red}{Among the main set of simulations where the functional forms of the predictors are mostly non-linear,}
+the predictive performances have a consistent pattern across the two
+distributions of outcomes. (See Tables \ref{tab:gaus} and
+\ref{tab:bin_auc})
+\textcolor{red}{The proposed model, BHAM, predicts as good as, if not better than, other high dimensional spline models. Specifically, BHAM shows greate improvement over COSSO methods [TODO: add statsitics] and the spikeSlabGAM model [TODO: add statsitics]. When comparing to SB-GAM, BHAM performs better in lower dimensional cases ($p=4,10$), and equally good or slightly worse [TODO: re-evaluate after tuning the models] in high-dimensional cases ($p=50,100, 200$). As previously hypothesized, the linear lasso model predicts less accurate compared to other flexibly models across all scenario; mgcv performs extremely well in low-dimensional case ($p = 4, 10$), and deteriorates as the dimensionality increases until not applicable. To note, mgcv still fit models with increasing in large dimension case ($p=50$). But the algorithm fails to converge within the default number of iterations, and hence leads to bad prediction performance.}
+In high dimensional cases where we mimic the situation the signals are
+extremely sparse, SB-GAM has better performance than the proposed
+method. However, the BHAM-CD has extreme computational advantage over
+SB-GAM (see Table \ref{tab:time_sim}) without sacrificing much of the
+prediction accuracy.
 
-\begin{itemize}
-\item \textcolor{red}{When the linear assumptions are violated, the linear lasso model performs extremely bad. adaptive cosso have improvement upon cosso.}
-\item \textcolor{red}{To note, the drastic deteriation in the prediction of mgcv is caused by the model would not converge in those scenarios. A null model were returned as a final model. }
-\item \textcolor{red}{Within the simulations where the functional form of the predictors are linear, we see that the proposed model similar to the lasso model regardless of the type outcome, and better moderately better than the model of comparison. (See Table Lnr Gause, and supporting table Lnr-binom.) Particularly, in gaussina simulations, the proposed model shows great advantage compared to SB-GAM (numeralize the advantage), and slightly improvement compare to ssGAM (numeralize the advantage). This shows that the model can be applied without constraining to the assumption where all functional form are non-linear.}
-\end{itemize}
+\textcolor{red}{
+We also examine the prediction performance when the functional form of predictors are linear. (See support information Table 1, and 2 [TODO: add hyperlink to the github repo]) The proposed model, BHAM, has similar performance as the linear lasso model regardless of the type outcome. This observation demonstrates that BHAM is a flexible model, and has good prediction performance regardless the underlying functional form of predictors. spikeSlabGAM have similar prediction performance to BHAM (numeralize the advantage). Surprisingly, SB-GAM doesn't perform well in high-dimensional Gaussian outcome scenarios. (numeralize the advantage)}
 
 \textcolor{red}{\subsubsection{Variable Selection Performance}
 While the main utility of the proposed work is prediction, the proposed model can also serve as variable selection/functional selection as a by-product. Hence We evaluate the variable selection performance. }
