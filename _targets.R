@@ -4,7 +4,7 @@ library(tarchetypes)
 library(dotenv)
 
 tar_option_set(
-  packages = c("tidyverse", "dplyr", "rticles", "gtsummary", "mgcv", #"here", 
+  packages = c("tidyverse", "dplyr", "rticles", "gtsummary", "mgcv", "gt", 
                "broom", "unglue", "knitr", "ggpubr", "xtable", "janitor", 
                "flextable", "BHAM", "BhGLM", "sparseGAM",  "glmnet", "yardstick",
                "rmarkdown"#, "cosso",
@@ -31,12 +31,23 @@ tar_plan(
   #** Binomial Outcome  ####
   #*** Prediction  ####
   sim_binom_tab = make_sim_main_table(sim_success_rate,
-                                  dist = "binomial",
-                                  measures = "auc"),
+                                      dist = "binomial",
+                                      measures = "auc"),
+  
+  sim_binom_tab_latex = format_predict_tbls(
+    sim_binom_tab,
+    caption = "The average and standard deviation of the out-of-sample area under the curve measures
+    for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian
+    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
+    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO),
+    adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide
+    estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    label = "tab:bin_auc")%>% 
+    cat(file = "Manuscript/Tabs/sim_binom_tab.tex"),
   
   #*** Variable Selection  ####
   sim_binom_var_select_raw = sim_var_select_raw(sim_success_rate,
-                                                       dist = "binomial"),
+                                                dist = "binomial"),
   
   # Table Presentation of Var Selection
   # make_sim_var_metric_raw(sim_binom_var_select_raw[[5]]) %>%
@@ -49,8 +60,8 @@ tar_plan(
   
   # plot_var_select(sim_binom_var_select_raw[[1]])
   sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
-                                                dist = "binomial"),
-
+                                                  dist = "binomial"),
+  
   # plot_comp_select(sim_binom_comp_select_raw[[4]])
   
   #*** Bi-level Selection  ####
@@ -60,28 +71,39 @@ tar_plan(
   #   geom_boxplot(aes(x = Method, y = value)) +
   #   theme(axis.text.x = element_text( angle = 90))+
   #   facet_wrap(~Metric, ncol = 3, nrow = 1, scales = "free"),
-
-
+  
+  
   
   #** Gaussian Outcome  ####
   #*** Prediction  ####
   sim_gaus_tab = make_sim_main_table(sim_success_rate,
-                                 dist = "gaussian",
-                                 measures = "R2"),
+                                     dist = "gaussian",
+                                     measures = "R2"),
+  
+  sim_gaus_tab_latex = format_predict_tbls(
+    sim_gaus_tab,
+    caption = "The average and standard deviation of the out-of-sample $R^2$ measure for
+    Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian
+    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
+    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive
+    COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation
+    whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    label = "tab:gaus") %>% 
+    cat(file = "Manuscript/Tabs/sim_gaus_tab.tex"),
   #*** Variable Selection  ####
   sim_gaus_var_select_raw = sim_var_select_raw(sim_success_rate,
-                                                dist = "gaussian"),
+                                               dist = "gaussian"),
   # plot_var_select(sim_gaus_var_select_raw[[3]])
   sim_gaus_comp_select_raw = sim_comp_select_raw(sim_success_rate,
-                                                  dist = "gaussian"),
+                                                 dist = "gaussian"),
   # sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
   #                                                  dist = "gaussian"),
   
-  make_sim_var_metric_raw(sim_gaus_var_select_raw[[4]]) %>%
-    group_by(Method, Metric) %>%
-    summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
-    ) %>%
-    pivot_wider(names_from = Method, values_from = mean),
+  # make_sim_var_metric_raw(sim_gaus_var_select_raw[[4]]) %>%
+  #   group_by(Method, Metric) %>%
+  #   summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
+  #   ) %>%
+  #   pivot_wider(names_from = Method, values_from = mean),
   #*** Bi-level Selection  ####
   # sim_tim_tab = make_time_table(sim_success_rate),
   
@@ -94,27 +116,48 @@ tar_plan(
   #** Binomial Outcome  ####
   #*** Prediction  ####
   sim_lnr_binom_tab = make_sim_main_table(sim_lnr_success_rate,
-                                      dist = "binomial",
-                                      measures = "auc"),
+                                          dist = "binomial",
+                                          measures = "auc"),
+  sim_lnr_binom_tab_latex = format_predict_tbls(
+    sim_lnr_binom_tab, 
+    # TODO: edit the caption
+    caption = "The average and standard deviation of the out-of-sample area under the curve measures
+    for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian
+    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
+    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO),
+    adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide
+    estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    label = "tab:lnr_bin_auc")%>% 
+    cat(file = "Manuscript/Tabs/sim_lnr_binom_tab.tex"),
   #*** Variable Selection  ####
   sim_lnr_binom_var_select_raw = sim_var_select_raw(sim_lnr_success_rate,
-                                                dist = "binomial"),
+                                                    dist = "binomial"),
   
   # Table Presentation of Var Selection
   sim_lnr_binom_var_select_tab = make_sim_var_metric_raw(sim_lnr_binom_var_select_raw[[4]]) %>%
     group_by(Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
-              ) %>%
+    ) %>%
     pivot_wider(names_from = Method, values_from = mean),
   
   #** Gaussian Outcome  ####
   #*** Prediction  ####
   sim_lnr_gaus_tab = make_sim_main_table(sim_lnr_success_rate,
-                                     dist = "gaussian",
-                                     measures = "R2"),
+                                         dist = "gaussian",
+                                         measures = "R2"),
+  sim_lnr_gaus_tab_latex = format_predict_tbls(
+    sim_lnr_gaus_tab, # TODO: edit the caption
+    caption = "The average and standard deviation of the out-of-sample $R^2$ measure for
+    Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian
+    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
+    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive
+    COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation
+    whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    label = "tab:lnr_gaus") %>% 
+    cat(file = "Manuscript/Tabs/sim_lnr_gaus_tab.tex"),
   #*** Variable Selection  ####
   sim_lnr_gaus_var_select_raw = sim_var_select_raw(sim_lnr_success_rate,
-                                               dist = "gaussian"),
+                                                   dist = "gaussian"),
   sim_lnr_gaus_var_select_tab = make_sim_var_metric_raw(sim_lnr_gaus_var_select_raw[[1]]) %>%
     group_by(Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
@@ -155,13 +198,13 @@ tar_plan(
   ECB_dsn_mat = ECB_sm_obj$data,
   
   ECB_bamlasso_raw = bamlasso(ECB_dsn_mat, ECB_outcome, family = "binomial",
-                          group = make_group(names(ECB_dsn_mat))),
+                              group = make_group(names(ECB_dsn_mat))),
   
   ECB_bamlasso_cv = tune.bgam(ECB_bamlasso_raw, s0 = seq(0.005, 0.1, 0.01)),
   
   ECB_bamlasso_fnl = bamlasso(ECB_dsn_mat, ECB_outcome, family = "binomial",
-                          group = make_group(names(ECB_dsn_mat)),
-                          ss = c(0.065 , 0.5)),
+                              group = make_group(names(ECB_dsn_mat)),
+                              ss = c(0.065 , 0.5)),
   
   ECB_bamlasso_insample_msr = measure.bh(ECB_bamlasso_fnl),
   ECB_bamlasso_var = bamlasso_var_selection(ECB_bamlasso_fnl),
@@ -169,10 +212,10 @@ tar_plan(
   
   # ** SB-GAM ---------------------------------------------------------------
   ECB_SBGAM_cv_raw = cv.SBGAM( X = ECB_cov,
-                       y = ECB_outcome,
-                       family = "binomial", nfolds = 10,
-                       nlambda = 10,
-                       a = 1, b = 1),
+                               y = ECB_outcome,
+                               family = "binomial", nfolds = 10,
+                               nlambda = 10,
+                               a = 1, b = 1),
   
   ECB_SBGAM_cv = summary_cv_SBGAM(ECB_SBGAM_cv_raw, family = "binomial"),
   # ECB_SBGAM_cv_per_fold = summary_cv_SBGAM_per_fold(ECB_SBGAM_cv_raw, family = "binomial"),
@@ -180,7 +223,7 @@ tar_plan(
   #   geom_violin(aes(x = lambda0, y = deviance)),
   
   ECB_SBGAM_fnl = SBGAM(X = ECB_cov, y = ECB_outcome, family = "binomial", lambda0 = 40, a = 1, b = 1),
-
+  
   ECB_SBGAM_insample_msr = measure.glm(y = ECB_outcome, ECB_SBGAM_fnl$mu.pred, family = "binomial"),
   
   ECB_SBGAM_var = (ECB_cov %>% colnames())[ECB_SBGAM_fnl$classifications!=0],
@@ -189,7 +232,7 @@ tar_plan(
   # 
   # train_msr = data.frame("method" = c("BHAM-SSL", "SB-GAM"),
   #                        rbind(ECB_bamlasso_insample_msr ,ECB_SBGAM_insample_msr)),
-
+  
   
   #* Weight Loss Maintainace Study---------------------------------------------------------------
   
@@ -237,11 +280,11 @@ tar_plan(
                               group = WLM_bgam_dat$group),
   
   WLM_bamlasso_cv = tune.bgam(WLM_bamlasso_raw, s0 = seq(0.001, 0.1, 0.01)),
-
+  
   
   WLM_bamlasso_fnl = bamlasso(WLM_bgam_dat$train_dat, WLM_train_dat$out_HOMA_std, family = "gaussian",
-                          ss=c(0.001, 0.5),
-                          group = WLM_bgam_dat$group),
+                              ss=c(0.001, 0.5),
+                              group = WLM_bgam_dat$group),
   # measure.bh(WLM_bamlasso_fnl),
   WLM_bamlasso_var = bamlasso_var_selection(WLM_bamlasso_fnl),
   
@@ -278,26 +321,19 @@ tar_plan(
   # measure.glm(WLM_train_dat$out_HOMA_std, WLM_SBGAM_fnl$mu.pred, family = "gaussian"),  
   
   # Manuscript --------------------------------------------------------------
-  tar_target(intro_path,
-             "Manuscript/01-Intro.Rmd",
-             format = "file"),
+  tar_files(manu_path,
+            c(
+              "Manuscript/01-Intro.Rmd",
+              "Manuscript/02-Method.Rmd",
+              "Manuscript/03-Simulation.Rmd",
+              "Manuscript/04-Real_Data.Rmd",
+              "Manuscript/05-Discussion.Rmd",
+              "bibfile.bib"
+            )
+  ),
   
-  tar_target(method_path,
-             "Manuscript/02-Method.Rmd",
-             format = "file"),
-  
-  tar_target(sim_path,
-             "Manuscript/03-Simulation.Rmd",
-             format = "file"),
-  
-  tar_target(real_data_path,
-             "Manuscript/04-Real_Data.Rmd",
-             format = "file"),
-  
-  tar_target(disc_path,
-             "Manuscript/05-Discussion.Rmd",
-             format = "file"),
-  
+  # TODO: laocate to the real data analysis session.
+  # TODO: create a latex output
   tar_target(tbl_real_time,
              create_real_data_time_tbl(  # Introduce dependency
                ECB_bamlasso_cv,
@@ -308,6 +344,10 @@ tar_plan(
                WLM_bamlasso_fnl,
                WLM_SBGAM_cv_raw,
                WLM_SBGAM_fnl)),
+  tar_files(
+    manu_tbs,
+    list.files("Manuscript/Tabs/", full.names = TRUE)
+  ),
   
   #* Assemble Manuscript ####
   tar_render(manu, "Manuscript/00-main.Rmd",
@@ -323,6 +363,6 @@ tar_plan(
              format = "file"),
   
   tar_render(RR, "Manuscript/R&R/00-response_letter.Rmd",
-             output_file = "response_SS_GAM.pdf"),
+             output_file = "response_SS_GAM.pdf")
 )
 

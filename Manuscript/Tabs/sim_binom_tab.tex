@@ -1,0 +1,21 @@
+\begin{table}[ht]
+\centering
+\begin{tabular}{cccccccc}
+  \hline
+P & mgcv & LASSO & COSSO & Adaptive COSSO & BHAM & SB-GAM & spikeSlabGAM \\ 
+  \hline
+  4 & 0.94 (0.01) & 0.83 (0.01) & 0.90 (0.01) & 0.90 (0.01) & 0.92 (0.01) & 0.92 (0.01) & 0.90 (0.00) \\ 
+   10 & 0.92 (0.03) & 0.83 (0.00) & 0.86 (0.04) & 0.86 (0.03) & 0.92 (0.01) & 0.92 (0.01) & 0.90 (0.00) \\ 
+   50 & 0.76 (0.03) & 0.83 (0.01) & 0.83 (0.02) & 0.84 (0.02) & 0.90 (0.01) & 0.92 (0.01) & 0.89 (0.01) \\ 
+  100 & NaN (NA) & 0.83 (0.01) & 0.83 (0.02) & 0.81 (0.09) & 0.90 (0.01) & 0.92 (0.01) & 0.88 (0.01) \\ 
+  200 & NaN (NA) & 0.83 (0.01) & 0.81 (0.06) & 0.82 (0.05) & 0.88 (0.02) & 0.92 (0.01) & 0.87 (0.02) \\ 
+   \hline
+\end{tabular}
+\caption{The average and standard deviation of the out-of-sample area under the curve measures
+    for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian
+    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
+    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO),
+    adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide
+    estimation whe number of parameters exceeds sample size i.e. p = 100, 200.} 
+\label{tab:bin_auc}
+\end{table}
