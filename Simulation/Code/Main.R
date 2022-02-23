@@ -11,7 +11,7 @@ if(length(args)==0){
 # Arguments
 # n_train <- 500
 # n_test <- 1000
-# p <- 4
+# p <- 200
 # it <- 10
 # # dis <- "gaussian"
 # dis <- "binomial"
@@ -30,11 +30,7 @@ library(glmnet)
 library(spikeSlabGAM)
 
 
-# Helper functions
-source("~/GitHub/Manuscript-BHAM/Simulation/Code/helper_func.R")
 
-# Simulation Fixed Parameters and Functions
-source("~/GitHub/Manuscript-BHAM/Simulation/Code/sim_pars_funs.R")
 
 # Using Array ID as seed ID
 it <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
@@ -43,6 +39,12 @@ it <- Sys.getenv('SLURM_ARRAY_TASK_ID') %>% as.numeric
 set.seed(it)
 fam_fun <- dis()  
 # fam_fun <- str2expression(paste0(dis,"()")) %>% eval
+
+# Helper functions
+source("~/GitHub/Manuscript-BHAM/Simulation/Code/helper_func.R")
+
+# Simulation Fixed Parameters and Functions
+source("~/GitHub/Manuscript-BHAM/Simulation/Code/sim_pars_funs.R")
 
 # Train Data
 tmp <- sim_Bai(n_train, p, family = fam_fun)
@@ -115,14 +117,14 @@ if(!is.null(mgcv_mdl)){
 
 
 
-#### BGAMs ####
+
+#### Fit BH Models ####
 train_sm_dat <- BHAM::construct_smooth_data(mgcv_df, dat)
 train_smooth <- train_sm_dat$Smooth
 train_smooth_data <- train_sm_dat$data
 test_sm_dat <- BHAM::make_predict_dat(train_sm_dat$Smooth, dat = test_dat)
 
 
-#### Fit BH Models ####
 
 func_list <- list(
   # "bglm", "bglm", "bmlasso", 
@@ -174,6 +176,7 @@ mdls <- pmap(list(func_list, group_list, prior), .f = function(.fun, .group, .pr
   # mdl <- call(.fun, x = train_smooth_data, y = dat$y, family = fam_fun$family, group = .group,
   #             ss = c(0.0011, 0.5)) %>% eval
   
+  # browser()
   
   s0_min <- cv_res$s0[which.min(cv_res$deviance)]
   
@@ -202,6 +205,8 @@ names(mdls) <- c(
   "bamlasso"#,
   # "bglm_share_t"
 )
+
+# mdls$bamlasso
 
 
 bham_time <- imap_dfr(mdls, .f = function(.mdl, .y){
