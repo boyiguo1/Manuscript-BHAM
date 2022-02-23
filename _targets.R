@@ -105,6 +105,8 @@ tar_plan(
   sim_gaus_var_select_raw = sim_var_select_raw(sim_success_rate,
                                                dist = "gaussian"),
   # plot_var_select(sim_gaus_var_select_raw[[3]])
+  
+  #*** Bi-level Selection  ####
   sim_gaus_comp_select_raw = sim_comp_select_raw(sim_success_rate,
                                                  dist = "gaussian"),
   # sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
@@ -115,8 +117,30 @@ tar_plan(
   #   summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
   #   ) %>%
   #   pivot_wider(names_from = Method, values_from = mean),
-  #*** Bi-level Selection  ####
-  # sim_tim_tab = make_time_table(sim_success_rate),
+
+  #** Simulation Time ####
+  sim_tim_tab = make_time_table(sim_success_rate),
+  sim_tim_tab_latex = sim_tim_tab %>% 
+    rename(Distribution = dist,
+           P = p,
+           COSSO = cosso,
+           `Adaptive COSSO` = acosso) %>% 
+    xtable(
+      caption = "The average and standard deviation of computation time in seconds,
+      including cross-validation and final model fitting, over 50 iterations. The models
+      of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted
+      with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD)
+      algorithms, component selection and smoothing operator (COSSO), adaptive COSSO,
+      mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't 
+      provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
+      label = "tab:time_sim",
+      booktabs = TRUE
+    ) %>% 
+    print(comment = FALSE, include.rownames = FALSE,
+          floating.environment = "sidewaystable",# caption.placement = "top"
+          table.placement = "!h"
+    ) %>% 
+    cat(file = "Manuscript/Tabs/sim_time_tab.tex"),
   
   
   #* Linear Simulation Study ####

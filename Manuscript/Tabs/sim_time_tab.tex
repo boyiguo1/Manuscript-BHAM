@@ -1,0 +1,27 @@
+\begin{sidewaystable}[!h]
+\centering
+\begin{tabular}{lrllllll}
+  \hline
+Distribution & P & mgcv & COSSO & Adaptive COSSO & BHAM & SB-GAM & spikeSlabGAM \\ 
+  \hline
+Binomial &   4 & 0.18 (0.04) & 3.16 (1.39) & 5.51 (4.07) & 2.73 (0.22) & 347.17 (89.43) & 8.41 (0.91) \\ 
+  Binomial &  10 & 3.46 (11.06) & 8.30 (1.70) & 10.66 (5.30) & 4.08 (0.29) & 539.05 (135.55) & 20.36 (2.16) \\ 
+  Binomial &  50 & 660.31 (141.53) & 103.41 (20.00) & 118.82 (18.45) & 14.22 (0.58) & 1590.09 (142.19) & 236.73 (14.83) \\ 
+  Binomial & 100 & - & 662.61 (125.00) & 672.65 (185.09) & 31.61 (2.56) & 2720.53 (250.43) & 967.97 (186.85) \\ 
+  Binomial & 200 & - & 5325.66 (995.60) & 4963.93 (1482.11) & 82.17 (3.29) & 4788.76 (420.64) & 3371.88 (194.02) \\ 
+  Gaussian &   4 & 0.05 (0.01) & 0.75 (0.09) & 0.75 (0.11) & 8.78 (1.57) & 38.82 (2.74) & 1.84 (0.18) \\ 
+  Gaussian &  10 & 0.32 (0.39) & 3.42 (0.24) & 3.41 (0.23) & 20.77 (3.95) & 76.12 (5.55) & 5.93 (0.57) \\ 
+  Gaussian &  50 & 72.03 (57.99) & 33.98 (2.88) & 34.35 (2.86) & 285.73 (12.53) & 374.76 (23.79) & 65.18 (8.12) \\ 
+  Gaussian & 100 & - & 117.79 (3.33) & 119.63 (3.66) & 372.01 (56.92) & 640.44 (21.91) & 194.14 (8.09) \\ 
+  Gaussian & 200 & - & 518.86 (40.78) & 524.76 (39.15) & 471.46 (72.23) & 1300.70 (72.74) & 738.52 (62.76) \\ 
+   \hline
+\end{tabular}
+\caption{The average and standard deviation of computation time in seconds,
+      including cross-validation and final model fitting, over 50 iterations. The models
+      of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted
+      with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD)
+      algorithms, component selection and smoothing operator (COSSO), adaptive COSSO,
+      mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't 
+      provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.} 
+\label{tab:time_sim}
+\end{sidewaystable}

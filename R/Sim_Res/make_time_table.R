@@ -1,7 +1,5 @@
 make_time_table <- function(success_rate){
   total_dat <- success_rate %>% 
-    # filter(dist==dist, n_success!=0) %>% 
-    # filter(dist=={{dist}}, n_success!=0) %>%
     filter(n_success!=0) %>% 
     pull(path) %>% 
     map_dfr( .f = function(sim){
@@ -12,14 +10,6 @@ make_time_table <- function(success_rate){
         mutate( p = as.numeric(p))
       fls <- list.files(sim, full.names = TRUE) 
       fls <- fls[grep(".rds", x=fls)]
-      # n <- length(fls)
-      # 
-      # 
-      # if(n == 0)
-      #   return(data.frame(NULL))
-      
-      # .file <- fls[1]
-      # ret <- fls 
       list.files(sim, full.names = TRUE) %>%
         grep(".rds", x=., value = TRUE) %>%
         map_dfr(.f = function(.file){
@@ -30,25 +20,25 @@ make_time_table <- function(success_rate){
               `[[`("time")%>% 
               data.frame() %>% 
               rownames_to_column("method")
-            
           )
         }) %>%
         arrange(it) %>% 
         mutate(p = sim.df$p,
-               dist = sim.df$dist)#  %>% 
+               dist = sim.df$dist)
       
     }) %>% 
     select(dist, p, it, method, elapsed) %>%
     pivot_wider(names_from = method, values_from = elapsed) %>% 
     transmute(dist = case_when(dist=="binomial"~"Binomial",
                                dist=="gaussian"~"Gaussian"),
-              p, it, mgcv, cosso, acosso,
-              `BHAM-CD` = blasso_spline_cv + blasso_spline_final,
-              `BHAM-IWLS` = bglm_spline_de_cv + bglm_spline_de_final,
-              `SB-GAM` = bai_cv + bai_final) %>% 
+              p = as.integer(p), it, mgcv, cosso, acosso,
+              `BHAM` = bamlasso_cv + bamlasso_final,
+              # `BHAM-IWLS` = bglm_spline_de_cv + bglm_spline_de_final,
+              `SB-GAM` = bai_cv + bai_final,
+              `spikeSlabGAM` = ssGAM) %>% 
     group_by(dist, p) %>%  
     summarize(
-      across(mgcv:`SB-GAM`, ~sprintf("%.2f (%.2f)", mean(.x), sd(.x))
+      across(mgcv:`spikeSlabGAM`, ~sprintf("%.2f (%.2f)", mean(.x), sd(.x))
       )
     ) %>% 
     ungroup()
