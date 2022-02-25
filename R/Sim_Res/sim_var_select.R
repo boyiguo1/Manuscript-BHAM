@@ -201,7 +201,8 @@ make_sim_var_metric_raw <- function(var_select){
         pivot_longer(cols = lasso_recall:ssGAM_mcc,
                      names_to = c("Method", "Metric"),
                      names_sep = "_") %>% 
-        mutate(It = it)
+        mutate(It = it,
+               p = p)
     })
   
   

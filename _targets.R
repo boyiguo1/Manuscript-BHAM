@@ -24,7 +24,7 @@ tar_plan(
   #  Simulations Studies -----------------------------------------------------
   #* Main Simulation Study ####
   tar_files(sim_main_path,
-            list.files("/data/user/boyiguo1/bgam/sim_res_20220220/main", recursive = T, full.names = T)),
+            list.files("/data/user/boyiguo1/bgam/sim_res_20220220/main/", recursive = T, full.names = T)),
   sim_success_rate = create_success_rate_table(sim_main_path),
   sim_mdl_fail = create_mdl_fail_rate(sim_success_rate),
   sim_pred_raw = create_raw_data(sim_success_rate),
@@ -55,22 +55,20 @@ tar_plan(
   sim_binom_var_select_raw = sim_var_select_raw(sim_success_rate,
                                                 dist = "binomial"),
   
+  # plot_var_select(sim_binom_var_select_raw[[1]])  
+
+  
   # Table Presentation of Var Selection
-  # make_sim_var_metric_raw(sim_binom_var_select_raw[[5]]) %>%
-  #   group_by(Method, Metric) %>%
-  #   summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
-  #             ) %>%
-  #   pivot_wider(names_from = Method, values_from = mean),
+  sim_binom_var_select_tbl = map_dfr(1:5, ~make_sim_var_metric_raw(sim_binom_var_select_raw[[.x]])) %>%
+    group_by(p, Method, Metric) %>%
+    summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
+              ) %>%
+    pivot_wider(names_from = Method, values_from = mean) %>% 
+    ungroup(),
   
-  
-  
-  # plot_var_select(sim_binom_var_select_raw[[1]])
-  sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
-                                                  dist = "binomial"),
-  
-  # plot_comp_select(sim_binom_comp_select_raw[[4]])
-  
-  #*** Bi-level Selection  ####
+  sim_binom_var_select_tbl_latex = sim_binom_var_select_tbl %>% 
+    format_var_slct_tbls(caption = "", label = "")%>% 
+    cat(file = "Manuscript/Tabs/sim_binom_var_slct_tab.tex"),
   # Visual Presentation of Var Selection
   # make_sim_var_metric_raw(sim_binom_var_select_raw[[4]]) %>% 
   # ggplot() + 
@@ -78,6 +76,15 @@ tar_plan(
   #   theme(axis.text.x = element_text( angle = 90))+
   #   facet_wrap(~Metric, ncol = 3, nrow = 1, scales = "free"),
   
+  
+  #*** Bi-level Selection  ####
+  
+
+  sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
+                                                  dist = "binomial"),
+  # plot_comp_select(sim_binom_comp_select_raw[[4]])
+  
+
   
   
   #** Gaussian Outcome  ####
@@ -101,10 +108,22 @@ tar_plan(
   sim_gaus_pred_bham_lasso = sim_pred_raw %>% filter(dist == "gaussian") %>%
     compare_methods(method_1 = "bamlasso", method_2 = "lasso", measures="R2") %>% 
     with(sprintf("%.0f%% (%.0f%%)", median*100, IQR*100)),
+  
+  
   #*** Variable Selection  ####
   sim_gaus_var_select_raw = sim_var_select_raw(sim_success_rate,
                                                dist = "gaussian"),
   # plot_var_select(sim_gaus_var_select_raw[[3]])
+  sim_gaus_var_select_tbl = map_dfr(1:5, ~make_sim_var_metric_raw(sim_gaus_var_select_raw[[.x]])) %>%
+    group_by(p, Method, Metric) %>%
+    summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
+    ) %>%
+    pivot_wider(names_from = Method, values_from = mean) %>% 
+    ungroup(),
+  
+  sim_gaus_var_select_tbl_latex = sim_gaus_var_select_tbl %>% 
+    format_var_slct_tbls(caption = "", label = "")%>% 
+    cat(file = "Manuscript/Tabs/sim_gaus_var_slct_tab.tex"),
   
   #*** Bi-level Selection  ####
   sim_gaus_comp_select_raw = sim_comp_select_raw(sim_success_rate,
@@ -112,11 +131,7 @@ tar_plan(
   # sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
   #                                                  dist = "gaussian"),
   
-  # make_sim_var_metric_raw(sim_gaus_var_select_raw[[4]]) %>%
-  #   group_by(Method, Metric) %>%
-  #   summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
-  #   ) %>%
-  #   pivot_wider(names_from = Method, values_from = mean),
+
 
   #** Simulation Time ####
   sim_tim_tab = make_time_table(sim_success_rate),
@@ -169,11 +184,16 @@ tar_plan(
                                                     dist = "binomial"),
   
   # Table Presentation of Var Selection
-  sim_lnr_binom_var_select_tab = make_sim_var_metric_raw(sim_lnr_binom_var_select_raw[[4]]) %>%
-    group_by(Method, Metric) %>%
+  sim_lnr_binom_var_select_tbl = map_dfr(1:5, ~make_sim_var_metric_raw(sim_lnr_binom_var_select_raw[[.x]])) %>%
+    group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
     ) %>%
-    pivot_wider(names_from = Method, values_from = mean),
+    pivot_wider(names_from = Method, values_from = mean) %>% 
+    ungroup(),
+  
+  sim_lnr_binom_var_select_tbl_latex = sim_lnr_binom_var_select_tbl %>% 
+    format_var_slct_tbls(caption = "", label = "")%>% 
+    cat(file = "Manuscript/Tabs/sim_lnr_binom_var_slct_tab.tex"),
   
   #** Gaussian Outcome  ####
   #*** Prediction  ####
@@ -193,11 +213,17 @@ tar_plan(
   #*** Variable Selection  ####
   sim_lnr_gaus_var_select_raw = sim_var_select_raw(sim_lnr_success_rate,
                                                    dist = "gaussian"),
-  sim_lnr_gaus_var_select_tab = make_sim_var_metric_raw(sim_lnr_gaus_var_select_raw[[1]]) %>%
-    group_by(Method, Metric) %>%
+  # Table Presentation of Var Selection
+  sim_lnr_gaus_var_select_tbl = map_dfr(1:5, ~make_sim_var_metric_raw(sim_lnr_gaus_var_select_raw[[.x]])) %>%
+    group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
     ) %>%
-    pivot_wider(names_from = Method, values_from = mean),
+    pivot_wider(names_from = Method, values_from = mean) %>% 
+    ungroup(),
+  
+  sim_lnr_gaus_var_select_tbl_latex = sim_lnr_gaus_var_select_tbl %>% 
+    format_var_slct_tbls(caption = "", label = "") %>% 
+    cat(file = "Manuscript/Tabs/sim_lnr_gaus_var_slct_tab.tex"),
   
   
   #  Real Data Analysis -----------------------------------------------------
