@@ -113,4 +113,12 @@ Similar to EM-CD, we assess convergence by the criterion, $|d^{(t)}-d^{(t-1)}|/(
 \subsection{Supplementary Information 3: Predictive Performance of Linear Simulations}
 \input{Tabs/sim_lnr_gaus_tab.tex}
 \input{Tabs/sim_lnr_binom_tab.tex}
-    
+
+\clearpage
+
+\subsection{Supplementary Information 4: Variable Selection Performance of Simulations}
+\input{Tabs/sim_binom_var_slct_tab.tex}
+\input{Tabs/sim_lnr_gaus_var_slct_tab.tex}
+\input{Tabs/sim_lnr_binom_var_slct_tab.tex}
+
+

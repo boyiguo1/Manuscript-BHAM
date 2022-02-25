@@ -26,13 +26,9 @@ $$
 
 
 \bg{\subsubsection{Variable Selection Performance}
-While the main utility of the proposed work is prediction, the proposed model can also serve as variable selection/functional selection as a by-product. Hence We evaluate the variable selection performance. }
+Within the simulation settings we examined, the proposed model tends to have a more conservative bebaviour in terms of variable selection, having high precision and low recall. (See Table xxx for gaussian outcomes, and support information xxx for binomial informaitons.) [TODO: mention the variable selection pattern is consistent across the types of outcomes.] THe high precision means that among all the selected variables, high percentage of them are true signals; low recall means that, the model selected small subset among all the positive predictions. Overall, among all the models examined, SB-GAM have the best performance, both high precision and high recall, and yield a high matthew correlation coefficient. Another Bayesian model, spike-and-slab performs bad in terms of variable selection in high-dimensional situations ($p=100,200$). We also want to highlight in our set of linear Gaussian simulations, the SB-GAM performs poorly (See Supproting table 1), while we didn't observe the same for linear binomial outcomes. 
+}
 
-\begin{itemize}
-\item \bg{If we use mcc as the measure, SBGAM has the best performance among all the method of comparison, followed by the proposed model BHAM. The pattern is consitent regardless of the type of outcomes. To note here, mgcv is not included in the performance table, as the mgcv isn't compatable with hign-dimensitonal data. Nevertheless, when the dimensionality is low, mgcv perfoms while for variable selection.}
-\item \bg{If we look at the precision of the variable selection, BHAM performs better than SBGAM model particularaly when the dimensionality increases. While the recall is lower than SBGAM. This translate to the selection of BHAM is more conservative that SBGAM, such that among the selected variables, many of them are signals, however, due to the conversative selection, there are few variables are selected.}
-\item \bg{We also want to high light that in the set of linear simulation, when the outcome is cgaussina, the proposed model performed extremely while. On the contrary the SBGAM is not so well.}
-\end{itemize}
 
 
 
