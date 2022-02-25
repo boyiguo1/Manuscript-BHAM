@@ -29,8 +29,12 @@ bamlasso_seq <- bgam_seq <- seq(0.001, 0.05, length.out = 20)
 #   
 #   
 #   
-# } else if(fam_fun$family == "gaussian"){
-#   bamlasso_seq <- case_when(
+# } else 
+# if(fam_fun$family == "gaussian"){
+#   if(p==200)
+#     bamlasso_seq <- seq(0.00025, to=0.0025, length.out = 20)
+# }
+      # case_when(
 #     p == 4 ~ seq(from = 0.08, to = 0.25, length.out = 20),
 #     p == 10 ~ seq(0.005, 0.03, length.out = 20),
 #     p == 50 ~ seq(0.0005, 0.01, length.out = 20),
