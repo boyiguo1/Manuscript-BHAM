@@ -1,5 +1,7 @@
 ---
-title: "Supporting Infromation"
+title: Spike-and-Slab Generalized Additive Models and Scalable Algorithms for High-Dimensional Data
+subtitle: "Supporting Infromation"
+author: Boyi Guo, Byron C. Jaeger, AKM Fazlur Rahman, D. Leann Long, Nengjun Yi
 output: 
   pdf_document:
     keep_tex: true
