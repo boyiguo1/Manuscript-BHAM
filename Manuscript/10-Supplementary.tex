@@ -4,14 +4,26 @@
 %
 \documentclass[
 ]{article}
+\title{Spike-and-Slab Generalized Additive Models and Scalable
+Algorithms for High-Dimensional Data}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Supporting Infromation}
+\author{Boyi Guo, Byron C. Jaeger, AKM Fazlur Rahman, D. Leann Long,
+Nengjun Yi}
+\date{}
+
+\usepackage{amsmath,amssymb}
 \usepackage{lmodern}
-\usepackage{amsmath}
-\usepackage{ifxetex,ifluatex}
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+\usepackage{iftex}
+\ifPDFTeX
   \usepackage[T1]{fontenc}
   \usepackage[utf8]{inputenc}
   \usepackage{textcomp} % provide euro and other symbols
-  \usepackage{amssymb}
 \else % if luatex or xetex
   \usepackage{unicode-math}
   \defaultfontfeatures{Scale=MatchLowercase}
@@ -60,22 +72,9 @@
 \providecommand{\tightlist}{%
   \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \setcounter{secnumdepth}{-\maxdimen} % remove section numbering
-\ifluatex
+\ifLuaTeX
   \usepackage{selnolig}  % disable illegal ligatures
 \fi
-
-\title{Spike-and-Slab Generalized Additive Models and Scalable
-Algorithms for High-Dimensional Data}
-\usepackage{etoolbox}
-\makeatletter
-\providecommand{\subtitle}[1]{% add subtitle to \maketitle
-  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
-}
-\makeatother
-\subtitle{Supporting Infromation}
-\author{Boyi Guo, Byron C. Jaeger, AKM Fazlur Rahman, D. Leann Long,
-Nengjun Yi}
-\date{}
 
 \begin{document}
 \maketitle
@@ -246,5 +245,12 @@ a small value (say \(10^{-5}\)).
 \subsection{Supplementary Information 3: Predictive Performance of Linear Simulations}
 \input{Tabs/sim_lnr_gaus_tab.tex}
 \input{Tabs/sim_lnr_binom_tab.tex}
+
+\clearpage
+
+\subsection{Supplementary Information 4: Variable Selection Performance of Simulations}
+\input{Tabs/sim_binom_var_slct_tab.tex}
+\input{Tabs/sim_lnr_gaus_var_slct_tab.tex}
+\input{Tabs/sim_lnr_binom_var_slct_tab.tex}
 
 \end{document}

@@ -154,6 +154,8 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \input{Tabs/sim_gaus_tab.tex}
 \clearpage
 \input{Tabs/sim_binom_tab.tex}
+\clearpage
+\input{Tabs/sim_gaus_var_slct_tab.tex}
 
 \clearpage
 <!-- \begin{landscape} -->
