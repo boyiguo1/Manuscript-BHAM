@@ -11,8 +11,8 @@ if(length(args)==0){
 # Arguments
 # n_train <- 500
 # n_test <- 1000
-# p <- 200
-# it <- 10
+# p <- 50
+# it <- 1
 # # dis <- "gaussian"
 # dis <- "binomial"
 
@@ -393,7 +393,12 @@ select(part, prob = `P.gamma...1.`) %>%
   unglue::unglue_unnest(part, "{}({var})", remove = FALSE) %>% 
   group_by(var) %>% 
   summarize(ssGAM = any(prob>0.5)) %>% 
-  column_to_rownames("var") %>% as.vector
+  unglue::unglue_unnest(var, "x{id}", remove = FALSE) %>% 
+  mutate(id = as.integer(id)) %>% 
+  arrange(id) %>% 
+  column_to_rownames("var") %>% 
+  select(ssGAM) %>% 
+  as.vector
 
 
 ssGAM_vs_part <- (summary(ssGAM_mdl)$trmSummary) %>% data.frame() %>% rownames_to_column("part") %>% 
@@ -403,6 +408,7 @@ ssGAM_vs_part <- (summary(ssGAM_mdl)$trmSummary) %>% data.frame() %>% rownames_t
 ssGAM_train_msr <- measure.glm(dat$y, 
                                predict(ssGAM_mdl, type = "response") %>% rescale_ssGAM_pred(family = fam_fun$family, y=ssGAM_train_dat$y),
                                family = fam_fun$family)
+
 ssGAM_test_msr <- measure.glm(test_dat$y, 
                               predict(ssGAM_mdl, newdata = test_dat, type = "response") %>% rescale_ssGAM_pred(family = fam_fun$family, y=ssGAM_train_dat$y),
                               family = fam_fun$family)
