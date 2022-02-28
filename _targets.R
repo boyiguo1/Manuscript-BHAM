@@ -1,12 +1,13 @@
 ## Load your packages, e.g. library(targets).
 library(targets)
 library(tarchetypes)
-library(dotenv)
+# library(dotenv)
 
 tar_option_set(
-  packages = c("tidyverse", "dplyr", "rticles", "gtsummary", "mgcv", "gt", 
+  packages = c("tidyverse", "dplyr", "rticles", #"gtsummary", "gt", 
                "broom", "unglue", "knitr", "ggpubr", "xtable", "janitor", 
-               "flextable", "BHAM", "BhGLM", "sparseGAM",  "glmnet", "yardstick",
+               # "flextable", 
+               "mgcv", "BHAM", "BhGLM", "sparseGAM",  "glmnet", "yardstick",
                "rmarkdown"#, "cosso",
   ),
   imports = c( "BHAM", "BhGLM", "sparseGAM")
@@ -82,7 +83,7 @@ tar_plan(
 
   sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
                                                   dist = "binomial"),
-  # plot_comp_select(sim_binom_comp_select_raw[[4]])
+  # plot_comp_select(sim_binom_comp_select_raw[[1]])
   
 
   
@@ -128,9 +129,10 @@ tar_plan(
   #*** Bi-level Selection  ####
   sim_gaus_comp_select_raw = sim_comp_select_raw(sim_success_rate,
                                                  dist = "gaussian"),
-  # sim_gaus_var_select = make_sim_var_select_table(sim_success_rate,
-  #                                                  dist = "gaussian"),
+
+  # plot_comp_select(sim_gaus_comp_select_raw[[5]]),
   
+  sim_gaus_comp_select_raw[[5]]$comp_select %>% filter(Variable %in% paste0("x",1:4)),
 
 
   #** Simulation Time ####
@@ -195,6 +197,12 @@ tar_plan(
     format_var_slct_tbls(caption = "", label = "")%>% 
     cat(file = "Manuscript/Tabs/sim_lnr_binom_var_slct_tab.tex"),
   
+  #*** Bi-level Selection  ####
+  sim_lnr_binom_comp_select_raw = sim_comp_select_raw(sim_lnr_success_rate,
+                                                     dist = "binomial"),
+  
+  # plot_comp_select(sim_lnr_binom_comp_select_raw[[2]]),
+  
   #** Gaussian Outcome  ####
   #*** Prediction  ####
   sim_lnr_gaus_tab = make_sim_main_table(sim_lnr_success_rate,
@@ -224,6 +232,12 @@ tar_plan(
   sim_lnr_gaus_var_select_tbl_latex = sim_lnr_gaus_var_select_tbl %>% 
     format_var_slct_tbls(caption = "", label = "") %>% 
     cat(file = "Manuscript/Tabs/sim_lnr_gaus_var_slct_tab.tex"),
+  
+  #*** Bi-level Selection  ####
+  sim_lnr_gaus_comp_select_raw = sim_comp_select_raw(sim_lnr_success_rate,
+                                                 dist = "gaussian"),
+  
+  # plot_comp_select(sim_lnr_gaus_comp_select_raw[[5]]),
   
   
   #  Real Data Analysis -----------------------------------------------------
