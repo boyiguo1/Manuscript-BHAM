@@ -52,6 +52,13 @@ tar_plan(
     compare_methods(method_1 = "bamlasso", method_2 = "lasso", measures="auc") %>% 
     with(sprintf("%.0f%% (%.0f%%)", median*100, IQR*100)),
   
+  #*** Bi-level Selection  ####
+  
+  
+  sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
+                                                  dist = "binomial"),
+  # plot_comp_select(sim_binom_comp_select_raw[[1]])
+  
   #*** Variable Selection  ####
   sim_binom_var_select_raw = sim_var_select_raw(sim_success_rate,
                                                 dist = "binomial"),
@@ -60,7 +67,10 @@ tar_plan(
 
   
   # Table Presentation of Var Selection
-  sim_binom_var_select_tbl = map_dfr(1:5, ~make_sim_var_metric_raw(sim_binom_var_select_raw[[.x]])) %>%
+  tmp = make_sim_var_metric_raw(),
+  sim_binom_var_select_tbl = map_dfr(1:5,
+                                     ~make_sim_var_metric_raw(sim_binom_var_select_raw[[.x]],
+                                                              sim_binom_comp_select_raw[[.x]])) %>%
     group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
               ) %>%
@@ -78,12 +88,7 @@ tar_plan(
   #   facet_wrap(~Metric, ncol = 3, nrow = 1, scales = "free"),
   
   
-  #*** Bi-level Selection  ####
-  
 
-  sim_binom_comp_select_raw = sim_comp_select_raw(sim_success_rate,
-                                                  dist = "binomial"),
-  # plot_comp_select(sim_binom_comp_select_raw[[1]])
   
 
   
@@ -111,11 +116,21 @@ tar_plan(
     with(sprintf("%.0f%% (%.0f%%)", median*100, IQR*100)),
   
   
+  #*** Bi-level Selection  ####
+  sim_gaus_comp_select_raw = sim_comp_select_raw(sim_success_rate,
+                                                 dist = "gaussian"),
+  
+  # plot_comp_select(sim_gaus_comp_select_raw[[5]]),
+  
+  # sim_gaus_comp_select_raw[[5]]$comp_select %>% filter(Variable %in% paste0("x",1:4)),
+  
   #*** Variable Selection  ####
   sim_gaus_var_select_raw = sim_var_select_raw(sim_success_rate,
                                                dist = "gaussian"),
   # plot_var_select(sim_gaus_var_select_raw[[3]])
-  sim_gaus_var_select_tbl = map_dfr(1:5, ~make_sim_var_metric_raw(sim_gaus_var_select_raw[[.x]])) %>%
+  sim_gaus_var_select_tbl = map_dfr(1:5, 
+                                    ~make_sim_var_metric_raw(sim_gaus_var_select_raw[[.x]],
+                                                             sim_gaus_comp_select_raw[[.x]])) %>%
     group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
     ) %>%
@@ -126,13 +141,7 @@ tar_plan(
     format_var_slct_tbls(caption = "", label = "")%>% 
     cat(file = "Manuscript/Tabs/sim_gaus_var_slct_tab.tex"),
   
-  #*** Bi-level Selection  ####
-  sim_gaus_comp_select_raw = sim_comp_select_raw(sim_success_rate,
-                                                 dist = "gaussian"),
-
-  # plot_comp_select(sim_gaus_comp_select_raw[[5]]),
   
-  sim_gaus_comp_select_raw[[5]]$comp_select %>% filter(Variable %in% paste0("x",1:4)),
 
 
   #** Simulation Time ####
@@ -181,12 +190,22 @@ tar_plan(
     estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:lnr_bin_auc")%>% 
     cat(file = "Manuscript/Tabs/sim_lnr_binom_tab.tex"),
+  
+  #*** Bi-level Selection  ####
+  sim_lnr_binom_comp_select_raw = sim_comp_select_raw(sim_lnr_success_rate,
+                                                      dist = "binomial"),
+  
+  # plot_comp_select(sim_lnr_binom_comp_select_raw[[2]]),
+  
   #*** Variable Selection  ####
   sim_lnr_binom_var_select_raw = sim_var_select_raw(sim_lnr_success_rate,
                                                     dist = "binomial"),
   
   # Table Presentation of Var Selection
-  sim_lnr_binom_var_select_tbl = map_dfr(1:5, ~make_sim_var_metric_raw(sim_lnr_binom_var_select_raw[[.x]])) %>%
+  sim_lnr_binom_var_select_tbl = map_dfr(1:5, 
+                                         ~make_sim_var_metric_raw(sim_lnr_binom_var_select_raw[[.x]],
+                                                                  sim_lnr_binom_comp_select_raw[[.x]])
+                                         ) %>%
     group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
     ) %>%
@@ -197,11 +216,7 @@ tar_plan(
     format_var_slct_tbls(caption = "", label = "")%>% 
     cat(file = "Manuscript/Tabs/sim_lnr_binom_var_slct_tab.tex"),
   
-  #*** Bi-level Selection  ####
-  sim_lnr_binom_comp_select_raw = sim_comp_select_raw(sim_lnr_success_rate,
-                                                     dist = "binomial"),
   
-  # plot_comp_select(sim_lnr_binom_comp_select_raw[[2]]),
   
   #** Gaussian Outcome  ####
   #*** Prediction  ####
@@ -218,11 +233,21 @@ tar_plan(
     whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:lnr_gaus") %>% 
     cat(file = "Manuscript/Tabs/sim_lnr_gaus_tab.tex"),
+  
+  #*** Bi-level Selection  ####
+  sim_lnr_gaus_comp_select_raw = sim_comp_select_raw(sim_lnr_success_rate,
+                                                     dist = "gaussian"),
+  
+  # plot_comp_select(sim_lnr_gaus_comp_select_raw[[5]]),
+  
   #*** Variable Selection  ####
   sim_lnr_gaus_var_select_raw = sim_var_select_raw(sim_lnr_success_rate,
                                                    dist = "gaussian"),
   # Table Presentation of Var Selection
-  sim_lnr_gaus_var_select_tbl = map_dfr(1:5, ~make_sim_var_metric_raw(sim_lnr_gaus_var_select_raw[[.x]])) %>%
+  sim_lnr_gaus_var_select_tbl = map_dfr(1:5, 
+                                        ~make_sim_var_metric_raw(sim_lnr_gaus_var_select_raw[[.x]],
+                                                                 sim_lnr_gaus_comp_select_raw[[.x]])
+                                        ) %>%
     group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
     ) %>%
@@ -233,11 +258,7 @@ tar_plan(
     format_var_slct_tbls(caption = "", label = "") %>% 
     cat(file = "Manuscript/Tabs/sim_lnr_gaus_var_slct_tab.tex"),
   
-  #*** Bi-level Selection  ####
-  sim_lnr_gaus_comp_select_raw = sim_comp_select_raw(sim_lnr_success_rate,
-                                                 dist = "gaussian"),
   
-  # plot_comp_select(sim_lnr_gaus_comp_select_raw[[5]]),
   
   
   #  Real Data Analysis -----------------------------------------------------

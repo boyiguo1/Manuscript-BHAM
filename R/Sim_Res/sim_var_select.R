@@ -172,12 +172,26 @@ plot_comp_select <- function(comp_select, show_null = TRUE){
 
 
 
-make_sim_var_metric_raw <- function(var_select){
+make_sim_var_metric_raw <- function(var_select,
+                                    bi_lvl = NULL){
   # browser()
   p <- var_select$p
   
+  slct_res <- 
+  if(!is.null(bi_lvl)){
+    # TODO: replace spikeSlabGAM res with bi_lvl results
+    bi_lvl$comp_select %>% 
+      select(-bamlasso) %>% 
+      group_by(It, Variable) %>% 
+      summarize(ssGAM = any(ssGAM)) %>% 
+      ungroup() %>% 
+      right_join(var_select$var_select %>% select(-ssGAM), 
+                 by=c("It", "Variable")) %>% 
+      relocate(ssGAM, .after = SB_GAM)
+  } else var_select$var_select
+  
   # TODO (boyiguo1): check if some method, return NA for variable selection, and how does that affect constructing the iteration level var_select metrics
-  var_select$var_select %>% 
+  slct_res %>% 
     rename(SBGAM = SB_GAM) %>% 
     # mutate(across(bamlasso:ssGAM, factor))
     mutate(
