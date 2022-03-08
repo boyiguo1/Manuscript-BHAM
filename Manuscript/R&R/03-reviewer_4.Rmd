@@ -107,5 +107,7 @@ authors might consider rephrasing it (e.g. they could say that semiparametric me
 like GAMs allow for easier interpretation and selection of the significant effects than
 the fully nonparametric "black box" methods).\em
 
-__Response__:
+__Response__: We thank the reviewer for the comment. We agree that using "nonparametric methods" to differentiate from "black box" methods would be misleading. However, we respectively argue that our word choice, i.e. "nonparametric regression models", is not misleading. First of all The black box models normally are not treated as _regression_ models. Moreover, the term "nonparametric regression models" has been consistently used in the generalized additive models literature, for example @Hastie1987. Last but not least, to the authors' knowledge, there is a subtle distinction between nonparametric regression models and semiparametric regression models: semiparametric regression models assume some predictors have linear effects, while nonparametric regression models assume unknown functions for all predictors. To give an example, see @du2010. The subtle definition distinction would not matter as much in this manuscript, but would be relevant to the future work, incorporating predictor structure in the additive model, e.g. gene network. We hope to establish the consistency in the word choice to avoid future confusion.
+
+Nevertheless, we edited the sentence for clarity. [TODO: check if this is done]
 \bigskip
