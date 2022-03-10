@@ -2,7 +2,7 @@ We sincerely thank you for the valuable comments. We have carefully addressed al
 
 \bigskip
 
-_Comments to the Authorss_
+_Comments to the Authors_
 
 _This paper introduces a new way to impose group sparse regularization in high-dimensional generalized additive models (GAMs). Specifically, this work proposes a re-parametrization, which allows separating the predictor space into linear/nonlinear ones. A spike-and-slab LASSO prior is then imposed on the coefficients for the re-parametrized predictors. The authors further uses EM algorithm to fit this model, where the M-step can be solved with either coordinate-descent or iteratively reweighted least squares. Simulation results and metabolomics data analysis are presented._
 
@@ -16,17 +16,25 @@ _While targeting an important question, the novelty of the solution provided by 
 
 _(1) It seems that after re-parametrization, the authors do not further consider the smoothing penalty (Equation (1)) and only include the spike-and-slab LASSO prior. I wonder how does this affect the smoothness of the fitted function and how does it resolves the issue of excess shrinkage._
 
-__Response__:
+__Response__: We thank the reviewer for the comment. The purpose of the reparameterization step is to factor the smoothing penalty matrix in the design matrix, such that the smoothing penalty is no long a function of the smoothing penalty matrix. In other words, the smoothing penalty changes from $\lambda \bs \beta^T \bs S \bs \beta$ to $\lambda \bs {\beta^*}^T \bs {\beta^*}$, where the $\bs \beta$ and $\bs \beta^*$ are the coefficients of the smoothing function before and after the reparameterization respectively. The spike-and-slab LASSO prior estimates whether to include the smoothing function and its appropriate smoothing parameter $\lambda$ with local adaptivity. This contrasts to previous methods that don't consider smoothing penalty at all or impose a uniform sparsity penalty upon uniform smoothing penalty, where both approaches tend to induce excessive shrinkage for the smoothing function.
+
+In the updated manuscript, we clarify the utility of the reparmeterization step and emphasize how the smoothness of the additive function are properiately modeled. Please see the revision of the method section, highlighted in red.
+
+
+
+
 \bigskip
 
 _(2) I was wondering why the authors choose spike-and-slab LASSO prior in particular. It is claimed in the paper that this prior yields a fast coordinate-descent algorithm, yet coordinate-descent seems also available to other priors as well. I think more discussion on the properties of SSL should be helpful here._
 
-__Response__:
+__Response__: Compared to other priors, the spike-and-slab double exponential prior provides three advantages. First of all, the spike-and-slab double exponential prior provides a locally adaptive shrinkage when estimating the coefficients. Hence, the smoothing functions can be estimated more accurately. Secondly, the spike-and-slab exponential prior encourages a sparse solution, making variable selection straight forward. Thirdly, the spike-and-slab double exponential prior motivates a scalable algorithm, the EM-CD algorithm, for model fitting, and hence is more feasible for high-dimensional data analysis.
+
+We revised our method section to highlight these advantages, see Pxxx.
 \bigskip
 
 _(3) Since the authors have already separated linear and nonlinear effects, and we might expect linear effects to enter the model first, I wonder why the authors does not incorporate this explicitly into their model by, say, changing the prior for gamma’s to impose different sparsity._
 
-__Response__: Thank you for the comment. We changed the prior distribution of the non-linear effects inclusion indicator to be $\gamma^\tp|\gamma, \theta \sim Bin(1, \gamma\theta)$ (See Equation ([TODO: add the equation number])), in comparison to $\gamma^\tp| \theta \sim Bin(1, \theta)$ previously. This prior formulation is motivated by effect forcing discussed in (Chipman, 2004). Now, the inclusion of the nonlinear effects is strictly dependent on the inclusion of the linear effects, and hence, reflects the hierarchy of bi-level selection. The modification of the prior doesn't complicate the model fitting algorithm. The $\gamma$ can be analytically integrated out of the density function (See Equation ([TODO: add the equation number]) and appendix) and requires minimum change of the proposed algorithms. In other words, the proposed model remain feasible for high-dimensional data analysis and retains the claimed computational advantages.
+__Response__: We thank the reviewer for the comment. We changed the prior distribution of the non-linear effects inclusion indicator to be $\gamma^\tp|\gamma, \theta \sim Bin(1, \gamma\theta)$ (See Equation ([TODO: add the equation number])), in comparison to $\gamma^\tp| \theta \sim Bin(1, \theta)$ previously. This prior formulation is motivated by effect forcing discussed in (Chipman, 2004). Now, the inclusion of the nonlinear effects is strictly dependent on the inclusion of the linear effects, and hence, reflects the hierarchy of bi-level selection. The modification of the prior doesn't complicate the model fitting algorithm. The $\gamma$ can be analytically integrated out of the density function (See Equation ([TODO: add the equation number]) and appendix) and requires minimum change of the proposed algorithms. In other words, the proposed model remain feasible for high-dimensional data analysis and retains the claimed computational advantages.
 
 \bigskip
 

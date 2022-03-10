@@ -17,6 +17,7 @@ tar_load(RR_path)
 ```
 
 \newcommand{\tp}{*}
+\newcommand{\bs}{\boldsymbol}
 
 \hrule
 \vspace*{0.02cm}

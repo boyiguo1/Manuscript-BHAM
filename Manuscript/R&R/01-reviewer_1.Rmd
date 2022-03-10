@@ -21,12 +21,18 @@ __Response__: Thank you for the comment. We expanded our simulation study from t
 
 _2. In Weight Loss Maintenance Cohort, R2 was very small by the two GAM methods.  I may think whether the data pretreatment and noise reduction process is appropriate._
 
-__Response__:
+__Response__: We thank the reviewer for the comment. We didn't perform the data processing step ourselves. We used the publicly available data that has been pre-processed. The data processing step is described in [TODO: add citation]. Meanwhile, we respectively argue that the small R2 is reasonable, as in many applications, genomics data can only accounts small amount of data variation. We think this example would be the case, as environmental factors (not accounted in these models) would be more substantial when explaining weight loss.
 \bigskip
 
 _3. In the paper, several priors were mentioned. How to choose the prior in different situations? What is the advantage of the spike-and-slab double exponential prior?_
 
-__Response__:
+__Response__: Thank you for the comment. The purpose of mentioning the other several priors in the previous manuscript is to describe the generalization of the proposed algorithms. In the updated manuscript, we move the subsection describing the other priors to the supporting information so that the readers can focus on understanding the proposed scalably model. We included an additional sentence in the discussion section. [TODO: list the sentence here].
+
+Compared to other priors, the spike-and-slab double exponential prior provides three advantages. First of all, the spike-and-slab double exponential prior provides a locally adaptive shrinkage when estimating the coefficients. Hence, the smoothing functions can be estimated more accurately. Secondly, the spike-and-slab exponential prior encourages a sparse solution, making variable selection straight forward. Thirdly, the spike-and-slab double exponential prior motivates a scalable algorithm, the EM-CD algorithm, for model fitting, and hence is more feasible for high-dimensional data analysis.
+
+We revised our method section to highlight these advantages, see Pxxx.
+
+
 \bigskip
 
 _4. How to detect the necessary before using the proposed model._
