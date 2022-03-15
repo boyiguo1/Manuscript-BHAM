@@ -108,6 +108,44 @@ Totally, the proposed EM-IWLS algorithm is summarized as follows:
 
 Similar to EM-CD, we assess convergence by the criterion, $|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon$, where $\epsilon$ is a small value (say $10^{-5}$).
 
+
+<!--     where $\eta_i = \sum\limits_{j=1}^p \hat f_j^{(t)}(x_{ij})$ is the estimated linear predictor using current estimated value of $\bs \beta^{}$, $L^{'}$ and $L^{''}$ are the first derivative and second derivative of the log-likelihood function. The $l_2$ penalty, $\sum\limits_{j=1}^{p}\left[E({S_j}^{-1}){\beta_j}^2+\sum\limits_{k=1}^{K_j}E(S^{-1}_{j})\beta_{jk}^2\right]$ can be seems as a multivariate normal distribution of mean $\textbf{0}$ and variance-covariance matrix $\Sigma(E({S}_1^{-1}), E(S_1^{-1}), \dots, E({S_p}^{-1}), E(S_p^{-1})$, conditioning on the value of $E({S_1}^{-1}), \dots E({S_p}^{-1})$. An augmentation step combines the normal approximation and multivariate normal for $\bs \beta$, similarly to Ridge regression model fitting. The estimates of $\bs \beta$ and $\phi$ can be quickly updated in the IRLS algorithm. -->
+
+
+<!-- From Equation^[TODO: add equation number], we can see that the estimates of $\gamma_jk, S^{-1}_{jk}$ are larger for larger coefficients $\beta_{jk}$, leading to different shrinkage for different coefficients. Moreover, to note that, we have different shrinkage $S^{-1}_{jk}$for the coefficients $\beta_{jk}$ of the variable $x_j$, and hence, we can penalize the null space of the spline differently and allow local adaption. --> 
+
+
+<!-- Totally, the framework of the proposed EM IRLS algorithm was summarized as follows: -->
+
+<!-- 1) Choose a starting value $\bs \beta^{(0)}$ and $\bs \theta^{(0)}$ [for $\bs \beta$ and $\bs \theta$. For example, we can initialize $\bs \beta^{(0)} = \bs 0$ and $\bs \theta^{(0)} = \bs 0.5$ -->
+
+<!-- 2) Iterate over the E-step and M-step until convergence -->
+
+<!-- E-step: calculate $E(\gamma_{j})$, $E(\gamma^{pen}_{j})$and $E({S}^{-1}_{j})$  , $E({S}^{-1}_{j})$with estimates of $\Theta^{(t-1)}$ from previous iteration -->
+
+<!-- M-step: -->
+
+<!-- a) Update $\bs \beta^{(t)}$ using the IRLS algorithm -->
+
+<!-- b) Update $\bs \theta^{(t)}$ using Equation \ref{eq:update_theta} -->
+
+<!-- We assess convergence by the criterion: -->
+<!-- $|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon$, where -->
+<!-- $d^{(t)} = -2l(\beta^{(t)},\phi^{(t)})$ is the estimate of deviance at -->
+<!-- the $t$th iteration, and $\epsilon$ is a small value (say -->
+<!-- $10^{-5}$). -->
+
+\subsubsection{Other Priors}
+
+With the re-parameterization step of the basis function matrix $\bs X$, it is possible to generalized the SSL prior to other priors, for example normal priors for ridge-type regularization and mixture normal prior for spike-and-slab regularization. These priors would work better in low and medium dimensional settings where the sparse assumption is not necessary. Here we elaborate the mixture normal prior as a demonstration of applying continuous spike-and-slab prior in BHAM.
+
+A spike-and-slab mixture normal spline prior can be expressed as 
+\begin{align*}
+  \beta_{j} |\gamma_{j},s_0,s_1 &\sim N(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)\\
+  \beta^\tp_{jk} | \gamma^\tp_{j},s_0,s_1 &\simiid N(0,(1-\gamma^\tp_{j}) s_0 + \gamma^\tp_{j} s_1), k=1,\dots, K_j.
+\end{align*}
+Similar to the spike-and-slab spline prior in Equation (\ref{eq:bham_ssl}), $0 < s_0 < s_1$ are tuning parameters and can be optimized via cross-validation. One of the critics received by the spike-and-slab mixture normal prior is that the tails of a normal distribution diminishes to zero too fast, which causes problems when estimating the large effects. Distributions with heavier tails can be used as an alternative, for example mixture Student's $t$ distribution with small degree of freedom. 
+
 \clearpage
 
 \subsection{Supplementary Information 3: Predictive Performance of Linear Simulations}
