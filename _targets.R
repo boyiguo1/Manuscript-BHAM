@@ -308,10 +308,25 @@ tar_plan(
   
   # *** Plot Non-Linear Functions ###
   # TODO: to generalize this for a list of plots.
-  ECB_bamlasso_nonlnr = ECB_bamlasso_var$`Non-parametric`[[1]][2],
-  ECB_plot = plot_smooth_term(ECB_bamlasso_fnl, ECB_bamlasso_nonlnr, ECB_sm_obj$Smooth,
-                              min = min(ECB_cov[, ECB_bamlasso_nonlnr])-0.1,
-                              max = max(ECB_cov[, ECB_bamlasso_nonlnr]) + 0.1),
+  ECB_bamlasso_nonlnr = ECB_bamlasso_var$`Non-parametric`[[1]],
+  
+  tar_target(
+    ECB_plot_list,
+    plot_smooth_term(ECB_bamlasso_fnl, ECB_bamlasso_nonlnr, ECB_sm_obj$Smooth,
+                     min = min(ECB_cov[, ECB_bamlasso_nonlnr])-0.1,
+                     max = max(ECB_cov[, ECB_bamlasso_nonlnr]) + 0.1)+
+      xlab(ECB_bamlasso_nonlnr)+
+      theme_pubr()+
+      theme(axis.title.y = element_blank()),
+    pattern = map(ECB_bamlasso_nonlnr),
+    iteration = "list"
+  ),
+  
+  ECB_plot = ggarrange(plotlist = ECB_plot_list),
+  
+
+  
+  
   
   
   # ** SB-GAM ---------------------------------------------------------------
@@ -394,10 +409,23 @@ tar_plan(
   
   # *** Plot Non-Linear Functions ###
   # TODO: to generalize this for a list of plots.
-  WLM_bamlasso_nonlnr = WLM_bamlasso_var$`Non-parametric`[[1]][1],
-  WLM_plot = plot_smooth_term(WLM_bamlasso_fnl, WLM_bamlasso_nonlnr, WLM_sm_obj$Smooth,
-                              min = min(WLM_bgam_dat$train_dat[, WLM_bamlasso_nonlnr])-0.1,
-                              max = max(WLM_bgam_dat$train_dat[, WLM_bamlasso_nonlnr]) + 0.1),
+
+  
+  WLM_bamlasso_nonlnr = WLM_bamlasso_var$`Non-parametric`[[1]],
+  
+  tar_target(
+    WLM_plot_list,
+    plot_smooth_term(WLM_bamlasso_fnl, WLM_bamlasso_nonlnr, WLM_bgam_dat$sm$Smooth,
+                     min = min(WLM_train_dat[, WLM_bamlasso_nonlnr])-0.1,
+                     max = max(WLM_train_dat[, WLM_bamlasso_nonlnr]) + 0.1)+
+      xlab(WLM_bamlasso_nonlnr)+
+      theme_pubr()+
+      theme(axis.title.y = element_blank()),
+    pattern = map(WLM_bamlasso_nonlnr),
+    iteration = "list"
+  ),
+  
+  WLM_plot = ggarrange(plotlist = WLM_plot_list),
   
   
   
