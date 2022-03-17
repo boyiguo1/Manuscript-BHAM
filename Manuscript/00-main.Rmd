@@ -72,6 +72,8 @@ tar_load(ECB_SBGAM_cv)
 tar_load(WLM_bamlasso_cv)
 tar_load(WLM_SBGAM_cv)
 tar_load(tbl_real_time)
+tar_load(ECB_plot)
+tar_load(WLM_plot)
 # tar_load(sim_tim_tab)
 ```
 
@@ -238,3 +240,13 @@ rbind(
   # flextable::set_caption(caption = "Measures of optimal BHAM and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
 ```
 
+\clearpage
+\begin{figure}[h]
+\includegraphics{Figs/ECB_plot}
+\end{figure}
+
+\clearpage
+
+\begin{figure}[h]
+\includegraphics{Figs/WLM_plot}
+\end{figure}

@@ -64,7 +64,7 @@ tar_plan(
                                                 dist = "binomial"),
   
   # plot_var_select(sim_binom_var_select_raw[[1]])  
-
+  
   
   # Table Presentation of Var Selection
   tmp = make_sim_var_metric_raw(),
@@ -73,7 +73,7 @@ tar_plan(
                                                               sim_binom_comp_select_raw[[.x]])) %>%
     group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
-              ) %>%
+    ) %>%
     pivot_wider(names_from = Method, values_from = mean) %>% 
     ungroup(),
   
@@ -88,9 +88,9 @@ tar_plan(
   #   facet_wrap(~Metric, ncol = 3, nrow = 1, scales = "free"),
   
   
-
   
-
+  
+  
   
   
   #** Gaussian Outcome  ####
@@ -142,8 +142,8 @@ tar_plan(
     cat(file = "Manuscript/Tabs/sim_gaus_var_slct_tab.tex"),
   
   
-
-
+  
+  
   #** Simulation Time ####
   sim_tim_tab = make_time_table(sim_success_rate),
   sim_tim_tab_latex = sim_tim_tab %>% 
@@ -205,7 +205,7 @@ tar_plan(
   sim_lnr_binom_var_select_tbl = map_dfr(1:5, 
                                          ~make_sim_var_metric_raw(sim_lnr_binom_var_select_raw[[.x]],
                                                                   sim_lnr_binom_comp_select_raw[[.x]])
-                                         ) %>%
+  ) %>%
     group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
     ) %>%
@@ -247,7 +247,7 @@ tar_plan(
   sim_lnr_gaus_var_select_tbl = map_dfr(1:5, 
                                         ~make_sim_var_metric_raw(sim_lnr_gaus_var_select_raw[[.x]],
                                                                  sim_lnr_gaus_comp_select_raw[[.x]])
-                                        ) %>%
+  ) %>%
     group_by(p, Method, Metric) %>%
     summarise(mean = mean(value, na.rm = TRUE)#, sd = sd(value, na.rm = TRUE)
     ) %>%
@@ -322,12 +322,13 @@ tar_plan(
     iteration = "list"
   ),
   
-  ECB_plot = ggarrange(plotlist = ECB_plot_list),
+  ECB_gg_plot = ggarrange(plotlist = ECB_plot_list) %>% 
+    annotate_figure(left = "Linear Predictor", bottom = "Features"),
   
-
-  
-  
-  
+  ECB_plot = ggsave(
+    filename = "Manuscript/Figs/ECB_plot.pdf",
+    plot = ECB_gg_plot,
+    device = "pdf"),
   
   # ** SB-GAM ---------------------------------------------------------------
   ECB_SBGAM_cv_raw = cv.SBGAM( X = ECB_cov,
@@ -409,7 +410,7 @@ tar_plan(
   
   # *** Plot Non-Linear Functions ###
   # TODO: to generalize this for a list of plots.
-
+  
   
   WLM_bamlasso_nonlnr = WLM_bamlasso_var$`Non-parametric`[[1]],
   
@@ -425,7 +426,13 @@ tar_plan(
     iteration = "list"
   ),
   
-  WLM_plot = ggarrange(plotlist = WLM_plot_list),
+  WLM_gg_plot = ggarrange(plotlist = WLM_plot_list) %>% 
+    annotate_figure(left = "Linear Predictor", bottom = "Features"),
+  
+  WLM_plot = ggsave(
+    filename = "Manuscript/Figs/WLM_plot.pdf",
+    plot = WLM_gg_plot,
+    device = "pdf"),
   
   
   
