@@ -1,8 +1,10 @@
 \begin{table}[ht]
 \centering
 \begin{tabular}{cccccccc}
- P & Metric & LASSO & COSSO & Adaptive COSSO & BHAM & SB-GAM & spikeSlabGAM \\ 
-   4 & Precision & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
+  \hline
+P & Metric & LASSO & COSSO & Adaptive COSSO & BHAM & SB-GAM & spikeSlabGAM \\ 
+  \hline
+  4 & Precision & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
    10 & Precision & 0.76 & 0.84 & 0.93 & 0.62 & 0.86 & 1.00 \\ 
    50 & Precision & 0.48 & 0.70 & 0.69 & 0.88 & 0.75 & 1.00 \\ 
   100 & Precision & 0.43 & 0.61 & 0.59 & 0.99 & 0.79 & 0.99 \\ 
@@ -18,7 +20,8 @@
    50 & MCC & 0.31 & 0.47 & 0.53 & 0.50 & 0.83 & 0.69 \\ 
   100 & MCC & 0.32 & 0.41 & 0.45 & 0.53 & 0.87 & 0.70 \\ 
   200 & MCC & 0.28 & 0.41 & 0.38 & 0.36 & 0.85 & 0.70 \\ 
-  \end{tabular}
+   \hline
+\end{tabular}
 \caption{The variable selection performance of Gaussian simulations,
                          measured by positive predictive value (precision), true positive rate (recall),
                          and Matthews correlation coefficient (MCC), for the high-dimensional methods
