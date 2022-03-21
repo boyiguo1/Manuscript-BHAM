@@ -191,7 +191,7 @@ sim_tim_tab %>%
 
 ```{r }
 tbl_real_time %>% 
-  flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.")
+  flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM and the model of comparison SB-GAM.")
 ```
 \label{tab:time_real_data}
 

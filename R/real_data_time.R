@@ -26,7 +26,7 @@ create_real_data_time_tbl <- function(...){
       col_keys,"{line2}_{line3}",
       na = "Data",
       remove = FALSE) %>% 
-    mutate(line2 = recode(line2, bamlasso = "BHAM-CD",
+    mutate(line2 = recode(line2, bamlasso = "BHAM",
                           SBGAM = "SB-GAM"),
            line3 = recode(line3, cv = "CV", fnl = "Final",
                           total = "Total"))
@@ -34,14 +34,14 @@ create_real_data_time_tbl <- function(...){
   flextable(time_tbl_raw) %>% 
     colformat_double(digits = 1) %>% 
     set_header_df(mapping = time_tbl_header) %>% 
-    set_header_labels(bamlasso = "BHAM-CD",
+    set_header_labels(bamlasso = "BHAM",
                       SBGAM = "SB-GAM",
                       cv = "CV",
                       fnl = "Final",
                       total = "Total") %>% 
     merge_h(part = "header", i = 1) %>% 
     merge_v(part = "header", j = 1) %>% 
-    theme_booktabs %>% 
-    align(align = "center", part = "all")
+    flextable::theme_booktabs() %>% 
+    flextable::align(align = "center", part = "all")
   
 }

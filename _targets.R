@@ -6,7 +6,7 @@ library(tarchetypes)
 tar_option_set(
   packages = c("tidyverse", "dplyr", "rticles", #"gtsummary", "gt", 
                "broom", "unglue", "knitr", "ggpubr", "xtable", "janitor", 
-               # "flextable", 
+               "flextable", 
                "mgcv", "BHAM", "BhGLM", "sparseGAM",  "glmnet", "yardstick",
                "rmarkdown"#, "cosso",
   ),
