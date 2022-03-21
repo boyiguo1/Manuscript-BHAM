@@ -41,8 +41,7 @@ tar_plan(
     sim_binom_tab,
     caption = "The average and standard deviation of the out-of-sample area under the curve measures
     for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian
-    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
-    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO),
+    hierarchical additive model (BHAM), component selection and smoothing operator (COSSO),
     adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide
     estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:bin_auc")%>% 
@@ -79,7 +78,7 @@ tar_plan(
     ungroup(),
   
   sim_binom_var_select_tbl_latex = sim_binom_var_select_tbl %>% 
-    format_var_slct_tbls(caption = "", label = "")%>% 
+    format_var_slct_tbls(caption = "", label = "tab:sim_binom_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_binom_var_slct_tab.tex"),
   # Visual Presentation of Var Selection
   # make_sim_var_metric_raw(sim_binom_var_select_raw[[4]]) %>% 
@@ -104,8 +103,7 @@ tar_plan(
     sim_gaus_tab,
     caption = "The average and standard deviation of the out-of-sample $R^2$ measure for
     Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian
-    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
-    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive
+    hierarchical additive model (BHAM), component selection and smoothing operator (COSSO), adaptive
     COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation
     whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:gaus") %>% 
@@ -196,8 +194,7 @@ tar_plan(
     # TODO: edit the caption
     caption = "The average and standard deviation of the out-of-sample area under the curve measures
     for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian
-    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
-    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO),
+    hierarchical additive model (BHAM), component selection and smoothing operator (COSSO),
     adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide
     estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:lnr_bin_auc")%>% 
@@ -225,7 +222,7 @@ tar_plan(
     ungroup(),
   
   sim_lnr_binom_var_select_tbl_latex = sim_lnr_binom_var_select_tbl %>% 
-    format_var_slct_tbls(caption = "", label = "")%>% 
+    format_var_slct_tbls(caption = "", label = "tab:sim_lnr_binom_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_lnr_binom_var_slct_tab.tex"),
   
   
@@ -239,8 +236,7 @@ tar_plan(
     sim_lnr_gaus_tab, # TODO: edit the caption
     caption = "The average and standard deviation of the out-of-sample $R^2$ measure for
     Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian
-    hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and
-    Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive
+    hierarchical additive model (BHAM), component selection and smoothing operator (COSSO), adaptive
     COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation
     whe number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:lnr_gaus") %>% 
@@ -267,7 +263,7 @@ tar_plan(
     ungroup(),
   
   sim_lnr_gaus_var_select_tbl_latex = sim_lnr_gaus_var_select_tbl %>% 
-    format_var_slct_tbls(caption = "", label = "") %>% 
+    format_var_slct_tbls(caption = "", label = "tab:sim_lnr_gaus_var_select") %>% 
     cat(file = "Manuscript/Tabs/sim_lnr_gaus_var_slct_tab.tex"),
   
   

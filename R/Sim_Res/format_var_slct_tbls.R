@@ -5,11 +5,12 @@ format_var_slct_tbls <- function( dat, caption, label){
                            labels = c("Precision", "Recall", "MCC")),
            p = as.integer(p)
     )%>% 
+    filter(!(Metric == "MCC" & p==4)) %>%
     arrange(Metric, p) %>% 
     select(
       "P" = p,
       Metric,
-      "mgcv" = mgcv,
+      # "mgcv" = mgcv,
       "LASSO" = lasso,
       "COSSO" = cosso,
       "Adaptive COSSO" = acosso,
@@ -20,7 +21,7 @@ format_var_slct_tbls <- function( dat, caption, label){
       "spikeSlabGAM" = ssGAM
     ) %>% 
     xtable(
-      align = "cccccccccc",
+      align = "ccccccccc",
       caption = caption,
       label = label
     ) %>% 
