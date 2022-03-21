@@ -25,5 +25,6 @@ format_var_slct_tbls <- function( dat, caption, label){
       caption = caption,
       label = label
     ) %>% 
-    print(comment = FALSE, include.rownames = FALSE)
+    print(comment = FALSE, include.rownames = FALSE,
+          hline.after = c(5,10))
 }

@@ -1,25 +1,24 @@
 \begin{table}[ht]
 \centering
 \begin{tabular}{cccccccc}
-  \hline
-P & Metric & LASSO & COSSO & Adaptive COSSO & BHAM & SB-GAM & spikeSlabGAM \\ 
-  \hline
-  4 & Precision & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
+ P & Metric & LASSO & COSSO & Adaptive COSSO & BHAM & SB-GAM & spikeSlabGAM \\ 
+   4 & Precision & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
    10 & Precision & 0.61 & 0.97 & 0.98 & 0.55 & 0.74 & 0.91 \\ 
    50 & Precision & 0.35 & 0.59 & 0.68 & 0.26 & 0.59 & 0.61 \\ 
   100 & Precision & 0.28 & 0.47 & 0.51 & 0.30 & 0.46 & 0.57 \\ 
   200 & Precision & 0.26 & 0.44 & 0.42 & 0.38 & 0.41 & 0.38 \\ 
-    4 & Recall & 1.00 & 0.85 & 0.78 & 1.00 & 1.00 & 1.00 \\ 
+   \hline
+  4 & Recall & 1.00 & 0.85 & 0.78 & 1.00 & 1.00 & 1.00 \\ 
    10 & Recall & 1.00 & 0.96 & 0.97 & 0.99 & 1.00 & 1.00 \\ 
    50 & Recall & 1.00 & 0.88 & 0.74 & 0.92 & 1.00 & 1.00 \\ 
   100 & Recall & 1.00 & 0.78 & 0.56 & 0.89 & 1.00 & 0.99 \\ 
   200 & Recall & 1.00 & 0.67 & 0.48 & 0.89 & 0.99 & 0.98 \\ 
-   10 & MCC & 0.58 & 0.95 & 0.96 & 0.49 & 0.72 & 0.91 \\ 
+   \hline
+ 10 & MCC & 0.58 & 0.95 & 0.96 & 0.49 & 0.72 & 0.91 \\ 
    50 & MCC & 0.52 & 0.66 & 0.65 & 0.37 & 0.73 & 0.74 \\ 
   100 & MCC & 0.49 & 0.55 & 0.47 & 0.43 & 0.65 & 0.72 \\ 
   200 & MCC & 0.49 & 0.49 & 0.39 & 0.47 & 0.62 & 0.58 \\ 
-   \hline
-\end{tabular}
+  \end{tabular}
 \caption{The variable selection performance of linear binomial simulations,
                          measured by positive predictive value (precision), true positive rate (recall),
                          and Matthews correlation coefficient (MCC), for the high-dimensional methods
