@@ -798,7 +798,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 
 \begin{longtable}[c]{|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}}
 
-\caption{Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\textbackslash{}label\{tab:time\_real\_data\}
+\caption{Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.
 }\\
 
 \hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}-}
@@ -841,6 +841,8 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 
 \end{longtable}
 
+\label{tab:time_real_data}
+
 \clearpage
 
 \begin{table}[ht]
@@ -849,12 +851,11 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
   \hline
 Methods & Deviance & AUC & Brier & Misclass \\ 
   \hline
-BHAM-CD.1 & 510.99 & 0.61 & 0.19 & 0.24 \\ 
-  BHAM-CD.2 & 510.99 & 0.61 & 0.19 & 0.24 \\ 
+BHAM & 510.99 & 0.61 & 0.19 & 0.24 \\ 
   SB-GAM & 636.56 & 0.56 & 0.22 & 0.30 \\ 
    \hline
 \end{tabular}
-\caption{Prediction performance of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.} 
+\caption{Prediction performance of BHAM fitted with Cooridnate Descent algorithm (BHAM) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.} 
 \label{tab:ECB_res}
 \end{table}
 
@@ -866,25 +867,19 @@ BHAM-CD.1 & 510.99 & 0.61 & 0.19 & 0.24 \\
   \hline
 Methods & Deviance & $R^2$ & MSE & MAE \\ 
   \hline
-BHAM-CD & 668.01 & 0.07 & 0.93 & 0.76 \\ 
+BHAM & 668.01 & 0.07 & 0.93 & 0.76 \\ 
   SB-GAM & 666.83 & 0.03 & 0.98 & 0.77 \\ 
    \hline
 \end{tabular}
-\caption{Prediction performance of of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).} 
+\caption{Prediction performance of of BHAM fitted with Cooridnate Descent algorithm (BHAM)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).} 
 \label{tab:WLM_res}
 \end{table}
 
 \clearpage
 \begin{figure}[h] 
 \includegraphics{Figs/ECB_plot}
-\caption{TODO: change this caption}
+\caption{Plots of the functions for the 33 metablites selected by BHAM in the Emory Cardiovascular Biobank data analysis}
 \label{fig:ECB_fig}
-\end{figure}
-
-\clearpage
-
-\begin{figure}[h]
-\includegraphics{Figs/WLM_plot}
 \end{figure}
 
 

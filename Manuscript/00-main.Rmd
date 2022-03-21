@@ -162,6 +162,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 
 \clearpage
 <!-- \begin{landscape} -->
+
 ```{r sim_time, results = "asis", eval = F}
 sim_tim_tab %>% 
   select(dist, p, `BHAM-IWLS`,`BHAM-CD`, cosso, acosso, mgcv, `SB-GAM`) %>% 
@@ -188,16 +189,17 @@ sim_tim_tab %>%
 <!-- \end{landscape} -->
 \clearpage
 
-```{r}
+```{r }
 tbl_real_time %>% 
-  flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\\label{tab:time_real_data}")
+  flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.")
 ```
+\label{tab:time_real_data}
 
 \clearpage
 
 ```{r results = "asis"}
 rbind(
-  'BHAM-CD' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
+  'BHAM' = ECB_bamlasso_cv %>% slice_max(auc)  %>% slice_min(s0) %>% select(-s0),
   'SB-GAM' = ECB_SBGAM_cv %>%  slice_max(auc) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>%
@@ -207,7 +209,7 @@ rbind(
          Brier = mse,
          Misclass = misclassification) %>% 
   xtable(
-    caption = "Prediction performance of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.",
+    caption = "Prediction performance of BHAM fitted with Cooridnate Descent algorithm (BHAM) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.",
     label = "tab:ECB_res"
   ) %>% 
   print(comment = FALSE, include.rownames = FALSE#, caption.placement = "top"
@@ -220,7 +222,7 @@ rbind(
 
 ```{r results = "asis"}
 rbind(
-  'BHAM-CD' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
+  'BHAM' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
   'SB-GAM' = WLM_SBGAM_cv %>%  slice_min(mse) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>%
@@ -231,7 +233,7 @@ rbind(
     `$R^2$` = R2
   ) %>% 
     xtable(
-    caption = "Prediction performance of of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).",
+    caption = "Prediction performance of of BHAM fitted with Cooridnate Descent algorithm (BHAM)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).",
     label = "tab:WLM_res"
   ) %>%
   print(comment = FALSE, include.rownames = FALSE, sanitize.text.function=function(x){x}#, caption.placement = "top"
@@ -244,12 +246,12 @@ rbind(
 \clearpage
 \begin{figure}[h] 
 \includegraphics{Figs/ECB_plot}
-\caption{TODO: change this caption}
+\caption{Plots of the functions for the 33 metablites selected by BHAM in the Emory Cardiovascular Biobank data analysis}
 \label{fig:ECB_fig}
 \end{figure}
 
-\clearpage
+<!-- \clearpage -->
 
-\begin{figure}[h]
-\includegraphics{Figs/WLM_plot}
-\end{figure}
+<!-- \begin{figure}[h] -->
+<!-- \includegraphics{Figs/WLM_plot} -->
+<!-- \end{figure} -->

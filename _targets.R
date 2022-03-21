@@ -140,7 +140,7 @@ tar_plan(
     ungroup(),
   
   sim_gaus_var_select_tbl_latex = sim_gaus_var_select_tbl %>% 
-    format_var_slct_tbls(caption = "", label = "")%>% 
+    format_var_slct_tbls(caption = "", label = "tab:sim_gaus_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_gaus_var_slct_tab.tex"),
   
   #*** Time  ####
@@ -327,9 +327,11 @@ tar_plan(
     plot_smooth_term(ECB_bamlasso_fnl, ECB_bamlasso_nonlnr, ECB_sm_obj$Smooth,
                      min = min(ECB_cov[, ECB_bamlasso_nonlnr])-0.1,
                      max = max(ECB_cov[, ECB_bamlasso_nonlnr]) + 0.1)+
-      xlab(ECB_bamlasso_nonlnr)+
+      xlab(str_split(ECB_bamlasso_nonlnr, "[.]")[[1]][1])+
       theme_pubr()+
-      theme(axis.title.y = element_blank()),
+      theme(axis.title.y = element_blank(),
+            axis.text.x = element_blank(),
+            axis.text.y = element_blank()),
     pattern = map(ECB_bamlasso_nonlnr),
     iteration = "list"
   ),
