@@ -78,7 +78,8 @@ tar_plan(
     ungroup(),
   
   sim_binom_var_select_tbl_latex = sim_binom_var_select_tbl %>% 
-    format_var_slct_tbls(caption = "", label = "tab:sim_binom_var_select")%>% 
+    format_var_slct_tbls(caption = "The variable selection performance of binomial simulations, measured by positive predictive value (precision), true positive rate (recall), and Matthews correlation coefficient (MCC), for the high-dimensional methods averaged over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian generalized additive model (SB-GAM), and spikeSlabGAM mdoel. MCC is ill-defined when $p=4$ simulation (no true negative), and hence omitted for all methods.",
+                         label = "tab:sim_binom_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_binom_var_slct_tab.tex"),
   # Visual Presentation of Var Selection
   # make_sim_var_metric_raw(sim_binom_var_select_raw[[4]]) %>% 
@@ -138,7 +139,7 @@ tar_plan(
     ungroup(),
   
   sim_gaus_var_select_tbl_latex = sim_gaus_var_select_tbl %>% 
-    format_var_slct_tbls(caption = "", label = "tab:sim_gaus_var_select")%>% 
+    format_var_slct_tbls(caption = "The variable selection performance of Gaussian simulations, measured by positive predictive value (precision), true positive rate (recall), and Matthews correlation coefficient (MCC), for the high-dimensional methods averaged over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian generalized additive model (SB-GAM), and spikeSlabGAM mdoel. MCC is ill-defined when $p=4$ simulation (no true negative), and hence omitted for all methods.", label = "tab:sim_gaus_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_gaus_var_slct_tab.tex"),
   
   #*** Time  ####
@@ -222,7 +223,8 @@ tar_plan(
     ungroup(),
   
   sim_lnr_binom_var_select_tbl_latex = sim_lnr_binom_var_select_tbl %>% 
-    format_var_slct_tbls(caption = "", label = "tab:sim_lnr_binom_var_select")%>% 
+    format_var_slct_tbls(caption = "The variable selection performance of linear binomial simulations, measured by positive predictive value (precision), true positive rate (recall), and Matthews correlation coefficient (MCC), for the high-dimensional methods averaged over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian generalized additive model (SB-GAM), and spikeSlabGAM mdoel. MCC is ill-defined when $p=4$ simulation (no true negative), and hence omitted for all methods.",
+                         label = "tab:sim_lnr_binom_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_lnr_binom_var_slct_tab.tex"),
   
   
@@ -263,7 +265,8 @@ tar_plan(
     ungroup(),
   
   sim_lnr_gaus_var_select_tbl_latex = sim_lnr_gaus_var_select_tbl %>% 
-    format_var_slct_tbls(caption = "", label = "tab:sim_lnr_gaus_var_select") %>% 
+    format_var_slct_tbls(caption = "The variable selection performance of linear Gaussian simulations, measured by positive predictive value (precision), true positive rate (recall), and Matthews correlation coefficient (MCC), for the high-dimensional methods averaged over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian generalized additive model (SB-GAM), and spikeSlabGAM mdoel. MCC is ill-defined when $p=4$ simulation (no true negative), and hence omitted for all methods.", 
+                         label = "tab:sim_lnr_gaus_var_select") %>% 
     cat(file = "Manuscript/Tabs/sim_lnr_gaus_var_slct_tab.tex"),
   
   
