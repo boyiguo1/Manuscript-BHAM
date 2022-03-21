@@ -604,24 +604,20 @@ sacrificing much of the prediction accuracy (see Table
 \textcolor{red}{We also examine the prediction performance when the functional form of predictors are linear, see Supporting Information Table S1, and S2. The proposed model, BHAM, has similar performance as the linear lasso model regardless of the distribution. This observation demonstrates that BHAM is a flexible model, and has good prediction performance regardless the underlying functional form of predictors. spikeSlabGAM have similar prediction performance to BHAM. Surprisingly, SB-GAM doesn't perform well in high-dimensional Gaussian outcome scenarios.}
 
 \textcolor{red}{\subsubsection{Variable Selection Performance}}
-\textcolor{red}{Among the set of simulations where the functional forms of the predictors are non-linear, the proposed model, BHAM, has a consistent performance across different dimension and distribution settings (See Table \ref{sec:gaus_var_select} for Gaussian outcomes, and Support Information Table S3 for binomial outcomes): being conservative. The symptoms of conservative variable selection are high precision and low recall, where high precision means that among all the selected variables, high percentage of them are true signals; low recall means that, the model selected small subset among all the active predictions. In other words, BHAM tends to select a smaller set of variables that are truly effective to the outcome. We want to note, the variable selection performance of BHAM is plummeted and not optimized when $p=200$ due to using a generic sequence of $s_0$ that doesn't contain the optimal value, discovered when analyzing the simulation result. Overall, among all the models examined, SB-GAM have the best performance, both high precision and high recall, and yield a high MCC. The performance of another Bayesian model, spikeSlabGAM deteriorates as sparsity grows, particularly when ($p>50$), or for binomial outcomes. The variable selection performance for linear simulations match with prediction performance: BHAM performs great with the Gaussian outcome, while SB-GAM's performance deteriorates.}
+\textcolor{red}{Among the set of simulations where the functional forms of the predictors are non-linear, the proposed model, BHAM, has a consistent performance across different dimension and distribution settings (See Table \ref{sec:gaus_var_select} for Gaussian outcomes, and Support Information Table S3 for binomial outcomes): being conservative. The symptoms of conservative variable selection are high precision and low recall, where high precision means that among all the selected variables, high percentage of them are true signals; low recall means that, the model selected small subset among all the active predictions. In other words, BHAM tends to select a smaller set of variables that are truly effective to the outcome. We want to note, the variable selection performance of BHAM is plummeted and not optimized when $p=200$. Upon further investigation, we discover it's because the generic sequence of $s_0$ used to tune the model doesn't contain the optimal value. Overall, among all the models examined, SB-GAM has the best performance, both high precision and high recall, and yield a high MCC. The performance of another Bayesian model, spikeSlabGAM deteriorates as the sparsity grows, particularly when ($p>50$), or for binomial outcomes. The variable selection performance for linear simulations match with prediction performance: BHAM performs great among the Gaussian scenarios, while the performance of SB-GAM deteriorates.}
 
-\textcolor{red}{Among the high-dimensional methods of comparison, there are two methods that are capable to achieve bi-level selection, the proposed BHAM and spikeSlabGAM. Among the linear simulations, both methods can accurately select the linear components while having a drastically lowered probability to include the nonlinear component in the model. Specifically, spikeSlabGAM have smaller probability to include non-linear component in the model than BHAM. However, this advantage of spikeSlabGAM over BHAM is less obvious among the mixed function form simulations: spikeSlabGAM performs better than BHAM when selecting components when the function form includes only linear or nonlinear component, e.g. function form for $x_3$ and $x_4$. However, the spikeSlabGAM inclines to complete ignore the variable that have more complex function form, e.g. function form for $x_1$ and $x_2$, while BHAM are more likely to include them in the model. This trade-off is determined by the assumption implicitly reflected via the prior hierarchy. We defer an in-depth discussion to the Section \ref{sec:concl}.}
+\textcolor{red}{Among the high-dimensional methods of comparison, there are two methods that are capable to achieve bi-level selection, the proposed BHAM and spikeSlabGAM. Among the linear simulations, both methods can accurately select the linear components and have a drastically lowered probability, close to 0, to include the nonlinear component, as anticipated. Specifically, spikeSlabGAM have smaller probability to include non-linear component in the model than BHAM. However, this advantage of spikeSlabGAM over BHAM is less obvious among the nonlinear simulations: spikeSlabGAM performs better than BHAM when selecting components of the function forms that include only linear or nonlinear component, e.g. function forms for $x_3$ and $x_4$. However, spikeSlabGAM inclines to ignore the variable that have more complex function forms, e.g. function forms for $x_1$ and $x_2$. In contrast, BHAM is more likely to include them in the model. This trade-off is determined by the assumption implicitly reflected via the prior hierarchy. We defer an in-depth discussion to the Section \ref{sec:concl}.}
 
 \section{Metabolomics Data Analysis}
 \label{sec:real_data}
 
-In this section, we apply the proposed models BHAM, fitted with the
-EM-CD algorithm, to analyze two real-world metabolomics datasets where
-the outcomes are binary and continuous respectively. We demonstrate the
-improved prediction performance compared to the other Bayesian
-hierarchical additive model, SB-GAM \citep{Bai2021}, while being
-computationally efficient (see Table \ref{tab:time_real_data}). {[}TODO:
-add a sentenec how much faster.{]}
-
-\begin{center}
-Table \ref{tab:time_real_data} here
-\end{center}
+In this section, we apply the proposed models BHAM to analyze two
+published metabolomics datasets where the outcomes are binary and
+continuous respectively. We demonstrate the improved prediction
+performance compared to the other Bayesian hierarchical additive model,
+SB-GAM \citep{Bai2021}, while being computationally efficient (see Table
+\ref{tab:time_real_data}).
+\textcolor{red}{BHAM requires roughly 10\% of the computation time of SB-GAM to fit models.}
 
 \subsection{Emory Cardiovascular Biobank}
 \label{sec:ECB}
@@ -643,15 +639,12 @@ default selection criterion implemented in the software. Out-of-bag
 samples are used for prediction performance evaluation, where deviance,
 AUC, Brier score defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2\), and
-misclassication error defined as
+misclassification error defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)\) are
-calculated. BHAM-CD obtains superior AUC, Brier score, and
+calculated. BHAM obtains superior AUC, Brier score, and
 misclassification error in the out-of-bag samples compared to SB-GAM
 (see Table \ref{tab:ECB_res}).
-
-\begin{center}
-Table \ref{tab:ECB_res} here
-\end{center}
+\textcolor{red}{We plot the 33 features included in the final BHAM model in Figure \ref{fig:ECB_fig}.}
 
 \subsection{Weight Loss Maintenance Cohort}
 
@@ -662,10 +655,10 @@ publicly available \citep{Bihlmeyer2021_data}. In this analysis, we
 primarily focus on the analysis of one of the three studies included,
 weight loss maintenance cohort \citep{Svetkey2008}, due to the
 drastically different intervention effects. In the dataset, 765
-metaboliltes in baseline plasma collected were profiled using liquid
+metabolites in baseline plasma collected were profiled using liquid
 chromatography mass spectrometry. Quality control and natural log
 transformation \textcolor{red}{were previously} performed and documented
-\textcolor{red}{by the study publishing team [@Bihlmeyer2021]}. The
+\textcolor{red}{by the study publishing team \cite{Bihlmeyer2021}}. The
 outcome of interest are standardized percent change in insulin
 resistance, and hence modeled using a Gaussian model. After removing
 missing datapoints and addressing outliers in the data, there are
@@ -681,10 +674,6 @@ absolute error (MAE) defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}|y_i - \hat y_i|\) are calculated.
 BHAM obtains superior \(R^2\), MSE, and MAE in the out-of-bag samples
 compared to SB-GAM (see Table \ref{tab:WLM_res}).
-
-\begin{center}
-Table \ref{tab:WLM_res} here
-\end{center}
 
 \section{Discussion}
 \label{sec:concl}
@@ -886,8 +875,10 @@ BHAM-CD & 668.01 & 0.07 & 0.93 & 0.76 \\
 \end{table}
 
 \clearpage
-\begin{figure}[h]
+\begin{figure}[h] 
 \includegraphics{Figs/ECB_plot}
+\caption{TODO: change this caption}
+\label{fig:ECB_fig}
 \end{figure}
 
 \clearpage

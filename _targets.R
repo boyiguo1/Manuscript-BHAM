@@ -505,6 +505,12 @@ tar_plan(
     list.files("Manuscript/Tabs/", full.names = TRUE)
   ),
   
+  tar_files(
+    manu_figs,
+    list.files("Manuscript/Figs/", full.names = TRUE)
+  ),
+  
+  
   tar_render(manu, "Manuscript/00-main.Rmd",
              output_file = "SS_GAM.pdf"),
   

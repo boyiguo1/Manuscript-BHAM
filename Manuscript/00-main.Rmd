@@ -63,10 +63,10 @@ set_flextable_defaults(fonts_ignore=TRUE)
 
 tar_load(manu_path)
 tar_load(manu_tbs)
+tar_load(manu_figs)
 
 
 tar_load(WLM_train_dat)
-# tar_load(tbl_one)
 tar_load(ECB_bamlasso_cv)
 tar_load(ECB_SBGAM_cv)
 tar_load(WLM_bamlasso_cv)
@@ -74,7 +74,6 @@ tar_load(WLM_SBGAM_cv)
 tar_load(tbl_real_time)
 tar_load(ECB_plot)
 tar_load(WLM_plot)
-# tar_load(sim_tim_tab)
 ```
 
 ```{r child="01-Intro.Rmd"}
@@ -243,8 +242,10 @@ rbind(
 ```
 
 \clearpage
-\begin{figure}[h]
+\begin{figure}[h] 
 \includegraphics{Figs/ECB_plot}
+\caption{TODO: change this caption}
+\label{fig:ECB_fig}
 \end{figure}
 
 \clearpage
