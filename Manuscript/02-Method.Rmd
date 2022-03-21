@@ -1,7 +1,7 @@
 \section{Bayesian Hierarchical Additive Models (BHAM)}
 \label{sec:BHAM}
 
-\bg{We assume the response variable, $Y$, follows an exponential family distribution with density function $f(y)$, mean $\mu$ and dispersion parameter $\phi$. The mean of the response variable can be modeled as the summation of smoothing functions, $B_j(\cdot), j = 1, \dots, p$, of a given $p$-dimensional vector of covariates $\bs x$, written as 
+\bg{We assume the response variable, $Y$, follows an exponential family distribution with density function $f(y)$, mean $\mu$ and dispersion parameter $\phi$. The mean of the response variable can be modeled as the summation of smoothing functions, $B_j(\cdot), j = 1, \dots, p$, of a given $p$-dimensional vector of predictors $\bs x$, written as 
 \begin{equation}\label{eq:gam}
  E(Y|\bs x) = g^{-1}(\beta_0 + \sum\limits^p_{j=1}B_j(x_j)) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} \bs \beta_j^T \bs X_j),
 \end{equation}
