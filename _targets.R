@@ -29,6 +29,7 @@ tar_plan(
   sim_success_rate = create_success_rate_table(sim_main_path),
   sim_mdl_fail = create_mdl_fail_rate(sim_success_rate),
   sim_pred_raw = create_raw_data(sim_success_rate),
+  sim_time_raw = create_raw_data(sim_success_rate, section = "time"),
   
   #** Binomial Outcome  ####
   #*** Prediction  ####
@@ -111,8 +112,8 @@ tar_plan(
     cat(file = "Manuscript/Tabs/sim_gaus_tab.tex"),
   
   # Percentage of change
-  sim_gaus_pred_bham_lasso = sim_pred_raw %>% filter(dist == "gaussian") %>%
-    compare_methods(method_1 = "bamlasso", method_2 = "lasso", measures="R2") %>% 
+  sim_gaus_time_bham_lasso = sim_pred_raw %>% filter(dist == "gaussian", !(p %in% c(4,10))) %>%
+    compare_methods(method_1 = "bamlasso", method_2 = "SB_GAM", measures="R2") %>% 
     with(sprintf("%.0f%% (%.0f%%)", median*100, IQR*100)),
   
   
@@ -141,6 +142,16 @@ tar_plan(
     format_var_slct_tbls(caption = "", label = "")%>% 
     cat(file = "Manuscript/Tabs/sim_gaus_var_slct_tab.tex"),
   
+  #*** Time  ####
+  sim_gaus_pred_bham_lasso = sim_time_raw %>% filter(dist == "gaussian", ) %>%
+    select(-c(user.self, sys.self, user.child, sys.child)) %>% 
+    pivot_wider(names_from = method, values_from = elapsed) %>% 
+    mutate(bamlasso = bamlasso_cv + bamlasso_final,
+           SB_GAM = bai_cv + bai_final) %>% 
+    select(it, dist, p, bamlasso, SB_GAM) %>% 
+    pivot_longer(cols = c(bamlasso, SB_GAM), names_to = "method", values_to = "time") %>% 
+    compare_methods(method_1 = "bamlasso", method_2 = "SB_GAM", measures="time") %>% 
+    with(sprintf("%.0f%% (%.0f%%)", median*100, IQR*100)),
   
   
   

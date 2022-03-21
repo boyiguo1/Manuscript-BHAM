@@ -1,3 +1,7 @@
+# Example:
+#
+
+
 compare_methods <- function(dat, method_1, method_2, measures){
   # browser()
   if(!all(c(method_1, method_2) %in% unique(dat$method)))
