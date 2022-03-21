@@ -18,10 +18,9 @@ Binomial &   4 & 0.18 (0.04) & 3.16 (1.39) & 5.51 (4.07) & 2.73 (0.22) & 347.17 
 \end{tabular}
 \caption{The average and standard deviation of computation time in seconds,
       including cross-validation and final model fitting, over 50 iterations. The models
-      of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted
-      with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD)
-      algorithms, component selection and smoothing operator (COSSO), adaptive COSSO,
-      mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't 
+      of comparison include the proposed Bayesian hierarchical additive model (BHAM), the linear LASSO model (LASSO),
+      component selection and smoothing operator (COSSO), adaptive COSSO,
+      mgcv, sparse Bayesian generalized additive model (SB-GAM), spikeSlabGAM. mgcv doesn't 
       provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.} 
 \label{tab:time_sim}
 \end{sidewaystable}
