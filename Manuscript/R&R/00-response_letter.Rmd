@@ -50,16 +50,14 @@ _Please follow carefully the comments, criticisms and suggestions of the three r
 
 __Response__: We summarize the major changes of our manuscript as a response to address the comments from the referees:
 \begin{itemize}
-    \item According to Reviewer \#2's and Reviewer \#4's comments, we modified the prior distribution of the non-linear effects inclusion indicator such that the strong hierarchy for bi-level selection is enforced. 
-    \item We moved the EM-IWLS fitting algorithm to the supporting information for three reasons. First of all, moving the EM-IWLS to the supporting information can help the audience focus on the model formulation and EM-Coordinate Descent algorithm, avoiding confusion and distraction. Secondly, many useful comments raised by the reviewers related to the EM-IWLS algorithm, e.g. constructing hypothesis testings and confidence band, requires a more dedicated discussion. We are preparing another manuscript discussing those. Lastly, relocating the EM-IWLS section would not hurt the integrity of the current manuscript that emphasize the scalability and bi-level selection.
-    \item According to Reviewer \#1's and Reviewer \#4's comments, we added linear lasso model and spikeSlabGAM model among the models to be compared. 
-    \item According to Reviewer \#1's and Reviewer \#4's comments, we added a new set of simulation scenarios where the functions of predictors are linear.  
-    \item According to Reviewer \#4's comment, we summarized the variable selection performance for all models of comparison and bi-level selection performance for the models that is capable, i.e. the proposed model and spikeSlabGAM.
-    \item According to Reviewer \#4's comment, we recorded the computation performance of spikeSlabGAM.
-    \item All existing figure and tables were updated to reflect the methodology change and simulation design change. Figures were added according to Reviewer \#4's comment.  [TODO: think what figures are needed]
-    \item We fixed the additional typos and grammar errors according to Review \#2. The revision of the manuscript is marked in \bg{red}. Deletions are not highlighted.
+    \item According to Reviewer \#2's and Reviewer \#4's comments, we modified the prior distribution of the non-linear effects to reflect the effect hierarchy principle for bi-level selection. We updated the simulation and real data analysis results.
+    \item We streamlined the structure of the manuscript, moving the previous EM-IWLS fitting algorithm subsection to the supporting information for three reasons. First of all, moving can help the audience focus on the model formulation and EM-Coordinate Descent algorithm, avoiding confusion and distraction. Secondly, many useful comments raised by the reviewers related to the EM-IWLS algorithm, e.g. constructing hypothesis testings and confidence band, requires a more dedicated discussion. We are preparing another manuscript discussing those. Lastly, with the added variable selection performance, the manuscript would be length if keeping the EM-IWLS in the main body. The readability of the manuscript would be damaged. Relocating the EM-IWLS section solves the dilemma without hurting the integrity of the current manuscript that emphasize the scalability.
+    \item According to Reviewer \#1's and Reviewer \#4's comments, we added linear LASSO model and spikeSlabGAM model among the models to be compared in the simulation study. In addition, we added a new set of simulation scenarios where the functions of predictors are linear.  
+    \item According to Reviewer \#4's comment, we summarized the variable selection and bi-level selection performance in the simulation study section. The computation performance of spikeSlabGAM is recorded and addressed too.
+    \item According to Reviewer \#4's comment, we added the plot showing the estimated functions of predictors for real-data analysis.
+    \item We updated the feature screening procedure in our real-data analysis of Emory Cardiovascular Biobank dataset. Our previous screening method, fitting univariate GAM, made the "double-dipping" mistake that would overestimate the prediction performance of any downstream prediction model. We updated the screening procedure with variance-based selection, and the prediction of both methods dropped. Nevertheless, the proposed model still outperforms the compared method. See change on P9.
+    \item We fixed the additional typos and grammar errors according to Review \#2. The revision of the manuscript is marked in \bg{red} (roughly due to the technical difficulties associated with Latex). Deletions are not highlighted.
 \end{itemize}
-
 
 
 \newpage
