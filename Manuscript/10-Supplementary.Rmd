@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 \newcommand{\tp}{*}
 \newcommand{\pr}{\text{Pr}}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\simiid}{\overset{\text{iid}}{\sim}}
 
 \subsection{Supplementary Information 1: Marginal Distribution of $\gamma_j^\tp$}
 Given that $\gamma_{j}^\tp | \gamma_{j}, \theta_j \sim Bin(1, \gamma_{j}\theta_j)$ where $\gamma_{j} | \theta_j \sim Bin(1, \theta_j)$, we can derive the the marginal distribution of $\gamma_{j}^\tp$ with the following manipulation.
