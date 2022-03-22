@@ -61,7 +61,7 @@ $$
 &\gamma_{j}^\tp | \bg{\gamma_{j}, } \theta_j \sim Bin(1, \bg{\gamma_{j}}\theta_j).
 \end{aligned}
 $$
-\bg{This is, when the linear effect is not selected, the probability of including the nonlinear effect drops from $\theta_j$ to 0. For the computational convenience, we analytically integrate $\theta_j$ out such that $\gamma_{j}^\tp | \theta_j \sim Bin(1, \theta_j^2)$.
+\bg{This is, when the linear effect is not selected, the probability of including the nonlinear effect drops from $\theta_j$ to 0. For the computational convenience, we analytically integrate $\gamma_j$ out such that $\gamma_{j}^\tp | \theta_j \sim Bin(1, \theta_j^2)$ (see the derivation in the Supporting Information).
 }
 
 <!-- To note, this prior differs from previous group SSL priors [@Tang2018; @Tang2019], as the $\beta_j$ and $\bs \beta^\tp_j$ have different indicator variables $\gamma_j$, $\gamma_j^\tp$ respectively. It is possible to add a more restrictive assumption on the priors, assuming that one indicator variable decides the inclusion of both the linear effect and nonlinear effect, i.e. $\gamma_j = \gamma^\tp_j$.  This converges to the SB-GAM [@Bai2021]. Conversely, it is also possible to relax the assumption such that each coefficient $\beta_{jk} \in \bs \beta^\tp_j$ has its own latent indicator $\gamma_{jk}$, but at the cost of complicating the bi-level functional selection. This reduces the proposed prior to the classic SSL prior. -->
