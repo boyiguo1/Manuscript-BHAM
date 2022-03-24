@@ -1,5 +1,5 @@
 ---
-title: Spike-and-Slab Generalized Additive Models and Scalable Algorithms for High-Dimensional Data
+title: Spike-and-Slab LASSO Generalized Additive Models and Scalable Algorithms for High-Dimensional Data Analysis
 author:
 - name: Boyi Guo*
   num: a

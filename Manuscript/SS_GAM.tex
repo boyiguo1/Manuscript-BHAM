@@ -33,8 +33,8 @@
 
 \begin{document}
 
-\title{Spike-and-Slab Generalized Additive Models and Scalable
-Algorithms for High-Dimensional Data}
+\title{Spike-and-Slab LASSO Generalized Additive Models and Scalable
+Algorithms for High-Dimensional Data Analysis}
 
 \author[a]{Boyi Guo*}
 \author[b]{Byron C. Jaeger}
@@ -327,7 +327,7 @@ effect is \(\textcolor{red}{\gamma_{j}}\theta_j\). \[
 &\gamma_{j}^*| \textcolor{red}{\gamma_{j}, } \theta_j \sim Bin(1, \textcolor{red}{\gamma_{j}}\theta_j).
 \end{aligned}
 \]
-\textcolor{red}{This is, when the linear effect is not selected, the probability of including the nonlinear effect drops from $\theta_j$ to 0. For the computational convenience, we analytically integrate $\theta_j$ out such that $\gamma_{j}^*| \theta_j \sim Bin(1, \theta_j^2)$.
+\textcolor{red}{This is, when the linear effect is not selected, the probability of including the nonlinear effect drops from $\theta_j$ to 0. For the computational convenience, we analytically integrate $\gamma_j$ out such that $\gamma_{j}^*| \theta_j \sim Bin(1, \theta_j^2)$ (see the derivation in the Supporting Information).
 }
 
 \textcolor{red}{To allow the shrinkage to self-adapt to the sparsity and smoothing pattern of the data, }we
@@ -695,11 +695,14 @@ deploying group spike-and-slab LASSO type priors and optimization-based
 scalable algorithms. Bai provides the theoretical proof for the
 consistency of variable selection using group spike-and-slab LASSO
 prior.
-\textcolor{red}{The proposed model focuses on improving prediction performance for high-dimensional GAM, with the capability of bi-level selection. Moreover, the proposed model can easily generalize to other family of priors or other family of smoothing functions if desired. Not focused in this manuscript, the generalization is described in the supporting materials.}
+\textcolor{red}{The proposed model focuses on improving prediction performance for high-dimensional GAM, with the capability of bi-level selection. Moreover, the proposed model can easily generalize to other family of priors or other family of smoothing functions if desired. Not focused in this manuscript, the generalization is described in the Supporting Information.}
 
 \textcolor{red}{During designing and analyzing the simulation study, we made couple interesting observations. First of all, variable selection is a delicate topic in the context predictive modelling. When prediction performance is used to tune a model, the model could possibly include noise variable in models, for example LASSO and LASSO-based models. \cite{Wu2019} Moreover, bi-level selection is a more complex problem than variable selection. The complexity reflects on the validity of the effect hierarchy principle. While most functional forms follow that linear components exists in the nonlinear function, there are functions that don't follow it, e.g. $x^2$. The proposed prior and spikeSlabGAM employ different structure: the proposed prior imposes effect hierarchy while spikeSlabGAM treats the selection of linear and nonlinear components independent. The different prior setups lead to trade-offs for the purpose of bi-level selection. We recommend to use more judgement in bi-level selection, either relying on heuristic knowledge to choose appropriate prior or exploring multiple models when heuristic knowledge doesn't exist. Secondly, we find the performance of the proposed model are more sensitive to the granularity of $s_0$ sequence in the high-dimensional settings than in the lower dimension settings. Even though the current default sequence of $s_0$ can result in reasonable performance shown in the simulation studies, we recommend to fine-tune the model with granular sequence of $s_0$ for performance improvement.}
 
-Our future efforts direct to survival analysis and integrative analysis.
+Our future efforts direct to
+\textcolor{red}{uncertainty inference of the proposed model}, survival
+analysis and integrative analysis.
+\textcolor{red}{Using EM-CD algorithm to fit the proposed BHAM is incapable of conducting uncertainty inference. We derive the EM-Iterative Weighted Least Square algorithm (EM-IWLS, see the Supporting Information) as an alternative. Instead of the Coordinate Descent algorithm, we use Iterative Weighted Least Square algorithm in the EM procedure. The EM-IWLS algorithm is previously used to fit Bayesian high-dimensional generalized linear models \cite{Yi2012}, and deliver estimates of the coefficient variance-covariance matrix. Due to the space limit, technical details will be explained in a future manuscript.}
 While the proposed model addresses a great deal of analytic problem,
 analyzing the time-to-event outcome remains unsolved. An naive approach
 would be convert a time-to-event outcome to a Poisson outcome following
