@@ -545,6 +545,10 @@ tar_plan(
   tar_render(manu, "Manuscript/00-main.Rmd",
              output_file = "SS_GAM.pdf"),
   
+  
+  tar_render(manu_app, "Manuscript/10-Supplementary.Rmd",
+             output_file = "SS_GAM_Supporting_Information.pdf"),
+  
   # R & R Letter --------------------------------------------------------------
   tar_files(RR_path,
             c("Manuscript/R&R/01-reviewer_1.Rmd", "Manuscript/R&R/02-reviewer_2.Rmd",
