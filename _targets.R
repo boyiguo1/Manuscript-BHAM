@@ -44,7 +44,7 @@ tar_plan(
     hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection and smoothing
     operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian generalized additive model (SB-GAM), and
     spikeSlabGAM mdoel. mgcv doesn't provide
-    estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    estimation when number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:bin_auc")%>% 
     cat(file = "Manuscript/Tabs/sim_binom_tab.tex"),
   
@@ -114,7 +114,7 @@ tar_plan(
     Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component
     selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian
     generalized additive model (SB-GAM), and spikeSlabGAM mdoel. mgcv doesn't provide estimation
-    whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    when number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:gaus") %>% 
     cat(file = "Manuscript/Tabs/sim_gaus_tab.tex"),
   
@@ -183,7 +183,7 @@ tar_plan(
       of comparison include the proposed Bayesian hierarchical additive model (BHAM), the linear LASSO model (LASSO),
       component selection and smoothing operator (COSSO), adaptive COSSO,
       mgcv, sparse Bayesian generalized additive model (SB-GAM), spikeSlabGAM. mgcv doesn't 
-      provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
+      provide estimation when number of parameters exceeds sample size i.e. p = 100, 200.",
       label = "tab:time_sim",
       booktabs = TRUE
     ) %>% 
@@ -212,7 +212,7 @@ tar_plan(
     Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component
     selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian
     generalized additive model (SB-GAM), and spikeSlabGAM mdoel. mgcv doesn't provide
-    estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    estimation when number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:lnr_bin_auc")%>% 
     cat(file = "Manuscript/Tabs/sim_lnr_binom_tab.tex"),
   
@@ -263,7 +263,7 @@ tar_plan(
     Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component
     selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian
     generalized additive model (SB-GAM), and spikeSlabGAM mdoel. mgcv doesn't provide estimation
-    whe number of parameters exceeds sample size i.e. p = 100, 200.",
+    when number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:lnr_gaus") %>% 
     cat(file = "Manuscript/Tabs/sim_lnr_gaus_tab.tex"),
   
