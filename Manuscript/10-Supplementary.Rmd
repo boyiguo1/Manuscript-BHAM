@@ -1,7 +1,8 @@
 ---
-title: Spike-and-Slab Generalized Additive Models and Scalable Algorithms for High-Dimensional Data
-subtitle: "Supporting Infromation"
+title: Spike-and-Slab LASSO Generalized Additive Models and Scalable Algorithms for High-Dimensional Data Analysis
+subtitle: "Supporting Information"
 author: Boyi Guo, Byron C. Jaeger, AKM Fazlur Rahman, D. Leann Long, Nengjun Yi
+bibliography: bibfile.bib
 output: 
   pdf_document:
     keep_tex: true
@@ -18,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 \newcommand{\simiid}{\overset{\text{iid}}{\sim}}
 
 \subsection{Supplementary Information 1: Marginal Distribution of $\gamma_j^\tp$}
-Given that $\gamma_{j}^\tp | \gamma_{j}, \theta_j \sim Bin(1, \gamma_{j}\theta_j)$ where $\gamma_{j} | \theta_j \sim Bin(1, \theta_j)$, we can derive the the marginal distribution of $\gamma_{j}^\tp$ with the following manipulation.
+Given that $\gamma_{j}^\tp | \gamma_{j}, \theta_j \sim Bin(1, \gamma_{j}\theta_j)$ where $\gamma_{j} | \theta_j \sim Bin(1, \theta_j)$, we can derive the marginal distribution of $\gamma_{j}^\tp$ with the following manipulation.
 \begin{align*}
 & \pr(\gamma_j^\tp = 1 | \theta_j)  = \pr(\gamma_j^\tp = 1, \gamma_j = 1 | \theta_j) + \pr(\gamma_j^\tp = 1 , \gamma_j = 0| \theta_j)\\
 = & \pr(\gamma_j^\tp = 1, \gamma_j = 1 | \theta_j) + 0 \qquad \text{[hierarchical structure between }\gamma^\tp \text{ and }\gamma \text{.]}\\
@@ -34,7 +35,7 @@ Given that $\gamma_{j}^\tp | \gamma_{j}, \theta_j \sim Bin(1, \gamma_{j}\theta_j
 
 \subsection{Supplementary Information 2: EM-Iterative Weighted Least Square Algorithm for BHAM Model Fitting}
 
-Similar to the EM-CD algorithm, the EM-Iterative Weighted Least Square (EM-IWLS) algorithm is an EM-based algorithm where the iterative weighted least squares algorithm is used to find the estimate of $\bs \beta, \phi$ that maximizes $E(Q_1)$. The iterative weighted least squares algorithm was originally proposed to fit the classical generalized linear models, and generalized to fit some Bayesian hierarchical models.[@Gelman2013] Yi and Ma [@Yi2012] extended the algorithm to fit Bayesian hierarchical models for high-dimensional data analysis. Specifically, the authors formulated Student's t-distribution and double exponential distribution as hierarchical normal distributions such that generalized linear models with shrinkage priors can be easily fitted. In this work, we further extend the EM-IWLS paradigm to fit the proposed BHAM method. COmpare to the EM-CD algorithm, EM-IWLS estimate the variance-covariance matrix of the coefficients, providing an opportunity to derive the uncertainty quantification of smoothing functions. We will defer this discussion to the future work, due to the delicacy of the topic. However, the EM-IWLS is not as computationally efficient as EM_CD, particularly in high-dimensional settings.
+Similar to the EM-CD algorithm, the EM-Iterative Weighted Least Square (EM-IWLS) algorithm is an EM-based algorithm where the iterative weighted least squares algorithm is used to find the estimate of $\bs \beta, \phi$ that maximizes $E(Q_1)$. The iterative weighted least squares algorithm was originally proposed to fit the classical generalized linear models, and generalized to fit some Bayesian hierarchical models.[@Gelman2013] Yi and Ma [@Yi2012] extended the algorithm to fit Bayesian hierarchical models for high-dimensional data analysis. Specifically, the authors formulated Student's t-distribution and double exponential distribution as hierarchical normal distributions such that generalized linear models with shrinkage priors can be easily fitted. In this work, we further extend the EM-IWLS paradigm to fit the proposed BHAM method. Compare to the EM-CD algorithm, EM-IWLS estimates the variance-covariance matrix of the coefficients, providing an opportunity to derive the uncertainty quantification of smoothing functions. We will defer this discussion to future work, due to the delicacy of the topic. However, the EM-IWLS is not as computationally efficient as EM-CD, particularly in high-dimensional settings.
 
 A double exponential prior, $\beta|S \sim DE(0, S)$ can be formulated as a hierarchical normal prior with unknown variance $\tau^2$ integrated out:
 \begin{align*}
@@ -100,7 +101,7 @@ Totally, the proposed EM-IWLS algorithm is summarized as follows:
     M-step:
 
     a) Based on the current value of $\beta$, calculate the pseudo-data $z_i^{(t)}$ and the pseudo-weights $w_i^{(t)}$
-    b) Update $\bs \beta^{(t)}$ by runing the augmented weighted least squared
+    b) Update $\bs \beta^{(t)}$ by running the augmented weighted least squared
     c) If $\phi$ is present, update $\phi$
 
 Similar to EM-CD, we assess convergence by the criterion, $|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon$, where $\epsilon$ is a small value (say $10^{-5}$).
@@ -132,7 +133,7 @@ Similar to EM-CD, we assess convergence by the criterion, $|d^{(t)}-d^{(t-1)}|/(
 <!-- the $t$th iteration, and $\epsilon$ is a small value (say -->
 <!-- $10^{-5}$). -->
 
-\subsection{Supplementary Information: Generalization of BHAM framework}
+\subsection{Supplementary Information 3: Generalization of BHAM framework}
 
 In the manuscript, we describe the Bayesian hierarchical additive model with the two-part spike-and-slab LASSO prior. Nevertheless, the proposed model and algorithm can be easily generalized to accommodate other priors thanks to the reparameterization of smoothing functions. To be more specific, we can apply a regularized prior on the linear coefficient, and a group regularized prior for the nonlinear coefficients. For example, we can apply the same proposed framework with a spike-and-slab mixture normal prior,
 \begin{align*}
@@ -143,15 +144,17 @@ The algorithm derivation still follows with slight modification, replacing  $l_1
 
 \clearpage
 
-\subsection{Supplementary Information 3: Predictive Performance of Linear Simulations}
+\subsection{Supplementary Information 4: Predictive Performance of Linear Simulations}
 \input{Tabs/sim_lnr_gaus_tab.tex}
 \input{Tabs/sim_lnr_binom_tab.tex}
 
 \clearpage
 
-\subsection{Supplementary Information 4: Variable Selection Performance of Simulations}
+\subsection{Supplementary Information 5: Variable Selection Performance of Simulations}
 \input{Tabs/sim_binom_var_slct_tab.tex}
 \input{Tabs/sim_lnr_gaus_var_slct_tab.tex}
 \input{Tabs/sim_lnr_binom_var_slct_tab.tex}
 
 
+\clearpage
+\subsection{References}

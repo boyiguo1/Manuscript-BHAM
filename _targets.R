@@ -43,7 +43,7 @@ tar_plan(
     for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian
     hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection and smoothing
     operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian generalized additive model (SB-GAM), and
-    spikeSlabGAM mdoel. mgcv doesn't provide
+    spikeSlabGAM model. mgcv doesn't provide
     estimation when number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:bin_auc")%>% 
     cat(file = "Manuscript/Tabs/sim_binom_tab.tex"),
@@ -85,7 +85,7 @@ tar_plan(
                          averaged over 50 iterations. The models of comparison include the proposed Bayesian
                          hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection and
                          smoothing operator (COSSO), adaptive COSSO, sparse Bayesian generalized additive model (SB-GAM),
-                         and spikeSlabGAM mdoel. MCC is ill-defined when $p=4$ simulation (no true negative), and hence omitted for all methods.",
+                         and spikeSlabGAM model. MCC is ill-defined when $p=4$ simulation (no true negative), and hence omitted for all methods.",
                          label = "tab:sim_binom_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_binom_var_slct_tab.tex"),
   # Visual Presentation of Var Selection
@@ -113,7 +113,7 @@ tar_plan(
     Gaussian outcomes over 50 iterations. The models of comparison include the proposed
     Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component
     selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian
-    generalized additive model (SB-GAM), and spikeSlabGAM mdoel. mgcv doesn't provide estimation
+    generalized additive model (SB-GAM), and spikeSlabGAM model. mgcv doesn't provide estimation
     when number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:gaus") %>% 
     cat(file = "Manuscript/Tabs/sim_gaus_tab.tex"),
@@ -153,7 +153,7 @@ tar_plan(
                          averaged over 50 iterations. The models of comparison include the proposed Bayesian
                          hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection
                          and smoothing operator (COSSO), adaptive COSSO, sparse Bayesian generalized additive
-                         model (SB-GAM), and spikeSlabGAM mdoel. MCC is ill-defined when $p=4$ simulation
+                         model (SB-GAM), and spikeSlabGAM model. MCC is ill-defined when $p=4$ simulation
                          (no true negative), and hence omitted for all methods.", label = "tab:sim_gaus_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_gaus_var_slct_tab.tex"),
   
@@ -211,7 +211,7 @@ tar_plan(
     for binomial outcomes over 50 iterations. The models of comparison include the proposed
     Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component
     selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian
-    generalized additive model (SB-GAM), and spikeSlabGAM mdoel. mgcv doesn't provide
+    generalized additive model (SB-GAM), and spikeSlabGAM model. mgcv doesn't provide
     estimation when number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:lnr_bin_auc")%>% 
     cat(file = "Manuscript/Tabs/sim_lnr_binom_tab.tex"),
@@ -244,7 +244,7 @@ tar_plan(
                          averaged over 50 iterations. The models of comparison include the proposed Bayesian
                          hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection
                          and smoothing operator (COSSO), adaptive COSSO, sparse Bayesian generalized
-                         additive model (SB-GAM), and spikeSlabGAM mdoel. MCC is ill-defined when $p=4$
+                         additive model (SB-GAM), and spikeSlabGAM model. MCC is ill-defined when $p=4$
                          simulation (no true negative), and hence omitted for all methods.",
                          label = "tab:sim_lnr_binom_var_select")%>% 
     cat(file = "Manuscript/Tabs/sim_lnr_binom_var_slct_tab.tex"),
@@ -262,7 +262,7 @@ tar_plan(
     Gaussian outcomes over 50 iterations. The models of comparison include the proposed
     Bayesian hierarchical additive model (BHAM), linear LASSO model (LASSO), component
     selection and smoothing operator (COSSO), adaptive COSSO, mgcv, sparse Bayesian
-    generalized additive model (SB-GAM), and spikeSlabGAM mdoel. mgcv doesn't provide estimation
+    generalized additive model (SB-GAM), and spikeSlabGAM model. mgcv doesn't provide estimation
     when number of parameters exceeds sample size i.e. p = 100, 200.",
     label = "tab:lnr_gaus") %>% 
     cat(file = "Manuscript/Tabs/sim_lnr_gaus_tab.tex"),
@@ -294,7 +294,7 @@ tar_plan(
                          for the high-dimensional methods averaged over 50 iterations.
                          The models of comparison include the proposed Bayesian hierarchical additive model (BHAM),
                          linear LASSO model (LASSO), component selection and smoothing operator (COSSO),
-                         adaptive COSSO, sparse Bayesian generalized additive model (SB-GAM), and spikeSlabGAM mdoel.
+                         adaptive COSSO, sparse Bayesian generalized additive model (SB-GAM), and spikeSlabGAM model.
                          MCC is ill-defined when $p=4$ simulation (no true negative), and hence omitted for all methods.", 
                          label = "tab:sim_lnr_gaus_var_select") %>% 
     cat(file = "Manuscript/Tabs/sim_lnr_gaus_var_slct_tab.tex"),
