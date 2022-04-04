@@ -39,7 +39,7 @@ Title & : & Spike-and-Slab Generalized Additive Models and Scalable Algorithms f
 \vspace*{1cm}
 
 
-First, we would like to thank you for handling this paper and thank the AE and both reviewers for their valuable comments. We have carefully addressed all the comments. Point-by-point responses are given below, where each comment is quoted in _italics_.
+First, we would like to thank you for handling this paper and thank the AE and the three reviewers for their valuable comments. We have carefully addressed all the comments. Point-by-point responses are given below, where each comment is quoted in _italics_.
 
 \bigskip
 
