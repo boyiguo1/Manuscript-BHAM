@@ -740,16 +740,16 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
   \node (linearBeta) [outCome] { $\beta_j \sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)$};\\
 };
 \matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (penGamma) [outCome] { $\gamma_{j}^*\sim Bin(1, \textcolor{red}{\gamma_{j}}\theta_j)$ };\\
-  \node (penBeta) [outCome] { $\beta_{jk}^*\sim  DE(0,(1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1)$};\\
+  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \bg{\gamma_{j}}\theta_j)$ };\\
+  \node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^\tp_{j}) s_0 + \gamma^\tp_{j} s_1)$};\\
 };
 
 
 \node (s) [staticCompo]  at ($(linearBeta)!0.5!(penBeta)$)  {($s_0, s_1$)};
-\node (Beta) [staticCompo, below = 1cm of s] {$\boldsymbol{\beta }= (\beta_1, \boldsymbol{\beta}^*_1, \dots,\beta_j, \boldsymbol{\beta}^*_j , \dots,\beta_p, \boldsymbol{\beta}^*_p) $};
+\node (Beta) [staticCompo, below = 1cm of s] {$\bs \beta = (\beta_1, \bs \beta^\tp_1, \dots,\beta_j, \bs \beta^\tp_j , \dots,\beta_p, \bs \beta^\tp_p) $};
 \node (Theta)[outCome, above = 2cm of s] {$\theta_{j} \sim Beta(a, b)$};
 \node (ab)[staticCompo, above = 0.5cm of Theta] {$(a, b)$};
-\node (Y) [outCome, below = 1cm of Beta] {$y_i \sim Expo. Fam. (g^{-1}(\boldsymbol{\beta}^T \boldsymbol{X}_i), \phi)$};
+\node (Y) [outCome, below = 1cm of Beta] {$y_i \sim Expo. Fam. (g^{-1}(\bs \beta^T \bs X_i), \phi)$};
 
 \draw[->] (Theta) -- (linearGamma);
 \draw[->] (Theta) -- (penGamma);
