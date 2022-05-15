@@ -1,0 +1,116 @@
+We sincerely thank you for the valuable comments. We have carefully addressed all the comments. A point-by-point response is given below, where each of your comments is quoted in _italics_. __For a summary of major changes, please see our response to the Associate Editor.__
+
+\bigskip
+
+\em Comments to the authors\em 
+
+## _1. Summary_
+
+\em The authors introduce the Bayesian hierarchical generalized additive model (BHAM) for high-dimensional data analysis with generalized additive models (GAMs). The BHAM framework allows for variable selection and estimation in GAMs. However, in contrast to previous works on Bayesian GAMs, bilevel selection is possible under BHAM, and BHAM allows practitioners to more easily distinguish linear effects from nonlinear effects. Two deterministic algorithms, EM-Coordinate Descent (EM-CD) and EM-Iterative Weighted Least Squares (EM-IWLS), are introduced to fit BHAM. The EM-IWLS algorithm allows for inference, which is its main advantage over EM-CD. The algorithms appear to be faster than GAMs based on group regularization since fitting a model with a lasso penalty is typically faster than fitting one with a group lasso penalty.
+
+The paper is coherent and introduces a potentially promising methodology that addresses some of the shortcomings of existing Bayesian GAM approaches. However, in order to be suitable for publication in Statistics in Medicine, I have a few concerns that I think the authors should address. Namely, the authors need to do a better job illustrating the benefits of the BHAM approach over existing methods (such as the sparse Bayesian GAM method of [@Bai2020; @Bai2021] or the spikeslabGAM of [@Scheipl2012]). I detail my main concerns below.\em
+
+## _2. Main Comments and Questions_
+
+\em 1. The incorporation of the smoothing penalty matrix $S_j$ in BHAM allows for separation of the linear space of a smoothing function from the nonlinear space. This is one of the touted benefits of BHAM - this separation allows for bilevel selection rather than "all-in-all-out" selection, so that the practitioner can distinguish linear effects from nonlinear ones. However, one concern is that the method might select the nonlinear effects but fail to select the linear component. The authors briefly allude to this in the Conclusion (p. 13 of the manuscript). The authors say that they "[include] the linear component in the model when non-linear component is selected."
+
+Could the authors elaborate on how they do this? I think this point should also be stressed and made more explicit earlier in the manuscript, possibly in Section 2 where the EM-CD and EM-IWLS algorithms are introduced. One potential downside of using the double exponential priors on individual basis coefficients, as opposed to the group spike-and-slab prior in SBGAM, is the fact that only individual coefficients are regularized. So it is conceivable that BHAM would end up including the nonlinear component but not the linear one, which is not sensible. How can strong hierarchy be enforced to ensure that the linear component is always included if the nonlinear one is selected (but not necessarily the other way around)? This should be detailed in the EM-CD and EM-IWLS algorithms, and the authors should explain how to enforce strong hierarchy.
+
+For example, in bilevel selection with the sparse group lasso [@simon2013], Simon et al. (2012)
+state in their algorithm that they first check whether or not the group is selected,
+and only if the group is nonzero do they then proceed with regularizing the individual
+coordinates in the nonzero groups. Is a similar check being done for BHAM? This
+needs to be explained further and made explicit. If necessary, the authors of the
+present manuscript could include an additional subsection in Section 2 that explains
+how to enforce strong hierarchy (i.e. linear effect is always selected if the corresponding
+nonlinear effect for the jth covariate is selected).\em
+
+__Response__: We thank the reviewer for the comment. We changed the prior distribution of the non-linear effects inclusion indicator to be $\gamma^\tp|\gamma, \theta \sim Bin(1, \gamma\theta)$, in comparison to $\gamma^\tp| \theta \sim Bin(1, \theta)$ previously. This prior formulation is motivated by the effect hierarchy discussed in Chipman (2004). Now, the inclusion of the nonlinear effects is strictly dependent on the inclusion of the linear effects, and hence, reflects the hierarchy of bi-level selection. The modification of the prior doesn't complicate the model fitting algorithm. The $\gamma$ can be analytically integrated out of the density function and requires minimum change of the proposed algorithm. In other words, the proposed model remains feasible for high-dimensional data analysis and retains the claimed computational advantages.
+\bigskip
+
+\em 2. Although the authors claim that BHAM is beneficial because it can distinguish linear
+effects from nonlinear effects (therefore, we can tell if nonlinear effects are necessary),
+this touted benefit is not well-illustrated in the Simulation Study (Section 3) or the
+metabolomics data (Section 4). In particular, the simulation setting in Section 3.1
+contains only one linear function. The authors should expand their simulation study
+to include a greater number of linear functions (in addition to a few nonlinear ones)
+to show how well BHAM is truly distinguishing the linear effects from the nonlinear
+effects.
+
+It would also be useful to report things like FDR, FNR, Matthews correlation coef-
+ficient, etc. for the function selection to see how well the proposed BHAM model
+is performing with respect to selection of the nonzero effects, especially compared to
+other methods like SBGAM or spikeslabGAM. In addition, if the authors could re-
+port a performance metric of how well BHAM is distinguishing nonlinear from linear
+functions, e.g. possibly reporting the proportion of simulations where the linear func-
+tion (resp. nonlinear) was correctly identified as linear (resp. nonlinear), that would
+provide empirical support for BHAM over existing methods.\em
+
+__Response__: We thank the reviewer for the comments. We made changes to our simulation study section, mainly adding variable selection and a new set of simulations that the predictors are all linear. The suggested model spikeSlabGAM and linear Lasso model as the benchmark were added to the models of comparison. When reporting the variable selection performance, we considered three metrics, positive predictive value (precision), true positive rate (recall), and Matthews correlation coefficient. Bi-level selection performance was provided for the two applicable models, the proposed model and spikeSlabGAM. Please see the updated simulation study on P7-9.
+
+
+\bigskip
+
+_3. The authors claim that BHAM is computationally beneficial because it does not rely
+on MCMC. The authors illustrate the computational benefit of the double exponential
+prior over the group spike-and-slab prior of [@Bai2020; @Bai2021], but in my view, they
+should also compare it to the method spikeslabGAM of @Scheipl2012. There is an R package
+spikeslabGAM to implement this method. This method uses a Gaussian spike-and-
+slab prior on the basis coefficients and is implemented using MCMC. In order to assess
+the benefit of using double exponential priors in BHAM vs. Gaussian spike-and-slab
+priors, as well as illustrating the computational efficiency of the EM-CD and EM-
+IWLS algorithms compared to MCMC, the authors should include comparisons to
+spikeslabGAM._
+
+__Response__: We thank the reviewer for the comment. In the update manuscript, we add the suggested model, spikeSlabGAM, in the simulation study, where all the performance metrics and computation time are recorded and compared. We see that the proposed method still preserves the computation advantage over spikeSlabGAM, particularly in the high-dimensional cases.
+\bigskip
+
+\em 4. The authors introduce the EM-IWLS method which can be used for inference of the
+regression coefficients. Does this method work for p > n? Or is it only limited to the
+case where p $\leq$ n? Even if this algorithm is limited to only the p $\leq$ n case, the benefit
+of inference is not illustrated anywhere in the manuscript. Could the authors report
+how to use the standard errors from the error variance-covariance matrix returned from
+EM-IWLS to construct pointwise confidence intervals? There should be a section in
+the manuscript for Uncertainty Quantification which explains how to use the results
+from the EM-IWLS algorithm for the regression coefficients to construct pointwise
+confidence intervals for the univariate functions themselves.
+
+In addition, the coverage probability of the 95% pointwise intervals constructed by
+BHAM in simulations should also be reported. Furthermore, the methods mgcv and
+spikeslabGAM also return interval estimates, so the authors would do well to compare
+the coverage probability of the confidence intervals constructed by BHAM vs. the
+confidence/credible intervals returned by mgcv and spikeslabGAM.\em
+
+__Response__: We thank the reviewer for the comment. After deliberation, we decide to focusing explaining the EM-CD method well. The inclusion of EM-IWLS would distract the reader from the main focus of manuscript, scalable model, good prediction and bi-level selection. We fully agree that the questions raised by the reviewer are very important and deserves more careful discussion. Nevertheless, that would be out of the scope of the current work. We will dedicate another manuscript to detail many of the questions here, for example estimating effective degree of freedom, limiting distribution of the test statistics to the EM-IWLS method.
+
+
+\bigskip
+
+\em 5. The authors only provide one figure (Figure 1) which illustrates the hierarchical model
+as a DAG. However, there are no other figures in the paper, e.g. plots of function
+estimates from BHAM. The authors may consider adding a plot of the function esti-
+mates vs. the ground truth in the simulation study (Section 3) for one of the nonlinear
+functions and one of the linear functions (these could be, for instance, the left panel
+and right panel of a figure). This will illustrate that BHAM can accurately recover
+both nonlinear functions and linear functions.
+
+The authors may also give one or two plots from the real data analysis in Section 4 of
+some of the significant effects that they discovered. These plots should contain not just
+the point estimates but also the the pointwise confidence intervals from the EM-IWLS
+method. This will illustrate the benefit of EM-IWLS since it allows practitioners to
+assess the uncertainty, in addition to an estimate of the function itself.\em
+
+__Response__: We thank the reviewer for the comment. We added Figure 2 displaying the estimated functions of the predictors from BHAM.
+\bigskip
+
+## _3. Minor Comments_
+\em 1. In Section 1, the authors say that nonparametric methods are an alternative to "black
+box" methods like random forest. This is a bit misleading, since the "black box"
+methods (random forest, deep learning, etc.) are als nonparametric methods. The
+authors might consider rephrasing it (e.g. they could say that semiparametric methods
+like GAMs allow for easier interpretation and selection of the significant effects than
+the fully nonparametric "black box" methods).\em
+
+__Response__: We thank the reviewer for the comment. We agree that using "nonparametric methods" to differentiate from "black box" methods would be misleading. However, we respectively argue that our word choice, i.e. "nonparametric regression models", is not misleading. First of all The black box models normally are not treated as _regression_ models. Moreover, the term "nonparametric regression models" has been consistently used in the generalized additive models literature, for example @Hastie1987. Last but not least, to the authors' knowledge, there is a subtle distinction between nonparametric regression models and semiparametric regression models: semiparametric regression models assume some predictors have linear effects, while nonparametric regression models assume unknown functions for all predictors. To give an example, see @du2010. The subtle definition distinction would not matter as much in this manuscript, but would be relevant to the future work, incorporating predictor structure in the additive model, e.g. gene network. We hope to establish consistency in the word choice to avoid future confusion.
+
+\bigskip

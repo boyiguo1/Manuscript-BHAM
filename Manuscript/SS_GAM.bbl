@@ -1,0 +1,244 @@
+\begin{thebibliography}{10}
+\providecommand \doibase [0]{http://dx.doi.org/}%
+
+\bibitem{Mallick2013}
+Mallick H, Yi N. {Bayesian Methods for High Dimensional Linear Models}. {\it
+  Journal of Biometrics {\&} Biostatistics} 2013(205)\string: 1--27.
+\newblock \href {\doibase 10.4172/2155-6180.S1-005} {doi:
+  10.4172/2155-6180.S1-005}
+
+\bibitem{Breiman2001}
+Breiman L. Statistical modeling: The two cultures (with comments and a
+  rejoinder by the author). {\it Statistical science} 2001\string;
+  16(3)\string: 199--231.
+
+\bibitem{Hastie1987}
+Hastie T, Tibshirani R. {Generalized additive models: Some applications}. {\it
+  Journal of the American Statistical Association} 1987\string; 82(398)\string:
+  371--386.
+\newblock \href {\doibase 10.1080/01621459.1987.10478440} {doi:
+  10.1080/01621459.1987.10478440}
+
+\bibitem{Ravikumar2009}
+Ravikumar P, Lafferty J, Liu H, Wasserman L. {Sparse additive models}. {\it
+  Journal of the Royal Statistical Society: Series B (Statistical Methodology)}
+  2009\string; 71(5)\string: 1009--1030.
+\newblock \href {\doibase 10.1111/j.1467-9868.2009.00718.x} {doi:
+  10.1111/j.1467-9868.2009.00718.x}
+
+\bibitem{Yuan2006}
+Yuan M, Lin Y. Model selection and estimation in regression with grouped
+  variables. {\it Journal of the Royal Statistical Society: Series B
+  (Statistical Methodology)} 2006\string; 68(1)\string: 49--67.
+
+\bibitem{Huang2010}
+Huang J, Horowitz JL, Wei F. Variable selection in nonparametric additive
+  models. {\it Annals of statistics} 2010\string; 38(4)\string: 2282.
+
+\bibitem{Wang2007}
+Wang L, Chen G, Li H. Group SCAD regression analysis for microarray time course
+  gene expression data. {\it Bioinformatics} 2007\string; 23(12)\string:
+  1486--1494.
+
+\bibitem{Xue2009}
+Xue L. Consistent variable selection in additive models. {\it Statistica
+  Sinica} 2009\string: 1281--1296.
+
+\bibitem{Fan2001}
+Fan J, Li R. Variable selection via nonconcave penalized likelihood and its
+  oracle properties. {\it Journal of the American statistical Association}
+  2001\string; 96(456)\string: 1348--1360.
+
+\bibitem{Xu2015}
+Xu X, Ghosh M, others . Bayesian variable selection and estimation for group
+  lasso. {\it Bayesian Analysis} 2015\string; 10(4)\string: 909--936.
+
+\bibitem{Yang2020}
+Yang X, Narisetty NN, others . Consistent group selection with Bayesian high
+  dimensional modeling. {\it Bayesian Analysis} 2020\string; 15(3)\string:
+  909--935.
+
+\bibitem{Bai2020}
+Bai R, Moran GE, Antonelli JL, Chen Y, Boland MR. Spike-and-slab group lassos
+  for grouped regression and sparse generalized additive models. {\it Journal
+  of the American Statistical Association} 2020\string: 1--14.
+
+\bibitem{Bai2021}
+Bai R. Spike-and-Slab Group Lasso for Consistent Estimation and Variable
+  Selection in Non-Gaussian Generalized Additive Models. {\it
+  arXiv:2007.07021v5.} Preprint posted online June 5, 2021.
+  https://arxiv.org/abs/2007.07021.
+
+\bibitem{Scheipl2013}
+Scheipl F, Kneib T, Fahrmeir L. Penalized likelihood and Bayesian function
+  selection in regression models. {\it AStA Advances in Statistical Analysis}
+  2013\string; 97(4)\string: 349--385.
+
+\bibitem{Scheipl2012}
+Scheipl F, Fahrmeir L, Kneib T. {Spike-and-slab priors for function selection
+  in structured additive regression models}. {\it Journal of the American
+  Statistical Association} 2012\string; 107(500)\string: 1518--1532.
+\newblock \href {\doibase 10.1080/01621459.2012.737742} {doi:
+  10.1080/01621459.2012.737742}
+
+\bibitem{Wood2017}
+Wood SN. {\it {Generalized additive models: An introduction with R, second
+  edition}} .
+\newblock 2017
+
+\bibitem{Meier2009}
+Meier L, {Van De Geer} S, B{\"{u}}hlmann P. {High-dimensional additive
+  modeling}. {\it Annals of Statistics} 2009\string; 37(6 B)\string:
+  3779--3821.
+\newblock \href {\doibase 10.1214/09-AOS692} {doi: 10.1214/09-AOS692}
+
+\bibitem{Marra2011}
+Marra G, Wood SN. Practical variable selection for generalized additive models.
+  {\it Computational Statistics \& Data Analysis} 2011\string; 55(7)\string:
+  2372--2387.
+
+\bibitem{Rockova2018b}
+Ro{\v{c}}kov{\'{a}} V. {Bayesian estimation of sparse signals with a continuous
+  spike-and-slab prior}. {\it The Annals of Statistics} 2018\string;
+  46(1)\string: 401--437.
+\newblock \href {\doibase 10.1214/17-AOS1554} {doi: 10.1214/17-AOS1554}
+
+\bibitem{Rockova2018}
+Ro{\v{c}}kov{\'{a}} V, George EI. {The Spike-and-Slab LASSO}. {\it Journal of
+  the American Statistical Association} 2018\string; 113(521)\string: 431--444.
+\newblock \href {\doibase 10.1080/01621459.2016.1260469} {doi:
+  10.1080/01621459.2016.1260469}
+
+\bibitem{Bai2021Review}
+Bai R, Rockova V, George EI. Spike-and-Slab Meets LASSO: A Review of the
+  Spike-and-Slab LASSO. {\it arXiv:2010.06451.} Preprint posted online July 1,
+  2021. https://arxiv.org/abs/2010.06451.
+
+\bibitem{Tang2018}
+Tang Z, Shen Y, Li Y, et al. {Group spike-And-slab lasso generalized linear
+  models for disease prediction and associated genes detection by incorporating
+  pathway information}. {\it Bioinformatics} 2018\string; 34(6)\string:
+  901--910.
+\newblock \href {\doibase 10.1093/bioinformatics/btx684} {doi:
+  10.1093/bioinformatics/btx684}
+
+\bibitem{Tang2019}
+Tang Z, Lei S, Zhang X, et al. {Gsslasso Cox: A Bayesian hierarchical model for
+  predicting survival and detecting associated genes by incorporating pathway
+  information}. {\it BMC Bioinformatics} 2019\string; 20(1)\string: 1--15.
+\newblock \href {\doibase 10.1186/s12859-019-2656-1} {doi:
+  10.1186/s12859-019-2656-1}
+
+\bibitem{chipman2006prior}
+Chipman H. Prior distributions for Bayesian analysis of screening experiments.
+  In: Springer.  2006 (pp. 236--267).
+
+\bibitem{George1997}
+George EI, McCulloch RE. {Approaches for Bayesian variable selection.}. {\it
+  Statistica Sinica} 1997\string; 7(2)\string: 339--373.
+
+\bibitem{Rockova2014a}
+Ro{\v{c}}kov{\'{a}} V, George EI. {EMVS: The EM approach to Bayesian variable
+  selection}. {\it Journal of the American Statistical Association}
+  2014\string; 109(506)\string: 828--846.
+\newblock \href {\doibase 10.1080/01621459.2013.869223} {doi:
+  10.1080/01621459.2013.869223}
+
+\bibitem{Tang2017a}
+Tang Z, Shen Y, Zhang X, Yi N. {The spike-and-slab lasso generalized linear
+  models for prediction and associated genes detection}. {\it Genetics}
+  2017\string; 205(1)\string: 77--88.
+\newblock \href {\doibase 10.1534/genetics.116.192195} {doi:
+  10.1534/genetics.116.192195}
+
+\bibitem{Tang2017}
+Tang Z, Shen Y, Zhang X, Yi N. {The spike-and-slab lasso Cox model for survival
+  prediction and associated genes detection}. {\it Bioinformatics} 2017\string;
+  33(18)\string: 2799--2807.
+\newblock \href {\doibase 10.1093/bioinformatics/btx300} {doi:
+  10.1093/bioinformatics/btx300}
+
+\bibitem{Friedman2010}
+Friedman J, Hastie T, Tibshirani R. Regularization paths for generalized linear
+  models via coordinate descent. {\it Journal of statistical software}
+  2010\string; 33(1)\string: 1.
+
+\bibitem{Zhang2006GAM}
+Zhang HH, Lin Y. Component selection and smoothing for nonparametric regression
+  in exponential families. {\it Statistica Sinica} 2006\string: 1021--1041.
+
+\bibitem{Storlie2011}
+Storlie CB, Bondell HD, Reich BJ, Zhang HH. Surface estimation, variable
+  selection, and the nonparametric oracle property. {\it Statistica Sinica}
+  2011\string; 21(2)\string: 679.
+
+\bibitem{Wood2011}
+Wood SN. Fast stable restricted maximum likelihood and marginal likelihood
+  estimation of semiparametric generalized linear models. {\it Journal of the
+  Royal Statistical Society (B)} 2011\string; 73(1)\string: 3-36.
+
+\bibitem{R}
+{R Core Team} . R: A Language and Environment for Statistical Computing. {\it R
+  Foundation for Statistical Computing} 2021. https://www.R-project.org/.
+
+\bibitem{Mehta2020}
+Mehta A, Liu C, Nayak A, et al. Untargeted high-resolution plasma metabolomic
+  profiling predicts outcomes in patients with coronary artery disease. {\it
+  PloS one} 2020\string; 15(8)\string: e0237579.
+
+\bibitem{Mehta2020_data}
+Mehta A, Liu C, Uppal K, Quyyumi A. Data from: Metabolomics - Emory
+  Cardiovascular Biobank. {\it Dryad, Dataset} Retrived online August 17, 2021.
+  https://doi.org/10.5061/dryad.866t1g1mt.
+
+\bibitem{Bihlmeyer2021}
+Bihlmeyer NA, Kwee LC, Clish CB, et al. Metabolomic profiling identifies
+  complex lipid species and amino acid analogues associated with response to
+  weight loss interventions. {\it Plos one} 2021\string; 16(5)\string:
+  e0240764.
+
+\bibitem{Bihlmeyer2021_data}
+Bihlmeyer NA, Kwee LC, Clish CB, et al. {Metabolomic profiling identifies
+  complex lipid species and amino acid analogues associated with response to
+  weight loss interventions}. {\it Zenodo} Retrived online August 18, 2021.
+  https://doi.org/10.5281/zenodo.4767969.
+
+\bibitem{Svetkey2008}
+Svetkey LP, Stevens VJ, Brantley PJ, et al. Comparison of strategies for
+  sustaining weight loss: the weight loss maintenance randomized controlled
+  trial. {\it Jama} 2008\string; 299(10)\string: 1139--1148.
+
+\bibitem{Wu2019}
+Wu J, Witten D. {Flexible and Interpretable Models for Survival Data}. {\it
+  Journal of Computational and Graphical Statistics} 2019\string; 28(4)\string:
+  954--966.
+\newblock \href {\doibase 10.1080/10618600.2019.1592758} {doi:
+  10.1080/10618600.2019.1592758}
+
+\bibitem{Yi2012}
+Yi N, Ma S. {Hierarchical Shrinkage Priors and Model Fitting for
+  High-dimensional Generalized Linear Models}. {\it Statistical Applications in
+  Genetics and Molecular Biology} 2012\string; 11(6).
+\newblock \href {\doibase 10.1515/1544-6115.1803} {doi: 10.1515/1544-6115.1803}
+
+\bibitem{Whitehead1980}
+Whitehead J. Fitting Cox's regression model to survival data using GLIM. {\it
+  Journal of the Royal Statistical Society: Series C (Applied Statistics)}
+  1980\string; 29(3)\string: 268--275.
+
+\bibitem{Simon2011}
+Simon N, Friedman J, Hastie T, Tibshirani R. Regularization paths for Cox’s
+  proportional hazards model via coordinate descent. {\it Journal of
+  statistical software} 2011\string; 39(5)\string: 1.
+
+\bibitem{Peterson2016}
+Peterson CB, Stingo FC, Vannucci M. Joint Bayesian variable and graph selection
+  for regression models with network-structured predictors. {\it Statistics in
+  medicine} 2016\string; 35(7)\string: 1017--1031.
+
+\bibitem{Ferrari2020}
+Ferrari F, Dunson DB. Identifying main effects and interactions among exposures
+  using Gaussian processes. {\it The Annals of Applied Statistics} 2020\string;
+  14(4)\string: 1743--1758.
+
+\end{thebibliography}

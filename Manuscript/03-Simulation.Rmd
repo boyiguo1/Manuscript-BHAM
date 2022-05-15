@@ -1,111 +1,39 @@
-# Simulation Study
+\section{Simulation Study}
 \label{sec:sim}
 
-In this section, we compare the performance of the proposed models to four alternative models: component selection and smoothing operator (COSSO) [@Zhang2006GAM], adaptive COSSO [@Storlie2011], generalized additive models with automatic smoothing [@Wood2011], SB-GAM [@Bai2021]. COSSO is one of the earliest smoothing spline models that consider sparsity-smoothness penalty. Adaptive COSSO improved upon COSSO by using adaptive weight for penalties such that the penalty of each functional component are different for extra flexibility. Generalized additive models with automatic smoothing, hereafter \textit{mgcv}, is one of the most popular models for nonlinear effect interpolation and prediction. SB-GAM is the first spike-and-slab lasso GAM. We implement COSSO and adaptive COSSO with R package \texttt{cosso 2.1-1}, generalized additive models with automatic smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R package \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide flexibility to define smoothing functions, and hence use the default choices. Both mgcv and proposed models allow customized smoothing functions and we choose the cubic regression spline. We controll the dimensionality of each smoothing function, 10 bases, for all different choices of smoothing functions. We use 5-fold CV with the default selection criteria to select the final model for COSSO models, SB-GAM and the proposed models. 20 default candidates of tuning parameters ($s_0$ in BHAM, $\lambda_0$ in SB-GAM) are examined for SB-GAM and the proposed models which allow user-specification of tuning candidates. All computation was conducted on a high-performance 64-bit Linux platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680 processors and 24G of RAM per core and R 3.6.2 [@R].
+In this section, we compare the performance of the proposed model to \bg{six alternative models: linear LASSO models,} component selection and smoothing operator (COSSO) [@Zhang2006GAM], adaptive COSSO [@Storlie2011], generalized additive models with automatic smoothing (referred to as \textit{mgcv} hereafter)[@Wood2011], \bg{spike-and-slab GAM \cite{Scheipl2012}}, and SB-GAM [@Bai2021]. \bg{We use linear LASSO models as the benchmark, examining the performance when the linearity assumption doesn't hold}. COSSO is one of the earliest smoothing spline models that consider sparsity-smoothness penalty. Adaptive COSSO improved upon COSSO by using adaptive weight for penalties such that the penalty of each functional component is different for extra flexibility. \textit{mgcv} is one of the most popular models for nonlinear effect interpolation and prediction. Nevertheless, \bg{mgcv doesn't support analyses when the number of parameters exceeds the sample size.} \bg{Spike-and-slab GAM employs a spike-and-slab prior for GAM and uses an MCMC algorithm for model fitting.} SB-GAM is the first spike-and-slab LASSO GAM. We implement linear LASSO model with R package \texttt{glmnet 4.1-2}, COSSO and adaptive COSSO with R package \texttt{cosso 2.1-1}, generalized additive models with automatic smoothing with R package \texttt{mgcv 1.8-31}, spike-and-slab GAM with R package \texttt{spikeSlabGAM 1.1-15}, and SB-GAM with R package \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide flexibility to define smoothing functions, and hence use the default choices; mgcv, spikeSlabGAM and the proposed model allow customized smoothing functions and we choose the cubic regression spline. We control the dimensionality of each smoothing function, 10 bases, for all different choices of smoothing functions. We use a 5-fold CV with the default selection criteria to select the final model for linear LASSO model, COSSO models, SB-GAM and the proposed model. Twenty default candidates of tuning parameters ($s_0$ in BHAM, $\lambda_0$ in SB-GAM) are examined for SB-GAM and the proposed model that allow user specification of tuning candidates. All computation was conducted on a high-performance 64-bit Linux platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680 processors and 24G of RAM per core and R 3.6.2 [@R].
 
-Other related methods for high-dimensional GAMs also exist, notably the methods of sparse additive models by Ravikumar et al. [@Ravikumar2009] and stochastic search term selection for GAM [@Scheipl2012]. However, we exclude these methods from current simulation study because of demonstrated inferior predictive performance compared to mgcv and scalability issues with increased number of predictors. [@Scheipl2013]
+Other related methods for high-dimensional GAMs also exist, notably the methods of sparse additive models by Ravikumar et al. [@Ravikumar2009]. However, we exclude these methods from the current simulation study because they demonstrated inferior predictive performance compared to \textit{mgcv} [@Scheipl2013].
 
 
-## Monte Carlo Simulation Study
-We follow the data generating process described in Bai [@Bai2021]. We first generate $n=500$ training data points with $p=4, 10, 50, 100, 200$ predictors respectively, where the predictors $X$ are simulated from a multivariate normal distribution $\text{MVN}_{n\times p}(0, I_{P})$. We then simulate the outcome $y$ from two distributions, Gaussian and binomial with the identity link and logit link $g(x) = \log(\frac{x}{1-x})$ respectively. The mean of each outcome were simulated via the following function
+\subsection{Monte Carlo Simulation Study}
+We follow the data generating process described in Bai [@Bai2021]: we first generate $n=500$ training data points with $p=4, 10, 50, 100, 200$ predictors respectively, where the predictors $\bs X$ are simulated from a multivariate normal distribution $\text{MVN}_{n\times p}(0, I_{P})$. We then simulate the outcome $Y$ from two distributions, Gaussian and binomial with the identity link and logit link $g(x) = \log(\frac{x}{1-x})$ respectively. The mean of each outcome is derived via the following function
 $$
 \mathbb{E}(Y) = g^{-1}(5 \sin(2\pi x_1) - 4 \cos(2\pi x_2 -0.5) + 6(x_3-0.5) - 5(x_4^2 -0.3))
 $$
-for Gaussian and binomial outcomes.
-<!-- and shrinked effects -->
-<!-- $$ -->
-<!-- \mathbb{E}(Y) = g^{-1}(\sin(2\pi x_1) - 2\cos(2\pi x_2 -0.5) + 0.4(x_3-0.5) - 2(x_4^2 -0.3)) -->
-<!-- $$ -->
-<!-- for  poisson outcomes.  -->
-Gaussian outcomes requires specification of dispersion, where we set the dispersion parameter to be 1. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active covariates, while the rest covariates are inactive, i.e. $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$, are created following the same data generating process, serving as the testing data. We generate 50 independent pairs of training and testing datasets to evaluate the prediction performance of the chosen models, where training datasets are used to fit the models and testing datasets used to calculate assessment measures.
-<!-- The dimensional of the smoothing functions are controlled as k=10. Hence, the corresponding number of coefficient parameters to be estimated is 37, 82, 451 and 1801.  -->
-<!-- We also run the simulation where the number of bases are increased to 25 deliberately. -->
+for Gaussian and binomial outcomes. Gaussian outcomes require specification of dispersion, where we set the dispersion parameter to be 1. In this data generating process, we have $x_1, x_2, x_3, x_4$ as the active predictors, while the rest predictors are inactive, i.e. $f_j(x_j) = 0$ for $j = 4, \dots, p$. Another set of independent sample of size $n_{test}=1000$, is created following the same data generating process, serving as the testing data. We generate 50 independent pairs of training and testing datasets to evaluate the prediction and variable selection performance of the chosen models, where training datasets are used to fit the models and testing datasets are used to calculate metrics of interest. \bg{In addition, we consider the data generating process where all functional forms of the predictors are linear while keeping the rest of simulation parameters the same. This additional set of linear simulations is designed to investigate the flexibility of the proposed model when nonlinear assumptions are not met.}
 
-To evaluate the predictive performance of the models, the statistics, $R^2$ for Gaussian model and AUC for binomial model calculated based on the testing dataset, are averaged <!--and deviance are calculated for Poisson model,--> across 50 simulations. Computation time for model selection, final model fitting and prediction are recorded for all simulations.
+To evaluate the predictive performance of the models, the statistics, $R^2$ for Gaussian model and AUC for binomial model calculated based on the testing datasets, are averaged across 50 simulations. \bg{To evaluate the variable selection performance of the models, we record the set of variables each method selects and calculate the averaged positive predictive value (precision), true positive rate (recall), and Matthews correlation coefficient (MCC),
+\begin{align*}
+&\text{precision} = \frac{TP}{PP}\\
+&\text{recall} = \frac{TP}{TP+FP}\\
+&\text{MCC} = \frac{TP\times TN - FP \times FN}{\sqrt{(TP+FP)(TP+FN)(TN+FP)(TN+FN)}},
+\end{align*}
+where TP, TN, FP, FN, and PP are true positives, true negatives, false positives, false negatives, and predicted positives respectively. For the methods that don't automatically achieve variable selection, we set the alpha level at 0.05 for \textit{mgcv} that relies on hypothesis testing, and a soft-threshold at 0.5 for spikeSlabGAM given the marginal inclusion probabilities. For the two methods, BHAM and spikeSlabGAM, that are capable of bi-level selection, we record the probability that the linear and nonlinear components of each predictor are selected in the models.}
 
+\subsection{\bg{Simulation Results}}
+\subsubsection{\bg{Prediction Performance}}
+\bg{Among the set of simulations where the functional forms of the predictors are nonlinear,} the predictive performances have a consistent pattern across the two distributions of outcomes. For simplicity, we use Gaussian simulations to exemplify the improvement of BHAM and defer to Tables \ref{tab:gaus} and \ref{tab:bin_auc} for detailed statistics. \bg{The proposed model, BHAM, predicts as good as, if not better than, other high dimensional additive models. Specifically, BHAM shows great improvement over COSSO methods, resulting in a median (interquartile range, IRT) 31\% (131\%) and 20\% (129\%) improvement over COSSO and adaptive COSSO in $R^2$ statistics respectively. The improvement over the spikeSlabGAM model is moderate, resulting in a median (IRT) 6\% (10\%) improvement in $R^2$. When comparing to SB-GAM, BHAM performs better (median (IRT) 13\% (8\%) improvement in R2) in lower dimensional cases ($p=4,10$), and equally good or slightly worse (median (IRT) 1\% (9\%) improvement in R2: ) in high-dimensional cases ($p=50,100, 200$). As previously hypothesized, the linear LASSO model predicts less accurate than other flexible models across all scenarios; mgcv performs extremely well in low-dimensional cases ($p = 4, 10$), and deteriorates as the dimensionality increases until not applicable. To note, mgcv fits models but fails to converge within the default number of iterations when the sample size approaches the number of coefficients to estimate ($p=50$), which leads to bad performance.} Even though SB-GAM has slight prediction advantage over the proposed model in high-dimensional situations, the BHAM has an extreme computational advantage over SB-GAM, resulting median (IRT) 64\% (39\%) reduction in computation time (measured in seconds) for Gaussian simulations, without sacrificing much of the prediction accuracy (see Table \ref{tab:time_sim}). 
 
-\begin{center}
-Table \ref{tab:gaus} here\\
-Table \ref{tab:bin_auc} here\\
-\end{center}
-```{r, fig.height=8, eval = FALSE}
-targets::tar_load(binom_plot)
-binom_plot
-```
+\bg{We also examine the prediction performance when the functional form of predictors is linear, see Supporting Information Table S1, and S2. The proposed model, BHAM, has a similar performance as the linear LASSO model regardless of the distribution. This observation demonstrates that BHAM is a flexible model, and has good prediction performance regardless of the underlying functional form of predictors. spikeSlabGAM has a similar prediction performance to BHAM. Surprisingly, SB-GAM doesn't perform well in high-dimensional Gaussian outcome scenarios.}
 
+\bg{\subsubsection{Variable Selection Performance}}
+\bg{Among the set of simulations where the functional forms of the predictors are nonlinear, the proposed model, BHAM, has a consistent performance across different dimensions and distribution settings (See Table \ref{tab:sim_gaus_var_select} for Gaussian outcomes, and Support Information Table S3 for binomial outcomes): being conservative. The symptoms of conservative variable selection are high precision and low recall, where high precision means that among all the selected variables, high percentage of them are true signals; low recall means that the model selected a small subset among all the active predictions. In other words, BHAM tends to select a smaller set of variables that are truly effective to the outcome. We want to note, the variable selection performance of BHAM is plummeted and not optimized when $p=200$. Upon further investigation, we discover it's because the generic sequence of $s_0$ used to tune the model doesn't contain the optimal value. Overall, among all the models examined, SB-GAM has the best performance, both high precision and high recall, and yields a high MCC. The performance of another Bayesian model, spikeSlabGAM deteriorates as the sparsity grows, particularly when ($p>50$), or for binomial outcomes. The variable selection performance for linear simulations matches with prediction performance: BHAM performs great among the Gaussian scenarios, while the performance of SB-GAM deteriorates.}
 
-```{r, fig.height=8, eval = FALSE}
-targets::tar_load(gaussian_plot)
-gaussian_plot
-```
-
-
-```{r, fig.height=8, eval = FALSE}
-targets::tar_load(poisson_plot)
-poisson_plot
-```
-
-The predictive performances have a consistent pattern across the two distributions of outcomes. Across all the scenarios, COSSO and adaptive COSSO have the least favorable performance among the applicable methods examined (See Table \ref{tab:gaus} and \ref{tab:bin_auc}). To note, mgcv doesn't support high-dimensional analysis, i.e. the number of coefficients are greater than the sample size, and hence not evaluated when $p=100, 200$. mgcv predicts well when $p$ is small or moderate ($p = 4, 10$), and deteriorate when the number of predictors increase. Among the three fast-computing Bayesian hierarchical models, the proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when the dimension of are moderate (p=4, 10, 50). Particularly, BHAM-IWLS performs as good as mgcv if not better. However, in high dimensional case where we mimic the situation the signals are extremely sparse, SB-GAM has better performance than the proposed method. However, the BHAM-CD has extreme computational advantage over SB-GAM (see Table \ref{tab:time_sim}) without sacrificing much of the prediction accuracy. 
+\bg{Among the high-dimensional methods of comparison, there are two methods that are capable to achieve bi-level selection, the proposed BHAM and spikeSlabGAM. Among the linear simulations, both methods can accurately select the linear components and have a drastically lowered probability, close to 0, to include the nonlinear component, as anticipated. Specifically, spikeSlabGAM have a smaller probability to include the nonlinear component in the model than BHAM. However, this advantage of spikeSlabGAM over BHAM is less obvious among the nonlinear simulations: spikeSlabGAM performs better than BHAM when selecting components of the functional forms that include only linear or nonlinear component, e.g. functional forms for $x_3$ and $x_4$. However, spikeSlabGAM inclines to ignore variables that have more complex function forms, e.g. function forms for $x_1$ and $x_2$. In contrast, BHAM is more likely to include them in the model. This trade-off is determined by the assumption implicitly reflected via the prior hierarchy. We defer an in-depth discussion to Section \ref{sec:concl}.} 
 
 
 
-
-<!-- %are calculated to assess out-of-sample estimation accuracy, -->
-
-<!-- We also calculated the area under the curve (AUC) of the receiver operating characteristic curve for $y_{new}$. We will also visually display the estimated smooth function with the smooth function of truth to compare if the models can infer the smooth function correctly, despite the prediction accuracy. -->
-
-
-
-<!-- The accuracy of variable selection is measured using Matthews correlation coefficient (MCC), -->
-<!-- $$ -->
-<!-- MCC = \frac{TP\times TN - FP \times FN}{\sqrt{(TP+FP)(TP+FN)(TN+FP)(TN+FN)}}, -->
-<!-- $$ -->
-<!-- where TP, TN, FP, and FN are true positives, true negatives, false positives, and false negatives, respectively. -->
-
-
- \  
-
-<!-- ### Simulation Results -->
-
-<!-- Overall, the proposed priors outperforms the state-of-the-art GAM model `mgcv` when the dimensionality is low, median, and high. The proposed priors predicts better than `mgcv` and infers better of the underlying smooth function. Most importantly, `mgcv` is infeasible in the high dimensional setting, i.e. when $p=50$ where the number of parameters are greater than the sample size.  -->
-
-
-<!-- #### Prediction Performace -->
-
-<!-- The prediction performance is tabulated in the table below for AUC and Supplementary tables for MSE and misclassification rate. In summary, the proposed Bayesian models outperforms the benchmark model `mgcv` regardless the choice of prior or fitting algorithm. The models with IRLS fitting algorithm give slightly better performance than the the model with cyclic coordinate descent algorithm. The advantage diminishes in the high dimensional setting (p=50). This is possible because the SS normal spline prior provides a more smooth solution, which would work well in a low to median dimension setting. However, in the high dimensional setting, there are not enough sparsity in the model, i.e. SS normal prior will provides a more complex model than necessary. This is confirmed with the visualization in the following section.  -->
-
-```{r tab.id="sim_GAM_AUC", eval=F}
-glm_spline_pred_dat <-readr::read_rds("Simulation_Result/predict_res.rds")
-
-glm_spline_pred_dat$auc %>% 
-        select(-c(n_train, n_test, "bglm_t", "bglm_de", "blasso")) %>% 
-        flextable() %>% 
-  set_caption(caption = "Averaged AUC of out-of-bag samples",
-              autonum = run_autonum(seq_id = "tab", bkm="sim_GAM_AUC", pre_label = "Table "))
-```
-
-```{r  eval=F}
-glm_spline_pred_dat <-readr::read_rds("Simulation_Result/predict_res.rds")
-
-glm_spline_pred_dat$misclass %>% 
-        select(-c(n_train, n_test, "bglm_t", "bglm_de", "blasso")) %>% 
-        flextable() %>% 
-  set_caption(caption = "Averaged misclassification rate of out-of-bag samples",
-              autonum = run_autonum(seq_id = "tab", bkm="sim_GAM_Misclass", pre_label = "Table "))
-```
-
-
-```{r  eval=F}
-
-glm_spline_pred_dat <-readr::read_rds("Simulation_Result/predict_res.rds")
-
-glm_spline_pred_dat$mse %>% 
-        select(-c(n_train, n_test, "bglm_t", "bglm_de", "blasso")) %>% 
-        flextable() %>% 
-  set_caption(caption = "Averaged mean squared area of out-of-bag samples",
-              autonum = run_autonum(seq_id = "tab", bkm="sim_GAM_MSE", pre_label = "Table "))
-```
 
 <!-- #### Visualization -->
 <!-- We plot the estimated smooth functions of the four active variables for the 100 simulation iterations, along with the 'true' smooth function. Across different settings of predictors, the patterns look similar. First of all, in all the settings, `mgcv` tends to provide more  extreme models, where in the graphs the smooth function have much higher bound than the true smooth function. Rarely the estimated smooth function from `mgcv` matches with the true smooth function. In comparison, the proposed method can interpolate the shape of the true smooth function. However, different priors and fitting algorithms have different advantages. For example, in Figure 1, we see that the SS normal distribution have problem with the tail of the smooth function, especially obvious in the estimations of the variable _x4_. However, it would have less sparse solutions, which is more likely to accurately interpolate the smooth function especially when the shape is complicated (see variable _x2_). On the contrary, the SS double exponential prior model encourages sparse solutions, which can sometime omit active predictors. -->
-

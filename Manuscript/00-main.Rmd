@@ -1,5 +1,5 @@
 ---
-title: Spike-and-Slab Generalized Additive Models and Scalable Algorithms for High-Dimensional Data
+title: Spike-and-Slab LASSO Generalized Additive Models and Scalable Algorithms for High-Dimensional Data Analysis
 author:
 - name: Boyi Guo*
   num: a
@@ -23,8 +23,8 @@ articletype: Research article
 received: 2021-01-01
 revised: 2021-02-01
 accepted: 2021-03-01
-abstract: "There are proposals that extend the classical generalized additive models (GAMs) to accommodate high-dimensional data ($p>>n$) using group sparse regularization. However, the sparse regularization may induce excess shrinkage when estimating smoothing functions, damaging predictive performance. Moreover, most of these GAMs consider an “all-in-all-out” approach for functional selection, rendering them difficult to answer if nonlinear effects are necessary. While some Bayesian models can address these shortcomings, using Markov chain Monte Carlo algorithms for model fitting creates a new challenge, scalability. Hence, we propose Bayesian hierarchical generalized additive models as a solution: we consider the smoothing penalty for proper shrinkage of curve interpolation and separation of smoothing function linear and nonlinear spaces. A novel spike-and-slab spline prior is proposed to select components of smoothing functions. Two scalable and deterministic algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least Squares, are developed for different utilities. Simulation studies and metabolomics data analyses demonstrate improved predictive or computational performance against state-of-the-art models, mgcv, COSSO and sparse Bayesian GAM. The software implementation of the proposed models is freely available via an R package BHAM."
-keywords: Spike-and-Slab Priors; High-Dimensional Data; Generalized Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility
+abstract: "There are proposals that extend the classical generalized additive models (GAMs) to accommodate high-dimensional data ($p>>n$) using group sparse regularization. However, the sparse regularization may induce excess shrinkage when estimating smoothing functions, damaging predictive performance. Moreover, most of these GAMs consider an “all-in-all-out” approach for functional selection, rendering them difficult to answer if nonlinear effects are necessary. While some Bayesian models can address these shortcomings, using Markov chain Monte Carlo algorithms for model fitting creates a new challenge, scalability. Hence, we propose Bayesian hierarchical generalized additive models as a solution: we consider the smoothing penalty for proper shrinkage of curve interpolation via reparameterization. A novel two-part spike-and-slab LASSO prior for smoothing functions is developed to address the sparsity of signals while providing extra flexibility to select the linear or nonlinear components of smoothing functions. A scalable and deterministic algorithm, EM-Coordinate Descent, is implemented in an open-source R package BHAM. Simulation studies and metabolomics data analyses demonstrate improved predictive and computational performance against state-of-the-art models. Functional selection performance suggests trade-offs exist regarding the effect hierarchy assumption."
+keywords: Spike-and-Slab Priors; High-Dimensional Data; Generalized Additive Models; EM-Coordinate Decsent; Scalablility; Predictive Modeling
 # bibliography: bibfile.bib
 output: 
   rticles::sim_article:
@@ -33,6 +33,8 @@ header-includes:
   - \usepackage{tikz}
   - \usepackage{pgfplots}
   - \usepackage{pdflscape}
+  - \usepackage{color}
+  - \usepackage{soul}
 ---
 
 <!-- \usepackage{tikz} -->
@@ -43,6 +45,8 @@ header-includes:
 \newcommand{\pr}{\text{Pr}}
 \newcommand{\repa}{\text{repa}}
 \newcommand{\simiid}{\overset{\text{iid}}{\sim}}
+\newcommand{\bg}[1]{\textcolor{red}{#1}}
+<!-- \newcommand{\st}[1]{} -->
 
 
 ```{r setup, include=FALSE}
@@ -57,23 +61,19 @@ library(flextable)
 
 set_flextable_defaults(fonts_ignore=TRUE)
 
-tar_load(intro_path)
-tar_load(method_path)
-tar_load(sim_path)
-tar_load(real_data_path)
-tar_load(disc_path)
+tar_load(manu_path)
+tar_load(manu_tbs)
+tar_load(manu_figs)
 
-tar_load(tab_binom)
-tar_load(tab_gaus)
 
 tar_load(WLM_train_dat)
-# tar_load(tbl_one)
 tar_load(ECB_bamlasso_cv)
 tar_load(ECB_SBGAM_cv)
 tar_load(WLM_bamlasso_cv)
 tar_load(WLM_SBGAM_cv)
 tar_load(tbl_real_time)
-tar_load(tab_time)
+tar_load(ECB_plot)
+tar_load(WLM_plot)
 ```
 
 ```{r child="01-Intro.Rmd"}
@@ -91,11 +91,11 @@ tar_load(tab_time)
 ```{r child="05-Discussion.Rmd"}
 ```
 
-\newpage
+\clearpage
 
 \bibliography{bibfile.bib}
 
-\newpage
+\clearpage
 
 \begin{figure}
 \centering
@@ -112,7 +112,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
   \node (linearBeta) [outCome] { $\beta_j \sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)$};\\
 };
 \matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \theta_j)$ };\\
+  \node (penGamma) [outCome] { $\gamma_{j}^\tp \sim Bin(1, \bg{\gamma_{j}}\theta_j)$ };\\
   \node (penBeta) [outCome] { $\beta_{jk}^\tp \sim  DE(0,(1-\gamma^\tp_{j}) s_0 + \gamma^\tp_{j} s_1)$};\\
 };
 
@@ -127,6 +127,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \draw[->] (Theta) -- (penGamma);
 \draw[->] (linearGamma) -- (linearBeta) ;
 \draw[->] (penGamma) -- (penBeta);
+\draw[->, draw = red] (linearGamma) -- (penGamma);
 \draw[->] (ab) -- (Theta);
 \draw[->] (s) -- (linearBeta) ;
 \draw[->] (s) -- (penBeta);
@@ -150,57 +151,20 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \label{fig:SSprior}
 \end{figure}
 
+\clearpage
+\input{Tabs/sim_gaus_tab.tex}
+\clearpage
+\input{Tabs/sim_binom_tab.tex}
+\clearpage
+\input{Tabs/sim_time_tab.tex}
+\clearpage
+\input{Tabs/sim_gaus_var_slct_tab.tex}
 
-\newpage
-
-
-```{r, results = "asis"}
-tab_gaus$mgcv[4] <- "-"
-tab_gaus$mgcv[5] <- "-"
-tab_gaus %>% 
-  mutate(p = as.integer(p)) %>% 
-  rename(
-    "P" = p,
-    "BHAM-IWLS" = bglm_spline_de,
-    "BHAM-CD" = blasso_spline,
-    "COSSO" = cosso,
-    "Adaptive COSSO" = acosso,
-    "SB-GAM" = SB_GAM
-  ) %>% 
-  xtable(
-    align = "cccccccc",
-    caption = "The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.",
-    label = "tab:gaus") %>% 
-  print(comment = FALSE, include.rownames = FALSE)
-  # flextable(
-  #   # col_keys = c("P", "BHAM-IWLS", "BHAM-CD", "COSSO", "Adaptive COSSO", "mgcv", "SB-GAM")
-  # ) %>% 
-  # flextable::autofit() %>% 
-  # flextable::set_caption(caption = "The average and standard deviation of the out-of-sample $R^2$ measures for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). \\label{tab:gaus}")
-```
-
-
-```{r, results = "asis"}
-tab_binom$mgcv[4] <- "-"
-tab_binom$mgcv[5] <- "-"
-tab_binom %>% 
-  mutate(p = as.integer(p)) %>% 
-  rename(
-    "P" = p,
-    "BHAM-IWLS" = bglm_spline_de,
-    "BHAM-CD" = blasso_spline,
-    "COSSO" = cosso,
-    "Adaptive COSSO" = acosso,
-    "SB-GAM" = SB_GAM
-  ) %>%  
-  xtable(caption = "The average and standard deviation of the out-of-sample area under the curve measures for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.", label = "tab:bin_auc") %>% 
-  print(comment = FALSE, include.rownames = FALSE)
-```
-
-\newpage
+\clearpage
 <!-- \begin{landscape} -->
-```{r results = "asis"}
-tab_time %>% 
+
+```{r sim_time, results = "asis", eval = F}
+sim_tim_tab %>% 
   select(dist, p, `BHAM-IWLS`,`BHAM-CD`, cosso, acosso, mgcv, `SB-GAM`) %>% 
   rename(Distribution = dist,
          P = p,
@@ -223,18 +187,19 @@ tab_time %>%
   # flextable::set_caption(caption = "The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.\\label{tab:time_sim}")
 ```
 <!-- \end{landscape} -->
-\newpage
+\clearpage
 
-```{r}
+```{r }
 tbl_real_time %>% 
-  flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\\label{tab:time_real_data}")
+  flextable::set_caption(caption = "Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM and the model of comparison SB-GAM.")
 ```
+\label{tab:time_real_data}
 
-\newpage
+\clearpage
 
 ```{r results = "asis"}
 rbind(
-  'BHAM-CD' = ECB_bamlasso_cv %>% slice_max(auc) %>% select(-s0),
+  'BHAM' = ECB_bamlasso_cv %>% slice_max(auc)  %>% slice_min(s0) %>% select(-s0),
   'SB-GAM' = ECB_SBGAM_cv %>%  slice_max(auc) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>%
@@ -244,7 +209,7 @@ rbind(
          Brier = mse,
          Misclass = misclassification) %>% 
   xtable(
-    caption = "Prediction performance of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.",
+    caption = "Prediction performance of BHAM fitted with Coordinate Descent algorithm (BHAM) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.",
     label = "tab:ECB_res"
   ) %>% 
   print(comment = FALSE, include.rownames = FALSE#, caption.placement = "top"
@@ -252,12 +217,12 @@ rbind(
 ```
 
 
-\newpage
+\clearpage
 
 
 ```{r results = "asis"}
 rbind(
-  'BHAM-CD' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
+  'BHAM' = WLM_bamlasso_cv %>% slice_min(mse) %>% select(-s0),
   'SB-GAM' = WLM_SBGAM_cv %>%  slice_min(mse) %>% select(-lambda)
 ) %>% 
   rownames_to_column("Methods") %>%
@@ -268,7 +233,7 @@ rbind(
     `$R^2$` = R2
   ) %>% 
     xtable(
-    caption = "Prediction performance of of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).",
+    caption = "Prediction performance of BHAM fitted with Coordinate Descent algorithm (BHAM)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).",
     label = "tab:WLM_res"
   ) %>%
   print(comment = FALSE, include.rownames = FALSE, sanitize.text.function=function(x){x}#, caption.placement = "top"
@@ -277,3 +242,16 @@ rbind(
   # flextable::autofit() %>% 
   # flextable::set_caption(caption = "Measures of optimal BHAM and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation\\label{tab:WLM_res}")
 ```
+
+\clearpage
+\begin{figure}[h] 
+\includegraphics{Figs/ECB_plot}
+\caption{Plots of the functions for the 33 metablites selected by BHAM in the Emory Cardiovascular Biobank data analysis}
+\label{fig:ECB_fig}
+\end{figure}
+
+<!-- \clearpage -->
+
+<!-- \begin{figure}[h] -->
+<!-- \includegraphics{Figs/WLM_plot} -->
+<!-- \end{figure} -->

@@ -1,0 +1,323 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\title{Spike-and-Slab LASSO Generalized Additive Models and Scalable
+Algorithms for High-Dimensional Data Analysis}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Supporting Information}
+\author{Boyi Guo, Byron C. Jaeger, AKM Fazlur Rahman, D. Leann Long,
+Nengjun Yi}
+\date{}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Spike-and-Slab LASSO Generalized Additive Models and Scalable Algorithms for High-Dimensional Data Analysis},
+  pdfauthor={Boyi Guo, Byron C. Jaeger, AKM Fazlur Rahman, D. Leann Long, Nengjun Yi},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\newlength{\cslhangindent}
+\setlength{\cslhangindent}{1.5em}
+\newlength{\csllabelwidth}
+\setlength{\csllabelwidth}{3em}
+\newlength{\cslentryspacingunit} % times entry-spacing
+\setlength{\cslentryspacingunit}{\parskip}
+\newenvironment{CSLReferences}[2] % #1 hanging-ident, #2 entry spacing
+ {% don't indent paragraphs
+  \setlength{\parindent}{0pt}
+  % turn on hanging indent if param 1 is 1
+  \ifodd #1
+  \let\oldpar\par
+  \def\par{\hangindent=\cslhangindent\oldpar}
+  \fi
+  % set entry spacing
+  \setlength{\parskip}{#2\cslentryspacingunit}
+ }%
+ {}
+\usepackage{calc}
+\newcommand{\CSLBlock}[1]{#1\hfill\break}
+\newcommand{\CSLLeftMargin}[1]{\parbox[t]{\csllabelwidth}{#1}}
+\newcommand{\CSLRightInline}[1]{\parbox[t]{\linewidth - \csllabelwidth}{#1}\break}
+\newcommand{\CSLIndent}[1]{\hspace{\cslhangindent}#1}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\maketitle
+
+\newcommand{\tp}{*}
+\newcommand{\pr}{\text{Pr}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\simiid}{\overset{\text{iid}}{\sim}}
+
+\subsection{Supplementary Information 1: Marginal Distribution of $\gamma_j^*$}
+
+Given that
+\(\gamma_{j}^*| \gamma_{j}, \theta_j \sim Bin(1, \gamma_{j}\theta_j)\)
+where \(\gamma_{j} | \theta_j \sim Bin(1, \theta_j)\), we can derive the
+marginal distribution of \(\gamma_{j}^*\) with the following
+manipulation. \begin{align*}
+& \text{Pr}(\gamma_j^*= 1 | \theta_j)  = \text{Pr}(\gamma_j^*= 1, \gamma_j = 1 | \theta_j) + \text{Pr}(\gamma_j^*= 1 , \gamma_j = 0| \theta_j)\\
+= & \text{Pr}(\gamma_j^*= 1, \gamma_j = 1 | \theta_j) + 0 \qquad \text{[hierarchical structure between }\gamma^*\text{ and }\gamma \text{.]}\\
+= & \text{Pr}(\gamma_j^*= 1| \gamma_j = 1,  \theta_j)\text{Pr}(\gamma_j = 1| \theta_j)\\
+= & \theta_j^2\\
+& \text{Pr}(\gamma_j^*= 0 | \theta_j)  = \text{Pr}(\gamma_j^*= 0, \gamma_j = 1 | \theta_j) + \text{Pr}(\gamma_j^*= 0 , \gamma_j = 0| \theta_j)\\
+= & \text{Pr}(\gamma_j^*= 0, \gamma_j = 1 | \theta_j) + \text{Pr}(\gamma_j^*= 0, \gamma_j = 0 | \theta_j)\\
+= & \text{Pr}(\gamma_j^*= 0| \gamma_j = 1,  \theta_j)\text{Pr}(\gamma_j = 1| \theta_j) + \text{Pr}(\gamma_j^*= 0| \gamma_j = 0,  \theta_j)\text{Pr}(\gamma_j = 0| \theta_j)\\
+= & (1-\theta_j)\theta_j + 1(1-\theta_j) = 1-\theta_j^2
+\end{align*}
+
+\clearpage
+
+\subsection{Supplementary Information 2: EM-Iterative Weighted Least Square Algorithm for BHAM Model Fitting}
+
+Similar to the EM-CD algorithm, the EM-Iterative Weighted Least Square
+(EM-IWLS) algorithm is an EM-based algorithm where the iterative
+weighted least squares algorithm is used to find the estimate of
+\(\boldsymbol{\beta}, \phi\) that maximizes \(E(Q_1)\). The iterative
+weighted least squares algorithm was originally proposed to fit the
+classical generalized linear models, and generalized to fit some
+Bayesian hierarchical models.(Gelman et al. 2013) Yi and Ma (Yi and Ma
+2012) extended the algorithm to fit Bayesian hierarchical models for
+high-dimensional data analysis. Specifically, the authors formulated
+Student's t-distribution and double exponential distribution as
+hierarchical normal distributions such that generalized linear models
+with shrinkage priors can be easily fitted. In this work, we further
+extend the EM-IWLS paradigm to fit the proposed BHAM method. Compare to
+the EM-CD algorithm, EM-IWLS estimates the variance-covariance matrix of
+the coefficients, providing an opportunity to derive the uncertainty
+quantification of smoothing functions. We will defer this discussion to
+future work, due to the delicacy of the topic. However, the EM-IWLS is
+not as computationally efficient as EM-CD, particularly in
+high-dimensional settings.
+
+A double exponential prior, \(\beta|S \sim DE(0, S)\) can be formulated
+as a hierarchical normal prior with unknown variance \(\tau^2\)
+integrated out: \begin{align*}
+  \beta|\tau^2 &\sim N(0, \tau^2)\\
+  \tau^2|S & \sim Gamma(1, 1/(2S^2)), 
+\end{align*} For the mixture double exponential priors, we can define
+the scale parameter \(S = (1-\gamma)s_0 + \gamma s_1\). The change in
+the prior formulation in turn leads to the change in the log posterior
+density function, as \(Q_1\) needs to account for the hyperprior of
+\(\tau^2\): \begin{equation}\label{eq:Q1_IWLS}
+Q_1(\boldsymbol{\beta}, \phi) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) + \sum\limits_{j=1}^p\left[\log f(\beta_j|{\tau}^2_j) + \log f({\tau}^2_j| S_j)+\sum\limits_{k=1}^{K_j} \{\log f(\beta^{*}_{jk}|{\tau^{*}}^2_{jk})+\log f({\tau^*}^2_{jk}| S^*_j)\}\right].
+\end{equation} Since \(\boldsymbol{\tau}^2\) are not of our primary
+interest, we treat them as the ``missing'' data in addition to the
+latent indicators \(\boldsymbol{\gamma}\), and hence construct the
+expectation
+\(E_{\boldsymbol{\gamma}, \boldsymbol{\tau}^2|\Theta^{(t-1)}}(Q_1)\) in
+the E-step. To note, unlike the same latent indicator \(\gamma^*_j\)
+which is shared by the coefficients of the nonlinear terms
+\(\beta^*_{jk}\) for \(k = 1, \dots, K_j\) , \(\tau^2_{jk}\) is
+coefficient specific for \(\beta^*_{jk}\).
+\(E({S_j}^{-1}|\beta_j, s_0, s_1), E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1), E({\tau}^2_{j}|S_j, \beta_j) \text{ and } E({\tau^*}^2_{jk}|S_j^*, \beta^*_{jk})\)
+needs to be calculated to formulate \(E(Q_1)\). As neither
+\(E({S_j}^{-1}|\beta_j, s_0, s_1)\) nor
+\(E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1)\) depends on
+\(\tau^2\)s, they can be derived following the same derivation in the
+EM-CD algorithm. On the other hand, \(\tau^{2}\), following gamma
+distributions, is a conjugate prior for the normal variance, and the
+conditional posterior density of \(\tau^{-2}\) is an inverse Gaussian
+distribution. \(E({\tau}^{-2}_{j})\) and \(E({\tau^*}^{-2}_{jk})\) are
+calculated using the closed form equation \begin{align*}
+ E({\tau}^{-2}_{j}|S_j, \beta_j) ={S_j}^{-1}/|\beta_j| \qquad E({\tau^*}^{-2}_{jk}|S_j^*, \beta^*_{jk})={S_j^*}^{-1}/|\beta^*_{jk}|,
+\end{align*} where \(S_j\) and \(S_j^*\) are replaced by the expectation
+and \(\beta\)s are replaced with \(\beta^{(t-1)}\). With simplification
+(up to constant additive terms), we have
+\begin{equation}\label{eq:EQ1_IWLS}
+E(Q_1) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) - \sum\limits_{j=1}^p\left[ {2E({\tau_j}^{-2})}{\beta_j}^2 +\sum\limits_{k=1}^{K_j} {2E({\tau_{jk}^*}^{-2})}{\beta_{jk}^*}^2\right].
+\end{equation} \(2E({\tau}^{-2})\beta^2\) can be seen as the kernel of a
+normal density with mean 0 and variance \(E(\tau^{2})\), and we can
+formulate the coefficients \(\boldsymbol{\beta}\) as a multivariate
+normal distribution with means \(\boldsymbol{0}\) and variance
+covariance matrix \(\boldsymbol{\Sigma}_{\tau^2}\), where
+\(\boldsymbol{\Sigma}_{\tau^2}\) is a diagonal matrix with
+\(E(\tau^2)\)s on the diagonal, \[
+\boldsymbol{\beta }\sim \text{MVN}(0, \boldsymbol{\Sigma}_{\tau^2}).
+\]
+
+Meanwhile, following the classical IWLS, we can approximate the
+generalized model likelihood at each iteration with a weighted normal
+likelihood: \[
+f(\textbf{y}|\boldsymbol{\beta}, \phi) \approx \text{MVN}(\textbf{z}|\boldsymbol{X} \boldsymbol{\beta}, \phi\boldsymbol{\Sigma })
+\] where the `normal response' \(z_i\) and `weight' \(w_i\) are called
+the pseudo-response and pseudo-weight respectively. The pseudo-response
+and the pseudo-weight are calculated by \[
+\begin{aligned}
+z_i &= \hat\eta_i - \frac{L^{'}(y_i|\hat\eta_i)}{L^{''}(y_i|\hat\eta_i)}& w_i &= - L^{''}(y_i|\hat\eta_i),
+\end{aligned}
+\] where \(\hat\eta_i = (\boldsymbol{X} {\hat{\boldsymbol{\beta}}})_i\),
+\(L^{'}(y_i|\hat\eta_i, \hat \phi)\) and
+\(L^{''}(y_i|\hat\eta_i, \hat \phi)\) are the first and second
+derivative of the log density,
+\(\log f(\textbf{y}_i|\boldsymbol{\beta}, \phi)\) with respect to
+\(\eta_i\).
+
+With
+\(\boldsymbol{z}\sim \text{MVN}(\boldsymbol{X} \boldsymbol{\beta}, \phi \boldsymbol{\Sigma})\)
+and
+\(\boldsymbol{\beta }\sim \text{MVN}(0, \phi \boldsymbol{\Sigma}_{\tau^2})\),
+we can augment the two multivariate normal distributions and update the
+estimates for \(\boldsymbol{\beta}\) and \(\phi\) via least squares in
+each iteration of the EM algorithm. We create the augmented response,
+augmented data, and augmented variance-covariance matrix following
+\begin{align*}
+& \boldsymbol{z}_* = \begin{bmatrix} \boldsymbol{z}\\ \boldsymbol{0}\end{bmatrix} &&
+  \boldsymbol{X}_* = \begin{bmatrix} \boldsymbol{X} \\ \boldsymbol{I} \end{bmatrix} &&
+  \boldsymbol{\Sigma}_* = \begin{bmatrix} \boldsymbol{\Sigma }& \boldsymbol{0}  \\ \boldsymbol{0} & \boldsymbol{\Sigma}_{\tau^2}/\phi \end{bmatrix}, &
+\end{align*} such that \[
+\boldsymbol{z}_* \sim \text{MVN}(\boldsymbol{X}_* \boldsymbol{\beta }, \phi \Sigma_*).
+\] Using the least squares estimators to update \(\boldsymbol{\beta}\)
+and \(\phi\), we have \begin{align*}
+& \boldsymbol{\beta}^{(t)} = (\boldsymbol{X}_*^T \boldsymbol{\Sigma}^{-1} \boldsymbol{X}_*)^{-1}\boldsymbol{X}_*^T \boldsymbol{\Sigma}^{-1} \boldsymbol{z}_* && \phi^{(t)} = \frac{1}{n}(\boldsymbol{z}_*-X_*\boldsymbol{\beta}^{(t)})^T\boldsymbol{\Sigma}^{-1}(\boldsymbol{z}_*-X_*\boldsymbol{\beta}^{(t)}).&
+\end{align*} To note, the variance-covariance matrix of the coefficient
+estimates variance-covariance matrix can be derived in the EM-IWLS
+algorithm and in turn can be used for statistical inferences, \[
+  \text{Var}(\boldsymbol{\beta}^{(t)}) = (\boldsymbol{X}_*^T\boldsymbol{\Sigma}^{-1} \boldsymbol{X}_*)^{-1}\phi^{(t)}.
+\]
+
+Totally, the proposed EM-IWLS algorithm is summarized as follows:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\item
+  Choose a starting value \(\boldsymbol{\beta}^{(0)}\) and
+  \(\boldsymbol{\theta}^{(0)}\) for \(\boldsymbol{\beta}\) and
+  \(\boldsymbol{\theta}\). For example, we can initialize
+  \(\boldsymbol{\beta}^{(0)} = \boldsymbol{0}\) and
+  \(\boldsymbol{\theta}^{(0)} = \boldsymbol{0}.5\)
+\item
+  Iterate over the E-step and M-step until convergence
+
+  E-step: calculate \(E(\gamma_{j})\), \(E(\gamma^*_{j})\) and
+  \(E(\tau^{-2}_{j})\), \(E({\tau^*}^{-2}_{jk})\) with the estimates
+  \(\Theta^{(t-1)}\) from the previous iteration
+
+  M-step:
+
+  \begin{enumerate}
+  \def\labelenumii{\alph{enumii})}
+  \tightlist
+  \item
+    Based on the current value of \(\beta\), calculate the pseudo-data
+    \(z_i^{(t)}\) and the pseudo-weights \(w_i^{(t)}\)
+  \item
+    Update \(\boldsymbol{\beta}^{(t)}\) by running the augmented
+    weighted least squared
+  \item
+    If \(\phi\) is present, update \(\phi\)
+  \end{enumerate}
+\end{enumerate}
+
+Similar to EM-CD, we assess convergence by the criterion,
+\(|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon\), where \(\epsilon\) is
+a small value (say \(10^{-5}\)).
+
+\subsection{Supplementary Information 3: Generalization of BHAM framework}
+
+In the manuscript, we describe the Bayesian hierarchical additive model
+with the two-part spike-and-slab LASSO prior. Nevertheless, the proposed
+model and algorithm can be easily generalized to accommodate other
+priors thanks to the reparameterization of smoothing functions. To be
+more specific, we can apply a regularized prior on the linear
+coefficient, and a group regularized prior for the nonlinear
+coefficients. For example, we can apply the same proposed framework with
+a spike-and-slab mixture normal prior, \begin{align*}
+  \beta_{j} |\gamma_{j},s_0,s_1 &\sim N(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)\\
+  \beta^*_{jk} | \gamma^*_{j},s_0,s_1 &\overset{\text{iid}}{\sim}N(0,(1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1), k=1,\dots, K_j.
+\end{align*} The algorithm derivation still follows with slight
+modification, replacing \(l_1\) penalization with \(l_2\) penalization.
+The implementation of effect hierarchy would be more challenging for the
+priors that do rely on a latent indicator for variable selection. As a
+naive solution, readers can consider the linear prior and the nonlinear
+prior being independent at the cost of bi-level selection accuracy.
+
+\clearpage
+
+\subsection{Supplementary Information 4: Predictive Performance of Linear Simulations}
+\input{Tabs/sim_lnr_gaus_tab.tex}
+\input{Tabs/sim_lnr_binom_tab.tex}
+
+\clearpage
+
+\subsection{Supplementary Information 5: Variable Selection Performance of Simulations}
+\input{Tabs/sim_binom_var_slct_tab.tex}
+\input{Tabs/sim_lnr_gaus_var_slct_tab.tex}
+\input{Tabs/sim_lnr_binom_var_slct_tab.tex}
+
+\clearpage
+\subsection{References}
+
+\hypertarget{refs}{}
+\begin{CSLReferences}{1}{0}
+\leavevmode\vadjust pre{\hypertarget{ref-Gelman2013}{}}%
+Gelman, A, JB Carlin, HS Stern, DB Dunson, A Vehtari, and BD Rubin.
+2013. {``Bayesian Data Analysis. 3rd Editio.''}
+
+\leavevmode\vadjust pre{\hypertarget{ref-Yi2012}{}}%
+Yi, Nengjun, and Shuangge Ma. 2012. {``{Hierarchical Shrinkage Priors
+and Model Fitting for High-dimensional Generalized Linear Models}.''}
+\emph{Statistical Applications in Genetics and Molecular Biology} 11
+(6). \url{https://doi.org/10.1515/1544-6115.1803}.
+
+\end{CSLReferences}
+
+\end{document}

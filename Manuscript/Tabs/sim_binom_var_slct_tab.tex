@@ -1,0 +1,33 @@
+\begin{table}[ht]
+\centering
+\begin{tabular}{cccccccc}
+  \hline
+P & Metric & LASSO & COSSO & Adaptive COSSO & BHAM & SB-GAM & spikeSlabGAM \\ 
+  \hline
+  4 & Precision & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 & 1.00 \\ 
+   10 & Precision & 0.58 & 0.71 & 0.69 & 0.93 & 0.88 & 0.89 \\ 
+   50 & Precision & 0.38 & 0.60 & 0.59 & 0.77 & 0.80 & 0.52 \\ 
+  100 & Precision & 0.35 & 0.62 & 0.65 & 0.82 & 0.77 & 0.42 \\ 
+  200 & Precision & 0.29 & 0.65 & 0.57 & 0.21 & 0.74 & 0.36 \\ 
+   \hline
+  4 & Recall & 0.54 & 0.61 & 0.54 & 0.38 & 0.97 & 0.55 \\ 
+   10 & Recall & 0.46 & 0.50 & 0.54 & 0.38 & 0.97 & 0.54 \\ 
+   50 & Recall & 0.34 & 0.30 & 0.30 & 0.32 & 0.90 & 0.55 \\ 
+  100 & Recall & 0.27 & 0.30 & 0.25 & 0.27 & 0.92 & 0.54 \\ 
+  200 & Recall & 0.27 & 0.25 & 0.29 & 0.56 & 0.92 & 0.53 \\ 
+   \hline
+ 10 & MCC & 0.18 & 0.35 & 0.36 & 0.47 & 0.86 & 0.55 \\ 
+   50 & MCC & 0.25 & 0.34 & 0.36 & 0.45 & 0.83 & 0.47 \\ 
+  100 & MCC & 0.24 & 0.37 & 0.37 & 0.45 & 0.82 & 0.43 \\ 
+  200 & MCC & 0.23 & 0.36 & 0.36 & 0.23 & 0.81 & 0.40 \\ 
+   \hline
+\end{tabular}
+\caption{The variable selection performance of binomial simulations,
+                         measured by positive predictive value (precision), true positive rate (recall),
+                         and Matthews correlation coefficient (MCC), for the high-dimensional methods 
+                         averaged over 50 iterations. The models of comparison include the proposed Bayesian
+                         hierarchical additive model (BHAM), linear LASSO model (LASSO), component selection and
+                         smoothing operator (COSSO), adaptive COSSO, sparse Bayesian generalized additive model (SB-GAM),
+                         and spikeSlabGAM model. MCC is ill-defined when $p=4$ simulation (no true negative), and hence omitted for all methods.} 
+\label{tab:sim_binom_var_select}
+\end{table}

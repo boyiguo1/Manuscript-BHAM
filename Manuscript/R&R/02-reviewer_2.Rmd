@@ -1,0 +1,56 @@
+We sincerely thank you for the valuable comments. We have carefully addressed all the comments. A point-by-point response is given below, where each of your comments is quoted in _italics_. __For a summary of major changes, please see our response to the Associate Editor.__
+
+\bigskip
+
+_Comments to the Authors_
+
+_This paper introduces a new way to impose group sparse regularization in high-dimensional generalized additive models (GAMs). Specifically, this work proposes a re-parametrization, which allows separating the predictor space into linear/nonlinear ones. A spike-and-slab LASSO prior is then imposed on the coefficients for the re-parametrized predictors. The authors further uses EM algorithm to fit this model, where the M-step can be solved with either coordinate-descent or iteratively reweighted least squares. Simulation results and metabolomics data analysis are presented._
+
+_The authors claim that the proposed model has the advantage of_
+
+  1. _does not induce excess shrinkage while still estimating a smooth function,_
+  2. _allow us to deal with linear/non-linear terms separately and understand if nonlinear terms are necessary_
+  3. _more scalable than previous algorithms which require MCMC for model fitting_
+
+_While targeting an important question, the novelty of the solution provided by the authors seem a little bit limited. In addition, the key and most significant step is the re-parametrization, yet there are a few points which I do not completely understand and might need further clarification from the authors:_
+
+_(1) It seems that after re-parametrization, the authors do not further consider the smoothing penalty (Equation (1)) and only include the spike-and-slab LASSO prior. I wonder how does this affect the smoothness of the fitted function and how does it resolves the issue of excess shrinkage._
+
+__Response__: We thank the reviewer for the comment. The purpose of the reparameterization step is to factor the smoothing penalty matrix in the design matrix, such that the smoothing penalty can be addressed implicitly. This contrasts with some previous methods that do not consider smoothing penalties at all. With the reparameterization, the smoothing penalty changes from $\lambda \bs \beta^T \bs S \bs \beta$ to $\lambda \bs {\beta^*}^T \bs {\beta^*}$, where the $\bs \beta$ and $\bs \beta^*$ are the coefficients of the smoothing function before and after the reparameterization respectively. However, the smoothing parameter $\lambda$, equivalently the scale parameter $s$ in the proposed model, needs to be estimated/tuned. The proposed two-part spike-and-slab LASSO prior provides the estimation of the smoothing parameter: when the nonlinear effect does not exist, a large shrinkage is applied to the coefficients via the spike density such that coefficients shrink to 0s; when then nonlinear exists, a small shrinkage is applied via the slab density such that the smoothing function can be estimated appropriately. Moreover, the local adaptivity of the spike-and-slab LASSO prior allows the shrinkage to adapt to the data, compared to previous methods that impose a uniform shrinkage.
+
+We clarified the utility of the reparameterization step and emphasized how the smoothness of the additive function is appropriately modeled (see P3).
+
+
+\bigskip
+
+_(2) I was wondering why the authors choose spike-and-slab LASSO prior in particular. It is claimed in the paper that this prior yields a fast coordinate-descent algorithm, yet coordinate-descent seems also available to other priors as well. I think more discussion on the properties of SSL should be helpful here._
+
+__Response__: Compared to other priors, the spike-and-slab double exponential prior provides three advantages. First of all, the spike-and-slab double exponential prior provides a locally adaptive shrinkage when estimating the coefficients. Hence, the smoothing functions can be estimated more accurately. Secondly, the spike-and-slab exponential prior encourages a sparse solution, making variable selection straightforward. Thirdly, the spike-and-slab double exponential prior motivates a scalable algorithm, the EM-CD algorithm, for model fitting, and hence is more feasible for high-dimensional data analysis.
+
+We revised our method section to highlight these advantages, see P4.
+\bigskip
+
+_(3) Since the authors have already separated linear and nonlinear effects, and we might expect linear effects to enter the model first, I wonder why the authors does not incorporate this explicitly into their model by, say, changing the prior for gamma’s to impose different sparsity._
+
+__Response__: We thank the reviewer for the comment. We changed the prior distribution of the non-linear effects inclusion indicator to be $\gamma^\tp|\gamma, \theta \sim Bin(1, \gamma\theta)$, in comparison to $\gamma^\tp| \theta \sim Bin(1, \theta)$ previously. This prior formulation is motivated by the effect hierarchy discussed in Chipman (2004). Now, the inclusion of the nonlinear effects is dependent on the inclusion of the linear effects, and hence, reflects the hierarchy of bi-level selection. The modification of the prior doesn't complicate the model fitting algorithm. The $\gamma$ can be analytically integrated out of the density function of $\gamma^*$ and requires a minimum change of the proposed algorithms. The updated model still shows performance advantages as before.
+
+\bigskip
+
+\em
+Besides, some writing of this paper should better be polished and some typos corrected. For example:
+\begin{enumerate}
+\item In page 3, line 31, what does "in the prior density function" mean?
+\item Same page, line 43 to line 45, the notation here is a little bit confusing.
+\item Page 5, line 17-18, how shall we understand this statement and any explanations?
+\item Page 5 line 37 and page 6 line 21-22, the implication seems to be ‘SSL is not a continuous prior’, which is not true.
+\item Page 6, line 16, missing a period at the end.
+\item Page 6, line 30, there are duplicate "the’".
+\item Page 6, line 56, ‘converge’ should be ‘converges’.
+\item Page 9, line 24-25, there seems to be duplicated "variance-covariance matrix".
+\item page 11, line 8, there are some problems with the table reference.
+\item In section 4, what is definition for the "deviance"?
+\end{enumerate}
+\em
+
+__Response__: We thank the review for the comment. We revised the manuscript according to the comment.
+\bigskip

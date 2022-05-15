@@ -25,7 +25,8 @@ make_bgam_dat <- function(train_dat, test_dat = NULL){
   spl_grp <- make_group(spl_pt_name)
   
   ret <- list(train_dat = dsn_mat,
-              group = spl_grp)
+              group = spl_grp,
+              sm = sm_obj)
   
   # Create test dat ---------------------------------------------------------
   if(!is.null(test_dat)){

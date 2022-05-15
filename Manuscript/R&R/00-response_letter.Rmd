@@ -1,0 +1,80 @@
+---
+output: 
+  pdf_document:
+    keep_tex: FALSE
+bibliography: reply_ref.bib
+header-includes: 
+ - \usepackage{color}
+link-citations: true
+---
+
+\newcommand{\bg}[1]{\textcolor{red}{#1}}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(targets)
+tar_load(RR_path)
+```
+
+\newcommand{\tp}{*}
+\newcommand{\bs}{\boldsymbol}
+
+\hrule
+\vspace*{0.02cm}
+\hrule
+\vspace*{1cm}
+\Large __Response to Reviewers' Comments__
+\vspace*{1cm}
+\hrule
+\vspace*{0.5cm}
+\begin{tabular}{llp{11.5cm}}
+Manuscript No. & : & SIM-21-0956 \\
+Title & : & Spike-and-Slab Generalized Additive Models and Scalable Algorithms for High-Dimensional Data\\
+\end{tabular}
+\vspace*{0.5cm}
+\hrule
+\vspace*{0.02cm}
+\hrule
+
+\vspace*{1cm}
+
+
+First, we would like to thank you for handling this paper and thank the AE and the three reviewers for their valuable comments. We have carefully addressed all the comments. Point-by-point responses are given below, where each comment is quoted in _italics_.
+
+\bigskip
+
+# Response to Associate Editor
+_Comments to the authors:_
+
+_Please follow carefully the comments, criticisms and suggestions of the three referees._
+
+__Response__: We summarize the major changes in our manuscript as a response to address the comments from the referees:
+\begin{itemize}
+    \item According to Reviewer \#2's and Reviewer \#4's comments, we modified the prior distribution of the non-linear effects to reflect the effect hierarchy principle for bi-level selection. We updated the simulation and real data analysis results.
+    \item We streamlined the structure of the manuscript, moving the previous EM-IWLS fitting algorithm subsection to the supporting information for three reasons. First of all, moving can help the audience focus on the model formulation and EM-Coordinate Descent algorithm, avoiding confusion and distraction. Secondly, many useful comments raised by the reviewers on the EM-IWLS algorithm, e.g. constructing hypothesis testings and confidence band, require a more dedicated discussion. We are preparing another manuscript discussing those. Lastly, with the added variable selection performance, the manuscript would be too lengthy if keeping the EM-IWLS in the main body. The readability of the manuscript would be damaged. Relocating the EM-IWLS section solves the dilemma without hurting the integrity of the current manuscript that emphasizes scalability.
+    \item According to Reviewer \#1's and Reviewer \#4's comments, we added the linear LASSO model and spikeSlabGAM model among the models to be compared in the simulation study. In addition, we added a new set of simulation scenarios where the functions of predictors are linear.  
+    \item According to Reviewer \#4's comment, we summarized the variable selection and bi-level selection performance in the simulation study section. The computation performance of spikeSlabGAM is recorded and addressed too.
+    \item According to Reviewer \#4's comment, we added the plot showing the estimated functions of predictors for real-data analysis.
+    \item We updated the feature screening procedure in our real-data analysis of the Emory Cardiovascular Biobank dataset. Our previous screening method, fitting univariate GAM, made the "double-dipping" mistake that would overestimate the prediction performance of any downstream prediction model. We updated the screening procedure with variance-based selection, and the prediction of both methods dropped. Nevertheless, the proposed model still outperforms the compared method. See change on P9.
+    \item We fixed the additional typos and grammar errors according to Review \#2. The revision of the manuscript is marked in \bg{red} (roughly due to the technical difficulties associated with Latex). Deletions are not highlighted.
+\end{itemize}
+
+
+\newpage
+# Response to Reviewer \#1
+```{r reviewer1, child="01-reviewer_1.Rmd"}
+```
+
+
+\newpage
+# Response to Reviewer \#2
+```{r reviewer2, child="02-reviewer_2.Rmd"}
+```
+
+\newpage
+# Response to Reviewer \#4
+```{r reviewer4, child="03-reviewer_4.Rmd"}
+```
+
+\newpage
+# Reference

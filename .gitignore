@@ -51,5 +51,8 @@ _targets/
 .DS_Store
 *.log
 *.pag
-*.pdf
 *Manuscript/SS_GAM.docx
+*.err
+*.out
+*.Rout
+Rplots.pdf

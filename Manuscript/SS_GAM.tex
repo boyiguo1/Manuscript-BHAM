@@ -8,6 +8,8 @@
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepackage{pdflscape}
+\usepackage{color}
+\usepackage{soul}
 \usepackage{multirow}
 \usepackage{multicol}
 \usepackage{colortbl}
@@ -31,8 +33,8 @@
 
 \begin{document}
 
-\title{Spike-and-Slab Generalized Additive Models and Scalable
-Algorithms for High-Dimensional Data}
+\title{Spike-and-Slab LASSO Generalized Additive Models and Scalable
+Algorithms for High-Dimensional Data Analysis}
 
 \author[a]{Boyi Guo*}
 \author[b]{Byron C. Jaeger}
@@ -65,18 +67,20 @@ Bayesian models can address these shortcomings, using Markov chain Monte
 Carlo algorithms for model fitting creates a new challenge, scalability.
 Hence, we propose Bayesian hierarchical generalized additive models as a
 solution: we consider the smoothing penalty for proper shrinkage of
-curve interpolation and separation of smoothing function linear and
-nonlinear spaces. A novel spike-and-slab spline prior is proposed to
-select components of smoothing functions. Two scalable and deterministic
-algorithms, EM-Coordinate Descent and EM-Iterative Weighted Least
-Squares, are developed for different utilities. Simulation studies and
-metabolomics data analyses demonstrate improved predictive or
-computational performance against state-of-the-art models, mgcv, COSSO
-and sparse Bayesian GAM. The software implementation of the proposed
-models is freely available via an R package BHAM.}
+curve interpolation via reparameterization. A novel two-part
+spike-and-slab LASSO prior for smoothing functions is developed to
+address the sparsity of signals while providing extra flexibility to
+select the linear or nonlinear components of smoothing functions. A
+scalable and deterministic algorithm, EM-Coordinate Descent, is
+implemented in an open-source R package BHAM. Simulation studies and
+metabolomics data analyses demonstrate improved predictive and
+computational performance against state-of-the-art models. Functional
+selection performance suggests trade-offs exist regarding the effect
+hierarchy assumption.}
 
 \keywords{Spike-and-Slab Priors; High-Dimensional Data; Generalized
-Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility}
+Additive Models; EM-Coordinate Decsent; Scalablility; Predictive
+Modeling}
 
 \maketitle
 
@@ -87,14 +91,13 @@ Additive Models; EM-IWLS; EM-Coordinate Decent; Scalablility}
 \newcommand{\pr}{\text{Pr}}
 \newcommand{\repa}{\text{repa}}
 \newcommand{\simiid}{\overset{\text{iid}}{\sim}}
+\newcommand{\bg}[1]{\textcolor{red}{#1}}
 
-\hypertarget{introduction}{%
-\section{Introduction}\label{introduction}}
-
+\section{Introduction}
 \label{sec:intro}
 
-Many modern biomedical research, e.g.~sequencing data analysis, electric
-health record data analysis, require special treatment of
+Much modern biomedical research, e.g., sequencing data analysis and
+electronic health record data analysis, require special treatment of
 high-dimensionality, commonly known as \(p >> n\) problem. There is
 extensive literature on high-dimensional linear models via penalized
 models or Bayesian hierarchical models, see Mallick and Yi
@@ -103,165 +106,126 @@ restrictive and unrealistic assumption, linearity. In classical
 statistical modeling, many strategies and models are proposed to relax
 the linearity assumption with various degrees of complexity. For
 example, variable categorization is a simple and common practice in
-epidemiology, but suffers from power and interpretation issues. More
+epidemiology but suffers from power and interpretation issues. More
 complex models to address nonlinear effects include random forest and
 other so-called ``black box'' models \citep{Breiman2001}. These models
 are useful for statistical prediction but do not estimate parameters
 relevant to the data generation process that one can draw inferences
-from. In addition, how to generalize these models to the
-high-dimensional setting remains unclear.
+from. In addition, how to generalize these \textcolor{red}{"black box"}
+models to the high-dimensional setting remains unclear.
 
-Nonparametric regression models are appropriate alternatives to the
-``black-box'' models thanks to their balance between model flexibility
-and interpretability. Among those, generalized additive models (GAMs),
-proposed in the seminal work of Hastie and Tibshirani
-\citep{Hastie1987}, grew to be one of the most popular modeling tools.
-In a GAM, the response variable, \(Y\), which is assumed to follow some
-exponential family distribution with mean \(\mu\) and dispersion
-\(\phi\), can be modeled with the summation of smoothing functions,
-\(B_j(\cdot), j = 1, \dots, p\), of a given \(p\)-dimensional vector of
-covariates \(\boldsymbol{x}\), written as \[
- E(Y|\boldsymbol{x}) = g^{-1}(\beta_0 + \sum\limits^p_{j=1}B_j(x_j)),
-\] where \(g^{-1}(\cdot)\) is the inverse of a monotonic link function.
-The smoothing functions can take many forms and are estimated using a
-pseudo-weighted version of the backfitting algorithm
-\citep{Breiman1985}. Nevertheless, the classical GAMs cannot fulfill the
-increasing analytic demands for high-dimensional data analysis in
-biomedical studies.
+\textcolor{red}{For their straightforward interpretation and flexibility, nonparametric regression models serve as great alternatives to the "black-box" models in prediction and variable selection}.
+Among those, generalized additive models (GAMs), proposed in the seminal
+work of Hastie and Tibshirani \citep{Hastie1987}, grew to be one of the
+most popular modeling tools. In a GAM, the response variable, which is
+assumed to follow some exponential family distribution, can be modeled
+with the summation of smoothing functions. Nevertheless, the classical
+GAMs cannot fulfill the increasing analytic demands for high-dimensional
+data analysis.
 
-There exists some proposals to generalize the classical GAM to
+There exist some proposals to generalize the classical GAM to
 accommodate high-dimensional applications. The regularized models,
 branching out from group regularized linear models, are used to fit GAMs
 by accounting for the structure introduced when expanding smoothing
-functions. Ravikumar et al. \citep{Ravikumar2009} extended the grouped
-lasso \citep{Yuan2006} to additive models (AMs); Huang et al.
-\citep{Huang2010} further developed adaptive grouped lasso for additive
+functions. Ravikumar et al. \citep{Ravikumar2009} extended the group
+LASSO \citep{Yuan2006} to additive models (AMs); Huang et al.
+\citep{Huang2010} further developed adaptive group LASSO for additive
 models; Wang et al. \citep{Wang2007} and Xue \citep{Xue2009}
-respectively applied grouped SCAD penalty \citep{Fan2001} to additive
-models. Recently Bayesian hierarchical models are also used in the
-context of high-dimensional additive models. Various group
-spike-and-slab priors combining with computationally intensive Markov
-chain Monte Carlo (MCMC) algorithms \citep{Xu2015, Yang2020} are
-proposed, where the application on AMs are by-products. Bai et al.
-\citep{Bai2020} was the first to apply group spike-and-slab lasso prior
-to Gaussian AMs using a fast optimization algorithm, and further
-generalized the framework to GAMs\citep{Bai2021}. Focus on addressing
-the sparsity, these methods can overly penalize the basis function
-coefficients and produce inaccurate predictions and curve interpolation,
-particularly when complex signals are assumed and large number of knots
-are used. \citep{Scheipl2013} In addition, these methods adapt an
-`all-in-all-out' strategy, i.e.~either including or excluding the
-variable completely, rendering no space for bi-level selection. Scheipl
-et al. \citep{Scheipl2012} proposed a spike-and-slab structure prior
-that address the previous challenges. But the model fitting relies on
-computational intensive MCMC algorithms and creates scalability concern.
-It would be of special interest to develop a fast, flexible and accurate
-generalized additive model framework.
+respectively applied group SCAD penalty \citep{Fan2001} to additive
+models. Bayesian hierarchical models are also used in the context of
+high-dimensional additive models, particularly within the spike-and-slab
+literature. Various group spike-and-slab priors \citep{Xu2015, Yang2020}
+combining with computationally intensive Markov chain Monte Carlo (MCMC)
+algorithms are proposed, where the application on AMs is treated as a
+special case. Bai and co-authors\citep{Bai2020} were the first to apply
+group spike-and-slab LASSO prior to Gaussian AMs using a fast
+optimization algorithm and further generalized the framework to GAMs
+\citep{Bai2021}. Focus on addressing the sparsity, these methods can
+excessively penalize the bases of a smoothing function and produce
+inaccurate predictions, particularly when complex signals are assumed
+and large numbers of knots are used. \citep{Scheipl2013} In addition,
+these methods adopt an `all-in-all-out' strategy, i.e.~either including
+or excluding the variable completely, rendering no space for bi-level
+selection. Scheipl et al. \citep{Scheipl2012} proposed a spike-and-slab
+structure prior that addresses the bi-level selection. But the model
+fitting relies on computationally intensive MCMC algorithms and creates
+scalability concerns. Developing a fast, flexible and accurate
+generalized additive model framework would be of special interest.
 
-To address these challenges, we propose a novel Bayesian hierarchical
-generalized additive model (BHAM) for high dimensional data analysis.
-Specifically, we incorporate smoothing penalties in the model via
-re-parameterization of the smoothing function to avoid overly shrinking
-basis function coefficients. Smoothing penalties are commonly
-implemented in the classical GAMs through smoothing regression splines.
-They are quadratic norms of the coefficients and allow locally adaptive
-penalties on each smoothing function. A smoothing penalty conditioning
-on a smoothing parameter \(\lambda_j\) is a function of the integration
-of the second derivative of the spline function, expressed
-mathematically as \begin{equation}\label{eq:smoothpen}
-  \text{pen}\left[B_j(x)\right] = \lambda_j \int B^{\prime\prime}_j(x)dx = \lambda_j \boldsymbol{\beta}_j^T \boldsymbol{S}_j \boldsymbol{\beta}_j ,
-\end{equation} where \(\boldsymbol{S}_j\) is a known smoothing penalty
-matrix, and \(\boldsymbol{\beta}_j\) are the basis function
-coefficients. Smoothing penalties were also previously used in the
-spike-and-slab GAM \citep{Scheipl2012} and the sparsity-smoothness
-penalty \citep{Meier2009}. Moreover, incorporating the smoothing penalty
-allows the separation of the linear space of a smoothing function from
-the nonlinear space. We then impose a new two-part spike-and-slab spline
-prior on the smoothing functions for bi-level selection such that the
-linear and nonlinear spaces of smoothing functions can be selected
-separately. The prior setup encourages a flexible solution, rendering
-one of three possibilities for each predictor: no effect, only linear
-effect, or linear and nonlinear effects. In addition, two scalable
-optimization-based algorithms, EM-Coordinate Descent (EM-CD) algorithm
-and EM-Iterative weighted least square (EM-IWLS) algorithm, are
-developed and implemented in an publicly available R package
-\texttt{BHAM} via \url{https://github.com/boyiguo1/BHAM}, making
-translational science more accessible.
+\textcolor{red}{We propose a novel Bayesian hierarchical generalized additive model (BHAM) for outcome prediction in the context of high-dimensional data analysis. Specifically, we incorporate smoothing penalties, derived from the smoothing spline literature \cite{Wood2017}, via reparameterization of smoothing functions to avoid excessive shrinkage on the bases. Smoothing penalties were also previously used in the spike-and-slab GAM \cite{Scheipl2012} and the sparsity-smoothness penalty \cite{Meier2009}. We then impose a new two-part spike-and-slab LASSO prior to address the signal sparsity. In addition, a scalable optimization-based algorithm, EM-Coordinate Descent (EM-CD) algorithm, is developed. While the primary focus of this model is to improve prediction, the proposed model also provides utility in functional selection. Notably, the two-part prior that follows the effect hierarchy principle motivates a bi-level selection, rendering one of three possibilities for each predictor: no effect, only linear effect, or linear and nonlinear effects. The proposed model is implemented in a publicly available R package \texttt{BHAM} via \url{https://github.com/boyiguo1/BHAM}.}
 
 The proposed framework, BHAM, differs from previous spike-and-slab based
-GAMs, i.e.~the spike-and-slab GAM \citep{Scheipl2012} and the SB-GAM
-\citep{Bai2021} in three ways. First of all, the proposed spike-and-slab
-spline prior is a spike-and-slab lasso type prior using independent
-mixture double exponential distribution, compared to spike-and-slab GAM
-that uses normal-mixture-of-inverse gamma prior. Spike-and-slab lasso
-priors provide computational convenience during model fitting by using
-optimization algorithms instead of intensive sampling algorithms. They
-make fitting high-dimensional models more feasible without sacrificing
-performance in prediction and variable selection. Secondly, SB-GAM uses
-a group spike-and-slab lasso prior with an EM-CD algorithm to fit the
-model. While both methods use the combination of expectation
-maximization algorithm and coordient descent algorithm, there are subtle
-difference in the implementation due to the difference in prior
-specification. The proposed model sets up independent priors among basis
-function coefficients after the re-parameterization step, which provides
-some advantage in computation. In addition, we offer an alternative
-algorithm, EM-IWLS, that can provide variance-covariance matrix of the
-coefficients. Last but not least, the proposed model addresses the
-incapability of bi-level selection in SB-GAM.
+GAMs, i.e., the spike-and-slab GAM \citep{Scheipl2012} and the sparse
+Bayesian GAM (SB-GAM) \citep{Bai2021}, in three ways. Firstly, the
+proposed prior for smoothing functions is a spike-and-slab LASSO type
+prior using independent mixture double exponential distribution,
+compared to spike-and-slab GAM that uses normal-mixture-of-inverse gamma
+prior. Spike-and-slab LASSO priors provide computational convenience
+during model fitting by using optimization algorithms instead of
+intensive sampling algorithms. They make fitting high-dimensional models
+more feasible without sacrificing performance in prediction and variable
+selection. Secondly, SB-GAM uses a group spike-and-slab LASSO prior with
+an EM-CD algorithm to fit the model. While both methods use the
+combination of expectation maximization algorithm and coordinate descent
+algorithm, there are subtle differences in the implementation due to the
+difference in prior specification. The proposed model sets up
+independent priors among basis coefficients after the reparameterization
+step, which provides some advantage in computation. Lastly, the proposed
+model addresses the incapability of bi-level selection in SB-GAM.
 
 In Section \ref{sec:BHAM}, we establish the Bayesian hierarchical
 generalized additive model, introduce the proposed spike-and-slab spline
-priors, and describe the two fast-fitting algorithms. In Section
+priors, and describe the fast-fitting EM-CD algorithm. In Section
 \ref{sec:sim}, we compare the proposed framework to state-of-the-art
-models, mgcv, COSSO and sparse Bayesian GAM via Monte Carlo simulation
-studies. Analyses of two metabolomics datasets are presented in Section
-\ref{sec:real_data}. Conclusion and discussions are given in Section
-\ref{sec:concl}.
+models via Monte Carlo simulation studies. Analyses of two metabolomics
+datasets are presented in Section \ref{sec:real_data}. Conclusion and
+discussions are given in Section \ref{sec:concl}.
 
-\hypertarget{bayesian-hierarchical-additive-models-bhams}{%
-\section{Bayesian Hierarchical Additive Models
-(BHAMs)}\label{bayesian-hierarchical-additive-models-bhams}}
-
+\section{Bayesian Hierarchical Additive Models (BHAM)}
 \label{sec:BHAM}
 
-Following the GLM notation introduced in Section \ref{sec:intro}, we
-have a generalized additive model with link function \(g(\cdot)\) and
-linear predictor \begin{equation}\label{eq:gam}
-\eta = \beta_0 + \sum\limits^p_{j=1}B_j(x_j) = \beta_0 + \sum\limits^p_{j=1} \boldsymbol{\beta}_j^T \boldsymbol{X}_j,
-\end{equation} with smoothing functions \(B_j(x_j)\) of the variable
-\(x_j, j = 1, \dots, p.\) The outcome \(Y\) follows a exponential family
-distribution with density function \(f(y)\), mean \(\mu = g^{-1}(\eta)\)
-and dispersion parameter \(\phi\), and the data distribution is
-\begin{equation}
-f(\boldsymbol{Y} = \boldsymbol{y}| \boldsymbol{\beta}, \phi) = \prod\limits^n_{i=1}f( Y = y_i|\boldsymbol{\beta}, \phi),\nonumber
-\end{equation} The basis function matrix, i.e.~the design matrix derived
-from the smoothing function \(B_j(x_j)\), is denoted
-\(\boldsymbol{X}_j\) for the variable \(x_j\). The dimension of the
-design matrix depends on the choice of the smoothing function, and is
-denoted as \(K_j\) for \(x_j\). Its corresponding smoothing penalty
-matrix is denoted as \(\boldsymbol{S}_j\). \(\boldsymbol{\beta}_j\)
-denotes the basis function coefficients for the \(j\)th variable such
-that \(B_j(x_j) = \boldsymbol{\beta}_j^T \boldsymbol{X}_j\). With slight
+\textcolor{red}{We assume the response variable, $Y$, follows an exponential family distribution with density function $f(y)$, mean $\mu$ and dispersion parameter $\phi$. The mean of the response variable can be modeled as the summation of smoothing functions, $B_j(\cdot), j = 1, \dots, p$, of a given $p$-dimensional vector of predictors $\boldsymbol{x}$, written as 
+\begin{equation}\label{eq:gam}
+ E(Y|\boldsymbol{x}) = g^{-1}(\beta_0 + \sum\limits^p_{j=1}B_j(x_j)) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} \boldsymbol{\beta}_j^T \boldsymbol{X}_j),
+\end{equation}
+where $g^{-1}(\cdot)$ is the inverse of a monotonic link function. Given $n$ data points $\{y_i, \boldsymbol{x}_i\}^n_{i=1}$,}
+the data distribution is expressed as \begin{equation}
+f(\boldsymbol{Y} = \boldsymbol{y}| \boldsymbol{\beta}, \phi) = \prod\limits^n_{i=1}f( Y = y_i|\boldsymbol{\beta}, \phi).\nonumber
+\end{equation}
+
+The basis function matrix, i.e.~the design matrix derived from the
+smoothing function \(B_j(x_j)\), is denoted \(\boldsymbol{X}_j\) for the
+variable \(x_j\). The dimension of the design matrix depends on the
+choice of the smoothing function, and is denoted as \(K_j\) for \(x_j\).
+\(\boldsymbol{\beta}_j\) denotes the basis function coefficients for the
+\(j\)th variable such that
+\(B_j(x_j) = \boldsymbol{\beta}_j^T \boldsymbol{X}_j\). With slight
 abuse of notation, we denote vectors and matrices in bold fonts
 \(\boldsymbol{\beta}, \boldsymbol{X}\) with conformable dimensions,
 where scalar and random variables are denoted in unbold fonts
 \(\beta, X\). The matrix transposing operation is denoted with a
-superscript \(^T\). To note, the proposed model can include parametric
-forms of variables in the model, treating the parametric function as a
-special case of the smoothing function, e.g.~\(B_j(x_j) = x_j\) with the
-smoothing penalty matrix defined as
-\(\boldsymbol{S}_j = \begin{bmatrix}0\end{bmatrix}\).
+superscript \(^T\).
+\textcolor{red}{To note, the proposed model can include parametric forms of variables in the model, and hence considers general linear models and semiparametric regression models as special cases.}
 
-To encourage proper smoothing of additive functions, we adopt the idea
-of smoothing penalties from smoothing spline models. The basic idea is
-to set up a smoothing penalty, described in Equation
-(\ref{eq:smoothpen}), in the prior density function. However, the direct
-integration of smoothing penalty with sparsity penalty is not obvious.
-Marra and Wood \citep{Marra2011} proposed a re-parameterization
-procedure to accommodate the smoothing penalty implicitly. Given the
-smoothing penalty matrix \(\boldsymbol{S}_j\) is symmetric and positive
-semi-definite for univariate smoothing functions, we apply
-eigendecomposition on the penalty matrix
+\subsection{Smoothing Function Reparameterization}
+
+To encourage proper smoothing of each additive function, we adopt the
+smoothing penalty from smoothing spline models\citep{Wood2017}. A
+smoothing penalty is the quadratic norm of the basis coefficients and
+allows different shrinkage on different bases, mathematically
+\begin{equation}
+  \text{pen}\left[B_j(x)\right] = \lambda_j \int B^{\prime\prime}_j(x)dx = \lambda_j \boldsymbol{\beta}_j^T \boldsymbol{S}_j \boldsymbol{\beta}_j ,\nonumber
+\end{equation} where \(\boldsymbol{S}_j\) is a known smoothing penalty
+matrix and \(\lambda_j\) denotes a smoothing parameter. A linear
+function can be modeled as \(B_j(x_j) = x_j\) with the smoothing penalty
+matrix \(\boldsymbol{S}_j = \begin{bmatrix}0\end{bmatrix}\).
+\textcolor{red}{Unlike previous regularized methods that either ignore the smoothing penalty completely or restrain the smoothing penalty as a component of sparse penalty which leads to a more restrictive solution, we consider an additional mechanism in pair with the proposed prior (described in Section \ref{sec:method_prior}) to address the smoothness and sparsity in signals such that the locally adaptive nature of the smoothing penalty retains.}
+
+Marra and Wood \citep{Marra2011} proposed a reparameterization procedure
+\textcolor{red}{to factor the smoothing penalty into the design matrix of each smoothing function}.
+Given that the smoothing penalty matrix \(\boldsymbol{S}_j\) is
+symmetric and positive semi-definite for the univariate smoothing
+functions, we eigendecompose the penalty matrix
 \(\boldsymbol{S} = \boldsymbol{U} \boldsymbol{D} \boldsymbol{U}^T\) ,
 where the matrix \(\boldsymbol{D}\) is diagonal with the eigenvalues
 arranged in the ascending order. To note, \(\boldsymbol{D}\) can contain
@@ -277,18 +241,18 @@ containing the eigenvectors as columns in the corresponding order to
 \(\boldsymbol{D}\). That is, \(\boldsymbol{U}\) contains the
 eigenvectors \(U^0\) with zero eigenvalues for the linear space and
 \(\boldsymbol{U}^{*}\) contains the eigenvectors (as columns) for the
-non-zero eigenvalues, i.e.~the non-linear space. We multiply the basis
+non-zero eigenvalues, i.e.~the nonlinear space. We multiply the basis
 function matrix \(\boldsymbol{X}\) with the orthonormal matrix
 \(\boldsymbol{U}\) for the new design matrix
 \({\boldsymbol{X}}^\text{repa}= \boldsymbol{X} \boldsymbol{U} \equiv \begin{bmatrix} X^0 : \boldsymbol{X}^{*} \end{bmatrix}\).
 An additional scaling step is imposed on \(\boldsymbol{X}^{*}\) by the
 non-zero eigenvalues of \(\boldsymbol{D}\) such that the new basis
-function matrix \(\boldsymbol{X}^\ast\) can receive uniform penalty on
+function matrix \(\boldsymbol{X}^\ast\) can receive a uniform penalty on
 each of its dimensions. With slight abuse of the notation, we drop the
 superscript \(^\text{repa}\) and denote
 \(\boldsymbol{X}_j \equiv \begin{bmatrix} X_j^0 : \boldsymbol{X}_j^{*} \end{bmatrix}\)
 as the basis function matrix for the \(j\)th variable after the
-re-parameterization. A spline function can be expressed in the matrix
+reparameterization. A spline function can be expressed in the matrix
 form \[
 B_j(x_j) = B_j^0(x_j) + B_j^*(x_j) = \beta_j X^0_j + \boldsymbol{\beta_j^*}^T \boldsymbol{X}_j^*,
 \] and the generalized additive model in Equation (\ref{eq:gam}) now is
@@ -297,94 +261,52 @@ E(Y|\boldsymbol{x}) = g^{-1}(\beta_0 + \sum\limits^p_{j=1} B_j(x_j)) = g^{-1}(\b
 \end{equation} where the coefficients
 \(\boldsymbol{\beta}_j \equiv \begin{bmatrix} \beta_j : \boldsymbol{\beta}^*_j \end{bmatrix}\)
 is an augmentation of the coefficient scalar \(\beta_j\) of linear space
-and the coefficient vector \(\boldsymbol{\beta}^*_j\) of non-linear
+and the coefficient vector \(\boldsymbol{\beta}^*_j\) of nonlinear
 space.
 
-The re-parameterization step sets up the foundation of the proposed
-model and provides three benefits. First of all, the re-parameterization
-integrates the smoothing penalty into the design matrix, and encourages
-models to properly smooth the nonlinear function in addition to the
-sparse penalty for functional selection. Secondly, the
-eigendecomposition of the smoothing penalty allows the isolation of the
-linear space from the nonlinear space, improving the feasibility of
-bi-level functional selection. The eigendecomposition facilitates the
-construction of orthonormal design matrix, which makes imposing
-independent priors on the coefficients possible. This reduces the
-computational complexity compared to using a multivariate priors, and
-greatly broadens the choices of priors and further model choices. Last
-but not least, the scaling step of \(\boldsymbol{X}^*\) further
-simplifies the choice of priors, from column-specific priors to a
-unified prior.
+To summarize, the reparameterization step provides three benefits.
+Firstly, the reparameterization integrates the smoothing penalty matrix
+into the design matrix, and encourages models to properly smooth the
+nonlinear function when sparsity penalty exists. Secondly, the
+eigendecomposition of the smoothing penalty matrix allows the isolation
+of the linear space from the nonlinear space, improving the feasibility
+of bi-level functional selection. Lastly, the eigendecomposition
+facilitates the construction of an orthonormal design matrix, which
+makes imposing independent priors on the coefficients possible. This
+reduces the computational complexity compared to using a multivariate
+priors, and improve the generalizability of the framework to be
+compatible with other choices of priors.
 
-\hypertarget{spike-and-slab-spline-priors}{%
-\subsection{Spike-and-Slab Spline
-Priors}\label{spike-and-slab-spline-priors}}
+\subsection{Two-part Spike-and-Slab LASSO Prior for Smoothing Functions}\label{sec:method_prior}
 
-The family of spike-and-slab (SS) regression models is one of most
+The family of spike-and-slab regression models is one of the most
 commonly used models in high-dimensional data analysis for its utility
-in outcome prediction and variable selection. We defer to Bai et al.
-\citep{Bai2021Review} for an in-depth introduction to spike-and-slab
-priors. To summarize, spike-and-slab priors are a family of mixture
-distributions that comprises a skinny spike density
-\(f_{\text{spike}}(\cdot)\) for weak signals and a flat slab density
-\(f_{\text{slab}}(\cdot)\) for strong signals, mathematically \[
- \beta|\gamma \sim (1-\gamma)f_{\text{spike}}(\beta) + \gamma f_{\text{slab}}(\beta).
-\] The most distinct feature of SS priors is that it is conditioned on a
-latent binary variable \(\gamma \in \{0,1\}\) that indicates whether the
-variable \(x\) is included in the model. There are various
-spike-and-slab priors depending on the choice for the spike density
-\(f_{\text{spike}}(\cdot)\) and the slab density
-\(f_{\text{slab}}(\cdot)\), see George and McCulloch
-\citep{George1993, George1997}; Chipman \citep{Chipman1996} for grouped
-variables; Brown et al. \citep{Brown1998} for multivariate outcomes;
-Ishwaran and Rao \citep{Ishwaran2005}; Clyde and George
-\citep{Clyde2004} and reference therein. Two of most popular spike and
-slab priors are spike-and-slab normal prior \citep{George1993} and
-spike-and-slab double exponential prior\citep{Rockova2018}.
-
-The major criticism of early spike-and-slab models is being
-computationally prohibitive. \citep{Bai2021Review} Since then, many
-studies focus on alleviating the computational burden that sampling
-algorithms bear, which include EMVS based on spike-and-slab normal
-prior\citep{Rockova2014a} and spike-and-slab Lasso (SSL)
-\citep{Rockova2018b, Rockova2018}. Particularly, the development of SSL
-model substantially improves the scalability of SS models, setting up
-the theoretical foundation for generalized models in -omics data
-analysis \citep{Tang2017a, Tang2017, Tang2018, Tang2019}. The SSL prior
-is composed of two double exponential distributions with mean 0 and
-different dispersion parameters, \(0 < s_0 < s_1\), mathematically,
+in outcome prediction and variable selection.
+\textcolor{red}{Among all the spike-and-slab priors, the spike-and-slab LASSO (SSL) prior \cite{Rockova2018b, Rockova2018} is one of the most popular choices because it's highly scalable. The SSL prior is composed of two double exponential distributions with mean 0 and different dispersion parameters, $0 < s_0 < s_1$, mathematically,
 \begin{equation} 
 \beta | \gamma \sim (1-\gamma)DE(0, s_0) + \gamma DE(0, s_1), 0 < s_0 < s_1.\nonumber
-\end{equation} Given that both double exponential distributions have a
-mean of 0 and the latent indicator \(\gamma\) can only take the value of
-0 or 1, the mixture double exponential distribution can be formulated as
-one single double exponential density, \begin{equation} \label{eq:ssl}
-\beta | \gamma \sim DE(0, S), 0 < s_0 < s_1,
-\end{equation} with the scale parameter
-\(S = (1-\gamma)s_0 + \gamma s_1\). The SSL also mitigates the problem
-of EMVS where the weak signals are not shrink to zero, and hence is
-preferred in high-dimensional data analysis. We notice that Bai
-\citep{Bai2021} is the first to apply spike-and-slab lasso prior in the
-GAM framework, where the densities of the spike and slab components take
-the group lasso density \citep{Xu2015} and limits to an
-``all-in-all-out'' strategy for functional selection.
+\end{equation}
+} The latent binary variable \(\gamma \in \{0,1\}\) indicates whether a
+variable \(x\) is included in the model, while the dispersion parameters
+\(s_0\) and \(s_1\) control the shrinkage of the coefficient. Given that
+both double exponential distributions have a mean of 0 and the latent
+indicator \(\gamma\) can only take the value of 0 or 1, the mixture
+double exponential distribution can be formulated as one single double
+exponential density, \begin{equation} \label{eq:ssl}
+\beta | \gamma \sim DE(0, (1-\gamma)s_0 + \gamma s_1), 0 < s_0 < s_1.
+\end{equation}
+\textcolor{red}{Compared to other priors for high-dimensional data analysis, SSL has the following advantages. First of all, the SSL prior provides a locally adaptive shrinkage when estimating the coefficients. Secondly, the SSL prior encourages a sparse solution, making variable selection straightforward. Thirdly, the SSL prior motivates a scalable algorithm, the EM-CD algorithm, for model fitting, and hence is more feasible for high-dimensional data analysis. We defer to Bai et al. \cite{Bai2021Review} for a detailed discussion.}
 
-\hypertarget{two-part-spike-and-slab-lasso-prior}{%
-\subsubsection{Two-part Spike-and-Slab Lasso
-Prior}\label{two-part-spike-and-slab-lasso-prior}}
-
-We introduce a novel prior for GAMs, particularly for high-dimensional
-nonlinear modeling with bi-level selection. The proposed prior extends
-from the spike-and-slab lasso prior described in Equation
-(\ref{eq:ssl}). Given the re-parameterized design matrix
+We introduce a novel SSL-based prior for smoothing functions in GAMs.
+Given the reparameterized design matrix
 \(\boldsymbol{X}_j = \begin{bmatrix} X^0_j : \boldsymbol{X}_j^*\end{bmatrix}\)
 for the \(j\)th variable, we impose a two-part SSL prior to the
 coefficients
 \(\boldsymbol{\beta}_j = \begin{bmatrix} \beta_j : \boldsymbol{\beta}_j^*\end{bmatrix}\).
-Specifically, we impose independent group priors on the linear space
-coefficients and on the nonlinear space coefficients respectively,
+Specifically, the linear space coefficient has an SSL prior and the
+nonlinear space coefficients share a group SSL prior,
 \begin{align}\label{eq:bham_ssl}
-  \beta_{j} |\gamma_{j},s_0,s_1 &\sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1) \nonumber \\
+  \beta_{j} | \gamma_{j},s_0,s_1 &\sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1) \nonumber \\
   \beta^*_{jk} | \gamma^*_{j},s_0,s_1 &\overset{\text{iid}}{\sim}DE(0,(1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1), k=1,\dots, K_j
 \end{align} where \(\gamma_{j}\in\{0,1\}\) and
 \(\gamma^*_{j}\in \{0,1\}\) are two latent indicator variables,
@@ -392,176 +314,45 @@ indicating if the model includes the linear effect and the nonlinear
 effect of the \(j\)th variable respectively. \(s_0\) and \(s_1\) are
 scale parameters, assuming \(0 < s_0 < s_1\) and given. These scale
 parameters \(s_0\) and \(s_1\) can be treated as tuning parameters and
-optimized via cross-validation. A discussion of how to choose the scale
-parameters comes in Section \ref{sec:tune}. To note, this prior differs
-from previous group SSL priors \citep{Tang2018, Tang2019}, as the
-\(\beta_j\) and \(\boldsymbol{\beta}^*_j\) have different indicator
-variables \(\gamma_j\), \(\gamma_j^*\) respectively. It is possible to
-add a more restrictive assumption on the priors, assuming that one
-indicator variable decides the inclusion of both the linear effect and
-nonlinear effect, i.e.~\(\gamma_j = \gamma^*_j\). This converges to the
-SB-GAM \citep{Bai2021}. Conversely, it is also possible to relax the
-assumption such that each coefficient
-\(\beta_{jk} \in \boldsymbol{\beta}^*_j\) has its own latent indicator
-\(\gamma_{jk}\), but at the cost of complicating the bi-level functional
-selection. This reduces the proposed prior to the classic SSL prior.
+optimized via cross-validation, discussed in Section \ref{sec:tune}.
 
-The re-parameterization introduced in Section \ref{sec:BHAM} grants the
-validity of the proposed prior. First of all, the smoothing function
-bases are linear dependent and necessitate extra attention. The
-eigeondecomposition remedies the problem and hence our prior can be set
-to be conditionally independent. Secondly, the eigenvalue scaling
-provides a panacea to allow unified scale parameters for all bases of
-all smoothing functions.
-
-The rest of the hierarchical prior follows the traditional SSL prior: we
-set up hyper-priors on \(\gamma_j, \gamma^*_j\) to allow local adaption
-of the shrinkage using a Bernoulli distribution, written as binomial
-distribution of one trial. The two indicators of the \(j\)th predictor,
-\(\gamma_j\) and \(\gamma^*_j\), shares the same probability parameter
-\(\theta_j\), \[
+\textcolor{red}{The proposed two-part SSL prior, particularly the group SSL prior of the nonlinear space coefficients, differs from previous group SSL priors \cite{Tang2018, Tang2019}, as the proposed prior follows the effect hierarchy principle. Effect hierarchy refers to the principle that "lower-order effects are more likely to be active than higher-order effects" defined by Chipman\cite{chipman2006prior}. To implement, we consider the shared latent indicator of nonlinear coefficients $\gamma^*_j$}
+depends on the value of the linear space latent indicator \(\gamma_j\),
+while both latent indicators \(\gamma_j\) and \(\gamma^*_j\) follow a
+Bernoulli distribution. While the probability of including the linear
+effect is \(\theta_j\), the probability of including the nonlinear
+effect is \(\textcolor{red}{\gamma_{j}}\theta_j\). \[
 \begin{aligned}
 &\gamma_{j} | \theta_j \sim Bin(1, \theta_j) & & 
-&\gamma_{j}^*| \theta_j \sim Bin(1, \theta_j).
+&\gamma_{j}^*| \textcolor{red}{\gamma_{j}, } \theta_j \sim Bin(1, \textcolor{red}{\gamma_{j}}\theta_j).
 \end{aligned}
-\] This is to leverage the fact that the probability of selecting the
-bases of a smoothing function should be similar, while allowing
-different penalty on the linear space and non-linear space of the
-smoothing function. The hyper prior of \(\gamma_{j}\) decides the
-sparsity of the model at the functional selection level, while that of
-\(\gamma_{j}^*\) decides the smoothness of the spline function at basis
-function level. Meanwhile, we specify that \(\gamma_{j}\) and
-\(\gamma_{j}^*\) are independently distributed for analytic simplicity.
-We further specify the parameter \(\theta_j\) follows a beta
-distribution with given shape parameters \(a\) and \(b\), \[
+\]
+\textcolor{red}{This is, when the linear effect is not selected, the probability of including the nonlinear effect drops from $\theta_j$ to 0. For computational convenience, we analytically integrate $\gamma_j$ out such that $\gamma_{j}^*| \theta_j \sim Bin(1, \theta_j^2)$ (see the derivation in the Supporting Information).
+}
+
+\textcolor{red}{To allow the shrinkage to self-adapt to the sparsity and smoothing pattern of the data, }we
+further specify the parameter \(\theta_j\) follows a beta distribution
+with given shape parameters \(a\) and \(b\), \[
 \theta_j \sim Beta(a, b).
-\] The beta distribution is a conjugate prior for the binomial
-distribution and hence provides some computation convenience. For
-simplicity, we focus on a special case of beta distribution, uniform
-(0,1), i.e.~\(a = 1, b = 1\). When the variable have large effects in
-any of the bases, the parameter \(\theta_j\) will be estimated large,
-which in turn encourages the model to include the rest of bases.
-Hereafter, we refer Bayesian hierarchical generalized additive models
-with the spike-and-slab spline prior as the BHAM, and visually presented
-in Figure \ref{fig:SSprior}.
+\] The beta distribution is a conjugate prior to the binomial
+distribution and hence provides some computation convenience.
+\textcolor{red}{Having a prior distribution of $\theta_j$ enables the proposed prior to inherit the selective shrinkage property and self-adaptivity \cite{Bai2021Review} from the classical SSL prior. In other words, when a smoothing function is significant, the coefficients of the smoothing function escape the overall shrinkage and produce a more accurate estimate, particularly in pair with the smoothing penalty implicitly addressed via the reparameterization. Meanwhile, the hyper prior encourages information borrowing across coordinates and hence automatic adjust for different levels of sparsity.}
+Hereafter, we refer to the Bayesian hierarchical generalized additive
+models with the two-part spike-and-slab LASSO prior as BHAM, and
+visually presented in Figure \ref{fig:SSprior}.
 
-\begin{center}
-Figure \ref{fig:SSprior} here
-\end{center}
+\subsection{Scalable EM-Coordinate Descent Algorithm}
 
-\hypertarget{other-priors}{%
-\subsubsection{Other Priors}\label{other-priors}}
-
-With the re-parameterization step of the basis function matrix
-\(\boldsymbol{X}\), it is possible to generalized the SSL prior to other
-priors, for example normal priors for ridge-type regularization and
-mixture normal prior for spike-and-slab regularization. These priors
-would work better in low and medium dimensional settings where the
-sparse assumption is not necessary. Here we elaborate the mixture normal
-prior as a demonstration of applying continuous spike-and-slab prior in
-BHAM.
-
-A spike-and-slab mixture normal spline prior can be expressed as
-\begin{align*}
-  \beta_{j} |\gamma_{j},s_0,s_1 &\sim N(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)\\
-  \beta^*_{jk} | \gamma^*_{j},s_0,s_1 &\overset{\text{iid}}{\sim}N(0,(1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1), k=1,\dots, K_j.
-\end{align*} Similar to the spike-and-slab spline prior in Equation
-(\ref{eq:bham_ssl}), \(0 < s_0 < s_1\) are tuning parameters and can be
-optimized via cross-validation. One of the critics received by the
-spike-and-slab mixture normal prior is that the tails of a normal
-distribution diminishes to zero too fast, which causes problems when
-estimating the large effects. Distributions with heavier tails can be
-used as an alternative, for example mixture Student's \(t\) distribution
-with small degree of freedom.
-
-\hypertarget{algorithms-for-fitting-bhams}{%
-\subsection{Algorithms for Fitting
-BHAMs}\label{algorithms-for-fitting-bhams}}
-
-The proposed models can be fitted with MCMC algorithms. Nevertheless,
-the computational burden of MCMC algorithms creates scalability issues.
-George and McCulloch\citep{George1997} examined the computation speed
-for various MCMC algorithms with spike-and-slab mixture normal priors,
-and suggested MCMC algorithms works well for medium size (\(p\)=25) of
-predictors with only linear effects. However, it is not feasible for
-high-dimensional data analysis where the number of predictors easily
-exceeds 100. Specific to additive models, each predictor would expand to
-multiple new ``predictors'' via basis functions, creating greater
-computational demands. Scheipl et al. \citep{Scheipl2013} demonstrated
-the computational demands of a MCMC algorithm for fitting spike-and-slab
-GAM grow exponentially as \(p\) increases modestly via simulation
-studies. Hence, we feel compelled to develop scalable algorithms for
-fitting Bayesian hierarchical additive models in high-dimensional
-settings.
-
-As an alternative to sampling algorithms for fitting Bayesian models,
-optimization algorithms focus on the maximum a posteriori (MAP)
-estimates and speed up the model fitting process at the cost of
-posterior inference. The earlier work for fitting SS models using
-optimization algorithms includes EMVS \citep{Rockova2014a}. Rockova and
-George\citep{Rockova2014a} proposed an expectation-maximization (EM)
-based algorithm to fit models that use continuous mixture normal priors.
-In the E step, the latent binary indicators \(\gamma\)s are treated as
-the missing data, and the posterior means are calculated conditioning on
-the current value of other parameters; in the M step, a ridge estimator
-was used to update the coefficients, followed by updating
-\(\phi, \theta\). The same authors \citep{Rockova2018b, Rockova2018}
-further combined the EM algorithm with coordinate descent algorithm to
-fit SSL models. Yi and his group independently developed the
-EM-Iterative Weighted Least Square and EM-cyclic coordinate descent
-algorithms to fit models with broader class of priors, SSL
-included.\citep{Yi2019} These algorithms were implemented for
-generalized linear models\citep{Tang2017a}, Cox proportional hazards
-models \citep{Tang2017} and their grouped
-counterparts\citep{Tang2018, Tang2019}. Both EM based algorithms provide
-deterministic solutions, which becomes a popular property for
-reproducible research
-
-In this section, we extend the two EM-based algorithms, EM-CD and
-EM-IWLS algorithms, to fit BHAMs. To note, the two proposed algorithms
-provides different utilities. The EM-CD algorithm is specifically for
-fitting BHAM with an expedited performance, recommending to use in high
-and ultra-high dimensional setting. A specific concern of EM-CD
-algorithm is that it provides no information for inference. In contrast,
-the EM-IWLS can estimate the variance-covariance matrix of the
-coefficients. Moreover, the EM-IWLS is a more general model fitting
-algorithm that can be used for fitting not only SSL and continuous SS
-priors but also Student's t-priors and double exponential priors. To
-note, SB-GAM\citep{Bai2020, Bai2021} also used an EM-CD algorithm. The
-main difference between proposed EM-CD algorithm and that in SB-GAM is
-that SB-GAM uses a block CD algorithm for their group prior, while the
-proposed prior is pairwise independent requiring no special treatment in
-the CD algorithm.
-
-\hypertarget{em-algorithms}{%
-\subsubsection{EM algorithms}\label{em-algorithms}}
-
-EM algorithm is an iterative algorithm to find MAP estimates or the
-maximum likelihood estimates. It is commonly used when some necessary
-data to establish the likelihood function are missing. Instead of
-maximizing the the likelihood function, the algorithm maximizes the
-expectation of the likelihood function with respect to the ``missing''
-data.
-
-The recursive algorithm consists of two steps:
-
-\begin{itemize}
-\tightlist
-\item
-  E-step: to calculate the expectation of the posterior density function
-  with respect to some ``missing'' data
-\item
-  M-step: to maximize the expectation derived in the E-step and update
-  parameters of interest
-\end{itemize}
+\textcolor{red}{Despite the advantage to estimate posterior densities, using MCMC algorithms to fit the proposed model is computationaly prohibited and not feasible for high-dimensional data. Previous research shows the computation performance of MCMC algorithms for spike-and-slab models is bottlenecked for medium-sized data ($p$=25) \cite{George1997}, and substantially slows as $p$ increases modestly in the GAM context \cite{Scheipl2013}. Hence, we consider the optimization algorithms that focus on the maximum a posteriori estimates at the cost of posterior inference. Specifically, we
+extend the EM-Coordinate Descent (EM-CD) algorithm to fit BHAMs. Similar to the EMVS algorithm \cite{Rockova2014a} for spike-and-slab models, the EM-CD algorithm is based on the expectation-maximization (EM) algorithm, integrating the Coordinate Descent algorithm in each iterative step to find the posterior mode. The EM-CD algorithm has been well adapted in generalized linear models \cite{Tang2017a}, Cox proportional hazards models \cite{Tang2017}, and their grouped counterparts \cite{Tang2018, Tang2019}. The EM-CD algorithm provides deterministic solutions, which becomes a popular property for reproducible research.}
 
 For BHAMs, we define the parameters of interest as
 \(\Theta = \{\boldsymbol{\beta}, \boldsymbol{\theta}, \phi\}\) and
 consider the latent binary indicators \(\boldsymbol{\gamma}\) as
-nuisance parameters of the model, in other words the ``missing'' data.
-Our objective is to find the parameters \(\Theta\) that maximize the
-posterior density function, or equivalently, the logarithm of the
-density function, \[
+nuisance parameters of the model, in other words, the ``missing'' data
+in the EM context. Our objective is to find the parameters \(\Theta\)
+that maximize the posterior density function, or equivalently the
+logarithm of the density function, \[
 \begin{aligned}
 & \text{argmax}_{\Theta}
 \log f(\Theta, \boldsymbol{\gamma}| \textbf{y}, \textbf{X}) \\
@@ -570,23 +361,24 @@ density function, \[
 \end{aligned}
 \]\\
 where \(f(\textbf{y}|\boldsymbol{\beta}, \phi)\) is the data
-distribution and \(f(\theta)\) is the Beta(1,1) density. We choose
+distribution and \(f(\theta)\) is the Beta(a, b) density. We choose
 non-informative prior for the intercept \(\beta_0\) and the dispersion
 parameter \(\phi\); for example, \(f(\beta_0|\tau_0^2)=N(0,\tau_0^2)\)
 with \(\tau^2_0\) set to a large value and \(f(\log \phi) \propto 1\).
 
-We use the EM algorithm to find the MAP estimate of \(\Theta\). This is,
-in the E-step, we calculate the expectation of posterior density
-function of
+We use the EM algorithm to find the maximum a posteriori estimate of
+\(\Theta\). This is, in the E-step, we calculate the expectation of
+posterior density function of
 \(\log f(\Theta, \boldsymbol{\gamma}| \textbf{y}, \textbf{X})\) with
 respect to the latent indicators \(\boldsymbol{\gamma}\) conditioning on
-the values from previous iteration \(\Theta^{(t-1)}\), \[
+the parameter values from previous iteration \(\Theta^{(t-1)}\), \[
 E_{\boldsymbol{\gamma}|\Theta^{(t-1)}}\log f(\Theta, \boldsymbol{\gamma}| \textbf{y}, \textbf{X}) .
 \] Hereafter, we use the shorthand notation
 \(E(\cdot)\equiv E_{\boldsymbol{\gamma}|\Theta^{(t-1)}}(\cdot)\). In the
-M-step, we find the \(\Theta^{(t)}\) that maximize
-\(E\log f(\Theta, \boldsymbol{\gamma}| \textbf{y}, \textbf{X})\). The E-
-and M- steps are iterated until the algorithm converge.
+M-step, we find the parameters \(\Theta^{(t)}\) that maximize
+\(E\log f(\Theta, \boldsymbol{\gamma}| \textbf{y}, \textbf{X})\).
+\textcolor{red}{The parenthesized subscription $^{(t)}$ denotes the parameter estimation at the $t$th iteration.}
+The E- and M- steps are iterated until the algorithm converges.
 
 To note here, the log-posterior density of BHAMs (up to additive
 constants) can be written as a two-part equation
@@ -601,65 +393,56 @@ probability parameters \(\boldsymbol{\theta}\) conditioning on
 \(\boldsymbol{\gamma}\). Meanwhile, conditioning on
 \(\boldsymbol{\gamma}\), \(Q_1\) and \(Q_2\) are independent and can be
 maximized separately for \(\boldsymbol{\beta}, \phi\) and
-\(\boldsymbol{\theta}\). Depending on the choice of coefficient priors,
-\(Q_1\) can be treated as penalized likelihood function and maximization
-of \(E(Q_1)\) can be solved via CD algorithm or IWLS algorithm in each
-iteration. Maximization of \(E(Q_2)\) can be solved via closed form
+\(\boldsymbol{\theta}\). With the proposed two-part spike-and-slab LASSO
+prior, \(Q_1\) can be treated as penalized likelihood function and
+maximization of \(E(Q_1)\) can be solved via the Coordinate Descent
+algorithm in each iteration. Coordinate descent is an optimization
+algorithm that offers extreme computational advantages, and is famous
+for its application in optimizing the \(l_1\) penalized likelihood
+function. Maximization of \(E(Q_2)\) can be solved via closed-form
 equations following the beta-binomial conjugate relationship.
 
-\hypertarget{em-coordinate-descent}{%
-\subsubsection{EM-Coordinate Descent}\label{em-coordinate-descent}}
-
-\label{sec:EMCD}
-
-When the prior distribution of the coefficients is set to mixture double
-exponential, coordinate descent algorithm can be used to estimate the
-parameters in the M-step. Coordinate descent is an optimization
-algorithm that offers extreme computational advantage, and famous for
-its application in optimizing the \(l_1\) penalized likelihood function.
-
-The density function of spike-and-slab mixture double exponential prior
-can be written as \[
+The density function of the mixture double exponential prior of
+coefficient \(\beta\) can be written as \[
 f(\beta|\gamma, s_0, s_1) = \frac{1}{2\left[(1-\gamma)s_0 + \gamma s_1\right]}\exp(-\frac{|\beta|}{(1-\gamma)s_0 + \gamma s_1}),
 \] and \(E(Q_1)\) can be expressed as a log-likelihood function with
 \(l_1\) penalty \begin{equation}\label{eq:Q1_CD}
 E(Q_1) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) - \sum\limits_{j=1}^p\left[E({S_j}^{-1})|\beta_j|+\sum\limits_{k=1}^{K_j}E({S^{*}}^{-1}_{j})|\beta_{jk}|\right],
-\end{equation} where
-\(S_{j} = (1-\gamma^{0}_{j}) s_0 + \gamma^{0}_{j} s_1\) and
+\end{equation} where \(S_{j} = (1-\gamma_{j}) s_0 + \gamma_{j} s_1\) and
 \(S^*_{j} = (1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1\). To calculate two
 unknown quantities \(E({S_j}^{-1})\) and \(E({S^*}^{-1}_j)\), the
 posterior probability
-\(p_{j} \equiv \text{Pr}(\gamma^{0}_{j}=1|\Theta^{(t-1)})\) and
+\(p_{j} \equiv \text{Pr}(\gamma_{j}=1|\Theta^{(t-1)})\) and
 \(p_{j}^*\equiv \text{Pr}(\gamma^*_{j}=1|\Theta^{(t-1)})\) are
 necessary, which can be derived via Bayes' theorem. The calculation of
 \(p_j^*\) is slightly different from that of \(p_j\), as \(p_j^*\)
-depends on the value of the vector \(\boldsymbol{\beta}^*_{j}\) and
+depends on the values of the vector \(\boldsymbol{\beta}^*_{j}\) and
 \(p_j\) only depends on the scalar \(\beta_j\). The calculation follows
-the equations below. \begin{align*}
+the equations below, \begin{align*}
 p_{j} &= \frac{\text{Pr}(\gamma_{j} = 1|\theta_j)f(\beta_{j}|\gamma_{j}=1, s_1) }{\text{Pr}(\gamma_{j} = 1|\theta_j)f(\beta_{j}|\gamma_{j}=1, s_1) + \text{Pr}(\gamma_{j} = 0|\theta_j)f(\beta_{j}|\gamma_{j}=0, s_0)}\\
 p^*_{j} &= \frac{\text{Pr}(\gamma^{*}_{j} = 1|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{*}_{j}=1, s_1) }{\text{Pr}(\gamma^{*}_{j} = 1|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{*}_{j}=1, s_1) + \text{Pr}(\gamma^{*}_{j} = 0|\theta_j)\prod\limits_{k=1}^{K_j}f(\beta_{jk}|\gamma^{*}_{j}=0, s_0)}
-\end{align*} and
-\(\text{Pr}(\gamma_{j}^{0} = 1|\theta_j) = \text{Pr}(\gamma_{j}^*= 1|\theta_j) = \theta_j\),
-\(\text{Pr}(\gamma_{j}^{0} = 0|\theta_j) = \text{Pr}(\gamma_{j}^*= 0|\theta_j) = 1-\theta_j\),
+\end{align*} where \(\text{Pr}(\gamma_{j} = 1|\theta_j) = \theta_j\),
+\(\text{Pr}(\gamma_{j} = 0|\theta_j) = 1-\theta_j\),
+\(\textcolor{red}{\text{Pr}(\gamma_{j}^*= 1|\theta_j) = \theta_j^2}\),
+\(\textcolor{red}{\text{Pr}(\gamma_{j}^*= 0|\theta_j) = 1-\theta^2_j}\),
 \(f(\beta|\gamma=1, s_1) = \text{DE}(\beta|0 , s_1)\),
 \(f(\beta|\gamma=0, s_0) = \text{DE}(\beta|0 , s_0)\). It is trivial to
-show \begin{align}\label{eq:exp_scale}
+show \begin{align*}\label{eq:exp_scale}
 &E(\gamma_{j})  = p_{j} & &E(\gamma^{*}_{j}) = p_{j}^{*}\nonumber\\
-&E({S}^{-1}_{j}) = \frac{1-p_{j}}{s_0} + \frac{p_{j}}{s_1} & &E({S^*}^{-1}_{j}) = \frac{1-p_{j}^{*}}{s_0} + \frac{p_{j}^{*}}{s_1}.
-\end{align} After replacing withe calculated quantities, \(E(Q_1)\) can
+&E({S}^{-1}_{j}) = \frac{1-p_{j}}{s_0} + \frac{p_{j}}{s_1} & &E({S_{j}^*}^{-1}) = \frac{1-p_{j}^{*}}{s_0} + \frac{p_{j}^{*}}{s_1}.
+\end{align*} After replacing the calculated quantities, \(E(Q_1)\) can
 be seen as a \(l_1\) penalized likelihood function with the
 regularization parameter \(\lambda = E(S^{-1})\), and hence be optimized
 via coordinate descent algorithm \citep{Friedman2010}. Independently,
 the remaining parameters of interest \(\boldsymbol{\theta}\) can be
 updated by maximizing \(E(Q_2)\). As the beta distribution is a
 conjugate prior for Bernoulli distribution, \(\boldsymbol{\theta}\) can
-be easily updated with a closed form equation,
+be easily updated with a closed-form equation,
 \begin{equation}\label{eq:update_theta}
 \theta_j = \frac{p_j + p^*_{j} + a - 1 }{a + b}.
 \end{equation}
 
-Totally, the proposed EM-coordinate descent algorithm is summarized as
-follows:
+Totally, the proposed EM-CD algorithm is summarized as follows:
 
 \begin{enumerate}
 \def\labelenumi{\arabic{enumi})}
@@ -696,329 +479,186 @@ We assess convergence by the criterion:
 is the estimate of deviance at the \(t\)th iteration, and \(\epsilon\)
 is a small value (say \(10^{-5}\)).
 
-\hypertarget{em-iwls}{%
-\subsubsection{EM-IWLS}\label{em-iwls}}
+\subsection{Selecting Optimal Scale Values}
+\label{sec:tune}
 
-Similar to the EM-CD algorithm, the EM-IWLS algorithm is an iterative
-EM-based algorithm where the iterative weighted least squares algorithm
-is used to find the estimate of \(\boldsymbol{\beta}, \phi\) that
-maximizes \(E(Q_1)\). The iterative weighted least squares algorithm was
-originally proposed to fit the classical generalized linear models, and
-generalized to fit some Bayesian hierarchical models.\citep{Gelman2013}
-Yi and Ma \citep{Yi2012} formulated Student's t-distribution and double
-exponential distribution as hierarchical normal distributions such that
-generalized linear models with shrinkage priors can be easily fitted
-using IWLS in combination with EM algorithm. In this work, we adapt the
-EM-IWLS paradigm to fit BHAM with spike-and-slab spline prior .
-
-A double exponential prior, \(\beta|S \sim DE(0, S)\) can be formulated
-as a hierarchical normal prior with unknown variance \(\tau^2\)
-integrated out: \begin{align*}
-  \beta|\tau^2 &\sim N(0, \tau^2)\\
-  \tau^2|S & \sim Gamma(1, 1/(2S^2)), 
-\end{align*} For the mixture double exponential priors, we can define
-the scale parameter \(S = (1-\gamma)s_0 + \gamma s_1\) following
-Equation (\ref{eq:ssl}). The change in the prior formulation in turn
-leads to the change in the log posterior density function, as \(Q_1\)
-needs to account for the hyperprior of \(\tau^2\):
-\begin{equation}\label{eq:Q1_IWLS}
-Q_1(\boldsymbol{\beta}, \phi) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) + \sum\limits_{j=1}^p\left[\log f(\beta_j|{\tau}^2_j) + \log f({\tau}^2_j| S_j)+\sum\limits_{k=1}^{K_j} \{\log f(\beta^{*}_{jk}|{\tau^{*}}^2_{jk})+\log f({\tau^*}^2_{jk}| S^*_j)\}\right].
-\end{equation} Since \(\boldsymbol{\tau}^2\) are not of our primary
-interest, we treat them as the ``missing'' data in addition to the
-latent indicators \(\boldsymbol{\gamma}\), and hence construct the
-expectation
-\(E_{\boldsymbol{\gamma}, \boldsymbol{\tau}^2|\Theta^{(t-1)}}(Q_1)\) in
-the E-step. To note, unlike the same latent indicator \(\gamma^*_j\)
-which is shared by the coefficients of the non-linear terms
-\(\beta^*_{jk}\) for \(k = 1, \dots, K_j\) , \(\tau^2_{jk}\) is
-coefficient specific for \(\beta^*_{jk}\).
-\(E({S_j}^{-1}|\beta_j, s_0, s_1), E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1), E({\tau}^2_{j}|S_j, \beta_j) \text{ and } E({\tau^*}^2_{jk}|S_j^*, \beta^*_{jk})\)
-needs to be calculated to formulate \(E(Q_1)\). As neither
-\(E({S_j}^{-1}|\beta_j, s_0, s_1)\) nor
-\(E({S^*}^{-1}_j|\boldsymbol{\beta}_j^*, s_0, s_1)\) depends on
-\(\tau^2\)s, they can be derived using Equation (\ref{eq:exp_scale}). On
-the other hand, \(\tau^{2}\), following gamma distributions, is a
-conjugate prior for the normal variance, and the conditional posterior
-density of \(\tau^{-2}\) is an inverse Gaussian distribution.
-\(E({\tau}^{-2}_{j})\) and \(E({\tau^*}^{-2}_{jk})\) are calculated
-using the closed form equation \begin{align*}
- E({\tau}^{-2}_{j}|S_j, \beta_j) ={S_j}^{-1}/|\beta_j| \qquad E({\tau^*}^{-2}_{jk}|S_j^*, \beta^*_{jk})={S_j^*}^{-1}/|\beta^*_{jk}|,
-\end{align*} where \(S_j\) and \(S_j^*\) are replaced by the expectation
-and \(\beta\)s are replaced with \(\beta^{(t-1)}\). With simplification
-(up to constant additive terms), we have
-\begin{equation}\label{eq:EQ1_IWLS}
-E(Q_1) = \log f(\textbf{y}|\boldsymbol{\beta}, \phi) - \sum\limits_{j=1}^p\left[ {2E({\tau_j}^{-2})}{\beta_j}^2 +\sum\limits_{k=1}^{K_j} {2E({\tau_{jk}^*}^{-2})}{\beta_{jk}^*}^2\right].
-\end{equation} \(2E({\tau}^{-2})\beta^2\) can be seen as the kernel of a
-normal density with mean 0 and variance \(E(\tau^{2})\), and we can
-formulate the coefficients \(\boldsymbol{\beta}\) as a multivariate
-normal distribution with means \(\boldsymbol{0}\) and variance
-covariance matrix \(\boldsymbol{\Sigma}_{\tau^2}\), where
-\(\boldsymbol{\Sigma}_{\tau^2}\) is a diagonal matrix with
-\(E(\tau^2)\)s on the diagonal, \[
-\boldsymbol{\beta }\sim \text{MVN}(0, \boldsymbol{\Sigma}_{\tau^2}).
-\]
-
-Meanwhile, following the classical IWLS, we can approximate the
-generalized model likelihood at each iteration with a weighted normal
-likelihood: \[
-f(\textbf{y}|\boldsymbol{\beta}, \phi) \approx \text{MVN}(\textbf{z}|\boldsymbol{X} \boldsymbol{\beta}, \phi\boldsymbol{\Sigma })
-\] where the `normal response' \(z_i\) and `weight' \(w_i\) are called
-the pseudo-response and pseudo-weight respectively. The pseudo-response
-and the pseudo-weight are calculated by \[
-\begin{aligned}
-z_i &= \hat\eta_i - \frac{L^{'}(y_i|\hat\eta_i)}{L^{''}(y_i|\hat\eta_i)}& w_i &= - L^{''}(y_i|\hat\eta_i),
-\end{aligned}
-\] where \(\hat\eta_i = (\boldsymbol{X} {\hat{\boldsymbol{\beta}}})_i\),
-\(L^{'}(y_i|\hat\eta_i, \hat \phi)\) and
-\(L^{''}(y_i|\hat\eta_i, \hat \phi)\) are the first and second
-derivative of the log density,
-\(\log f(\textbf{y}_i|\boldsymbol{\beta}, \phi)\) with respect to
-\(\eta_i\).
-
-With
-\(\boldsymbol{z}\sim \text{MVN}(\boldsymbol{X} \boldsymbol{\beta}, \phi \boldsymbol{\Sigma})\)
-and
-\(\boldsymbol{\beta }\sim \text{MVN}(0, \phi \boldsymbol{\Sigma}_{\tau^2})\),
-we can augment the two multivariate normal distributions and update the
-estimates for \(\boldsymbol{\beta}\) and \(\phi\) via least squares in
-each iteration of the EM algorithm. We create the augmented response,
-augmented data, and augmented variance-covariance matrix following
-\begin{align*}
-& \boldsymbol{z}_* = \begin{bmatrix} \boldsymbol{z}\\ \boldsymbol{0}\end{bmatrix} &&
-  \boldsymbol{X}_* = \begin{bmatrix} \boldsymbol{X} \\ \boldsymbol{I} \end{bmatrix} &&
-  \boldsymbol{\Sigma}_* = \begin{bmatrix} \boldsymbol{\Sigma }& \boldsymbol{0}  \\ \boldsymbol{0} & \boldsymbol{\Sigma}_{\tau^2}/\phi \end{bmatrix}, &
-\end{align*} such that \[
-\boldsymbol{z}_* \sim \text{MVN}(\boldsymbol{X}_* \boldsymbol{\beta }, \phi \Sigma_*).
-\] Using the least squares estimators to update \(\boldsymbol{\beta}\)
-and \(\phi\), we have \begin{align*}
-& \boldsymbol{\beta}^{(t)} = (\boldsymbol{X}_*^T \boldsymbol{\Sigma}^{-1} \boldsymbol{X}_*)^{-1}\boldsymbol{X}_*^T \boldsymbol{\Sigma}^{-1} \boldsymbol{z}_* && \phi^{(t)} = \frac{1}{n}(\boldsymbol{z}_*-X_*\boldsymbol{\beta}^{(t)})^T\boldsymbol{\Sigma}^{-1}(\boldsymbol{z}_*-X_*\boldsymbol{\beta}^{(t)}).&
-\end{align*} To note, the variance-covariance matrix of the coefficient
-estimates variance-covariance matrix can be derived in the EM-IWLS
-algorithm and in turn can be used for statistical inferences, \[
-  \text{Var}(\boldsymbol{\beta}^{(t)}) = (\boldsymbol{X}_*^T\boldsymbol{\Sigma}^{-1} \boldsymbol{X}_*)^{-1}\phi^{(t)}.
-\]
-
-Totally, the proposed EM-IWLS algorithm is summarized as follows:
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi})}
-\item
-  Choose a starting value \(\boldsymbol{\beta}^{(0)}\) and
-  \(\boldsymbol{\theta}^{(0)}\) for \(\boldsymbol{\beta}\) and
-  \(\boldsymbol{\theta}\). For example, we can initialize
-  \(\boldsymbol{\beta}^{(0)} = \boldsymbol{0}\) and
-  \(\boldsymbol{\theta}^{(0)} = \boldsymbol{0}.5\)
-\item
-  Iterate over the E-step and M-step until convergence
-
-  E-step: calculate \(E(\gamma_{j})\), \(E(\gamma^*_{j})\) and
-  \(E(\tau^{-2}_{j})\), \(E({\tau^*}^{-2}_{jk})\) with the estimates
-  \(\Theta^{(t-1)}\) from the previous iteration
-
-  M-step:
-
-  \begin{enumerate}
-  \def\labelenumii{\alph{enumii})}
-  \tightlist
-  \item
-    Based on the current value of \(\beta\), calculate the pseudo-data
-    \(z_i^{(t)}\) and the pseudo-weights \(w_i^{(t)}\)
-  \item
-    Update \(\boldsymbol{\beta}^{(t)}\) by runing the augmented weighted
-    least squared
-  \item
-    If \(\phi\) is present, update \(\phi\)
-  \end{enumerate}
-\end{enumerate}
-
-Similar to EM-CD, we assess convergence by the criterion,
-\(|d^{(t)}-d^{(t-1)}|/(0.1+|d^{(t)}|)<\epsilon\), where \(\epsilon\) is
-a small value (say \(10^{-5}\)).
-
-\hypertarget{selecting-optimal-scale-values}{%
-\subsection{Selecting Optimal Scale
-Values}\label{selecting-optimal-scale-values}}
-
-\label{sec:tune} Our proposed models, BHAM, require two preset scale
-parameters (\(s_0\), \(s_1\)). Hence, we need to find the optimal values
-for the scale parameters such that the model reaches its best prediction
-performance regarding a criteria of preference. This would be achieved
-by constructing a two dimensional grid, consists of different pairs of
-(\(s_0\), \(s_1\)) value. However, previous research suggested the value
-of slab scale \(s_1\) have less impact on the final model and is
-recommended to be set as a generally large value, e.g.~\(s_1 = 1\), that
-provides no or weak shrinkage. \citep{Rockova2018} As a result, we focus
-on examining different values of spike scale \(s_0\). Instead of the 2-D
-grid, We consider a sequence of \(L\) decreasing values
+Our proposed model, BHAM, requires two preset scale parameters (\(s_0\),
+\(s_1\)). Hence, we need to find the optimal values for the scale
+parameters such that the model reaches its best prediction performance
+regarding criteria of preference. This would be achieved by constructing
+a two-dimensional grid, consisting of different (\(s_0\), \(s_1\))
+pairs. However, previous research suggests the value of slab scale
+\(s_1\) has less impact on the final model and is recommended to be set
+as a generally large value, e.g.~\(s_1 = 1\), that provides no or weak
+shrinkage. \citep{Rockova2018} As a result, we focus on examining
+different values of spike scale \(s_0\). Instead of the two-dimensional
+grid, we consider a sequence of \(L\) decreasing values
 \(\{s_0^l\}: 0 < s_0^1 < s_0^2 < \dots < s_0^L < s_1\). Increasing the
 spike scale \(s_0\) tends to include more non-zero coefficients in the
 model. A measure of preference calculated with cross-validations (CV),
-e.g.~deviance, area under the curve (AUC), mean squared error, can be
-used to facilitate the selection of a final model. The procedure is
-similar to the Lasso implemented in the widely used R package
-\texttt{glmnet}, which quickly fits Lasso models over a list of values
-of regularization parameters \(\lambda\) , giving a sequence of models
-for users to choose from.
+e.g.~deviance
+\textcolor{red}{(defined as model log-likelihood times -2, $-2\log f(\boldsymbol{y}|\boldsymbol{\hat\beta}, \hat\phi)$)},
+area under the curve (AUC), mean squared error, can be used to
+facilitate the selection of a final model. The procedure is similar to
+the LASSO implementation in the widely used R package \texttt{glmnet},
+which quickly fits LASSO models over a list of candidate values of
+\(\lambda\) and gives a sequence of models for users to choose from.
 
-\hypertarget{simulation-study}{%
-\section{Simulation Study}\label{simulation-study}}
-
+\section{Simulation Study}
 \label{sec:sim}
 
-In this section, we compare the performance of the proposed models to
-four alternative models: component selection and smoothing operator
-(COSSO) \citep{Zhang2006GAM}, adaptive COSSO \citep{Storlie2011},
-generalized additive models with automatic smoothing \citep{Wood2011},
-SB-GAM \citep{Bai2021}. COSSO is one of the earliest smoothing spline
-models that consider sparsity-smoothness penalty. Adaptive COSSO
-improved upon COSSO by using adaptive weight for penalties such that the
-penalty of each functional component are different for extra
-flexibility. Generalized additive models with automatic smoothing,
-hereafter \textit{mgcv}, is one of the most popular models for nonlinear
-effect interpolation and prediction. SB-GAM is the first spike-and-slab
-lasso GAM. We implement COSSO and adaptive COSSO with R package
-\texttt{cosso 2.1-1}, generalized additive models with automatic
-smoothing with R package \texttt{mgcv 1.8-31}, SB-GAM with R package
-\texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide
+In this section, we compare the performance of the proposed model to
+\textcolor{red}{six alternative models: linear LASSO models,} component
+selection and smoothing operator (COSSO) \citep{Zhang2006GAM}, adaptive
+COSSO \citep{Storlie2011}, generalized additive models with automatic
+smoothing (referred to as \textit{mgcv} hereafter)\citep{Wood2011},
+\textcolor{red}{spike-and-slab GAM \cite{Scheipl2012}}, and SB-GAM
+\citep{Bai2021}.
+\textcolor{red}{We use linear LASSO models as the benchmark, examining the performance when the linearity assumption doesn't hold}.
+COSSO is one of the earliest smoothing spline models that consider
+sparsity-smoothness penalty. Adaptive COSSO improved upon COSSO by using
+adaptive weight for penalties such that the penalty of each functional
+component is different for extra flexibility. \textit{mgcv} is one of
+the most popular models for nonlinear effect interpolation and
+prediction. Nevertheless,
+\textcolor{red}{mgcv doesn't support analyses when the number of parameters exceeds the sample size.}
+\textcolor{red}{Spike-and-slab GAM employs a spike-and-slab prior for GAM and uses an MCMC algorithm for model fitting.}
+SB-GAM is the first spike-and-slab LASSO GAM. We implement linear LASSO
+model with R package \texttt{glmnet 4.1-2}, COSSO and adaptive COSSO
+with R package \texttt{cosso 2.1-1}, generalized additive models with
+automatic smoothing with R package \texttt{mgcv 1.8-31}, spike-and-slab
+GAM with R package \texttt{spikeSlabGAM 1.1-15}, and SB-GAM with R
+package \texttt{sparseGAM 1.0}. COSSO models and SB-GAM do not provide
 flexibility to define smoothing functions, and hence use the default
-choices. Both mgcv and proposed models allow customized smoothing
-functions and we choose the cubic regression spline. We controll the
-dimensionality of each smoothing function, 10 bases, for all different
-choices of smoothing functions. We use 5-fold CV with the default
-selection criteria to select the final model for COSSO models, SB-GAM
-and the proposed models. 20 default candidates of tuning parameters
-(\(s_0\) in BHAM, \(\lambda_0\) in SB-GAM) are examined for SB-GAM and
-the proposed models which allow user-specification of tuning candidates.
-All computation was conducted on a high-performance 64-bit Linux
-platform with 48 cores of 2.70GHz eight-core Intel Xeon E5-2680
-processors and 24G of RAM per core and R 3.6.2 \citep{R}.
+choices; mgcv, spikeSlabGAM and the proposed model allow customized
+smoothing functions and we choose the cubic regression spline. We
+control the dimensionality of each smoothing function, 10 bases, for all
+different choices of smoothing functions. We use a 5-fold CV with the
+default selection criteria to select the final model for linear LASSO
+model, COSSO models, SB-GAM and the proposed model. Twenty default
+candidates of tuning parameters (\(s_0\) in BHAM, \(\lambda_0\) in
+SB-GAM) are examined for SB-GAM and the proposed model that allow user
+specification of tuning candidates. All computation was conducted on a
+high-performance 64-bit Linux platform with 48 cores of 2.70GHz
+eight-core Intel Xeon E5-2680 processors and 24G of RAM per core and R
+3.6.2 \citep{R}.
 
 Other related methods for high-dimensional GAMs also exist, notably the
 methods of sparse additive models by Ravikumar et al.
-\citep{Ravikumar2009} and stochastic search term selection for GAM
-\citep{Scheipl2012}. However, we exclude these methods from current
-simulation study because of demonstrated inferior predictive performance
-compared to mgcv and scalability issues with increased number of
-predictors. \citep{Scheipl2013}
+\citep{Ravikumar2009}. However, we exclude these methods from the
+current simulation study because they demonstrated inferior predictive
+performance compared to \textit{mgcv} \citep{Scheipl2013}.
 
-\hypertarget{monte-carlo-simulation-study}{%
-\subsection{Monte Carlo Simulation
-Study}\label{monte-carlo-simulation-study}}
+\subsection{Monte Carlo Simulation Study}
 
-We follow the data generating process described in Bai \citep{Bai2021}.
-We first generate \(n=500\) training data points with
+We follow the data generating process described in Bai \citep{Bai2021}:
+we first generate \(n=500\) training data points with
 \(p=4, 10, 50, 100, 200\) predictors respectively, where the predictors
-\(X\) are simulated from a multivariate normal distribution
-\(\text{MVN}_{n\times p}(0, I_{P})\). We then simulate the outcome \(y\)
+\(\boldsymbol{X}\) are simulated from a multivariate normal distribution
+\(\text{MVN}_{n\times p}(0, I_{P})\). We then simulate the outcome \(Y\)
 from two distributions, Gaussian and binomial with the identity link and
 logit link \(g(x) = \log(\frac{x}{1-x})\) respectively. The mean of each
-outcome were simulated via the following function \[
+outcome is derived via the following function \[
 \mathbb{E}(Y) = g^{-1}(5 \sin(2\pi x_1) - 4 \cos(2\pi x_2 -0.5) + 6(x_3-0.5) - 5(x_4^2 -0.3))
-\] for Gaussian and binomial outcomes. Gaussian outcomes requires
+\] for Gaussian and binomial outcomes. Gaussian outcomes require
 specification of dispersion, where we set the dispersion parameter to be
 1. In this data generating process, we have \(x_1, x_2, x_3, x_4\) as
-the active covariates, while the rest covariates are inactive,
+the active predictors, while the rest predictors are inactive,
 i.e.~\(f_j(x_j) = 0\) for \(j = 4, \dots, p\). Another set of
-independent sample of size \(n_{test}=1000\), are created following the
+independent sample of size \(n_{test}=1000\), is created following the
 same data generating process, serving as the testing data. We generate
 50 independent pairs of training and testing datasets to evaluate the
-prediction performance of the chosen models, where training datasets are
-used to fit the models and testing datasets used to calculate assessment
-measures.
+prediction and variable selection performance of the chosen models,
+where training datasets are used to fit the models and testing datasets
+are used to calculate metrics of interest.
+\textcolor{red}{In addition, we consider the data generating process where all functional forms of the predictors are linear while keeping the rest of simulation parameters the same. This additional set of linear simulations is designed to investigate the flexibility of the proposed model when nonlinear assumptions are not met.}
 
 To evaluate the predictive performance of the models, the statistics,
 \(R^2\) for Gaussian model and AUC for binomial model calculated based
-on the testing dataset, are averaged across 50 simulations. Computation
-time for model selection, final model fitting and prediction are
-recorded for all simulations.
+on the testing datasets, are averaged across 50 simulations.
+\textcolor{red}{To evaluate the variable selection performance of the models, we record the set of variables each method selects and calculate the averaged positive predictive value (precision), true positive rate (recall), and Matthews correlation coefficient (MCC),
+\begin{align*}
+&\text{precision} = \frac{TP}{PP}\\
+&\text{recall} = \frac{TP}{TP+FP}\\
+&\text{MCC} = \frac{TP\times TN - FP \times FN}{\sqrt{(TP+FP)(TP+FN)(TN+FP)(TN+FN)}},
+\end{align*}
+where TP, TN, FP, FN, and PP are true positives, true negatives, false positives, false negatives, and predicted positives respectively. For the methods that don't automatically achieve variable selection, we set the alpha level at 0.05 for \textit{mgcv} that relies on hypothesis testing, and a soft-threshold at 0.5 for spikeSlabGAM given the marginal inclusion probabilities. For the two methods, BHAM and spikeSlabGAM, that are capable of bi-level selection, we record the probability that the linear and nonlinear components of each predictor are selected in the models.}
 
-\begin{center}
-Table \ref{tab:gaus} here\\
-Table \ref{tab:bin_auc} here\\
-\end{center}
+\subsection{\textcolor{red}{Simulation Results}}
+\subsubsection{\textcolor{red}{Prediction Performance}}
 
-The predictive performances have a consistent pattern across the two
-distributions of outcomes. Across all the scenarios, COSSO and adaptive
-COSSO have the least favorable performance among the applicable methods
-examined (See Table \ref{tab:gaus} and \ref{tab:bin_auc}). To note, mgcv
-doesn't support high-dimensional analysis, i.e.~the number of
-coefficients are greater than the sample size, and hence not evaluated
-when \(p=100, 200\). mgcv predicts well when \(p\) is small or moderate
-(\(p = 4, 10\)), and deteriorate when the number of predictors increase.
-Among the three fast-computing Bayesian hierarchical models, the
-proposed models, BHAM-IWLS and BHAM-CD predicts better than SB-GAM when
-the dimension of are moderate (p=4, 10, 50). Particularly, BHAM-IWLS
-performs as good as mgcv if not better. However, in high dimensional
-case where we mimic the situation the signals are extremely sparse,
-SB-GAM has better performance than the proposed method. However, the
-BHAM-CD has extreme computational advantage over SB-GAM (see Table
-\ref{tab:time_sim}) without sacrificing much of the prediction accuracy.
+\textcolor{red}{Among the set of simulations where the functional forms of the predictors are nonlinear,}
+the predictive performances have a consistent pattern across the two
+distributions of outcomes. For simplicity, we use Gaussian simulations
+to exemplify the improvement of BHAM and defer to Tables \ref{tab:gaus}
+and \ref{tab:bin_auc} for detailed statistics.
+\textcolor{red}{The proposed model, BHAM, predicts as good as, if not better than, other high dimensional additive models. Specifically, BHAM shows great improvement over COSSO methods, resulting in a median (interquartile range, IRT) 31\% (131\%) and 20\% (129\%) improvement over COSSO and adaptive COSSO in $R^2$ statistics respectively. The improvement over the spikeSlabGAM model is moderate, resulting in a median (IRT) 6\% (10\%) improvement in $R^2$. When comparing to SB-GAM, BHAM performs better (median (IRT) 13\% (8\%) improvement in R2) in lower dimensional cases ($p=4,10$), and equally good or slightly worse (median (IRT) 1\% (9\%) improvement in R2: ) in high-dimensional cases ($p=50,100, 200$). As previously hypothesized, the linear LASSO model predicts less accurate than other flexible models across all scenarios; mgcv performs extremely well in low-dimensional cases ($p = 4, 10$), and deteriorates as the dimensionality increases until not applicable. To note, mgcv fits models but fails to converge within the default number of iterations when the sample size approaches the number of coefficients to estimate ($p=50$), which leads to bad performance.}
+Even though SB-GAM has slight prediction advantage over the proposed
+model in high-dimensional situations, the BHAM has an extreme
+computational advantage over SB-GAM, resulting median (IRT) 64\% (39\%)
+reduction in computation time (measured in seconds) for Gaussian
+simulations, without sacrificing much of the prediction accuracy (see
+Table \ref{tab:time_sim}).
 
-~
+\textcolor{red}{We also examine the prediction performance when the functional form of predictors is linear, see Supporting Information Table S1, and S2. The proposed model, BHAM, has a similar performance as the linear LASSO model regardless of the distribution. This observation demonstrates that BHAM is a flexible model, and has good prediction performance regardless of the underlying functional form of predictors. spikeSlabGAM has a similar prediction performance to BHAM. Surprisingly, SB-GAM doesn't perform well in high-dimensional Gaussian outcome scenarios.}
 
-\hypertarget{metabolomics-data-analysis}{%
-\section{Metabolomics Data Analysis}\label{metabolomics-data-analysis}}
+\textcolor{red}{\subsubsection{Variable Selection Performance}}
+\textcolor{red}{Among the set of simulations where the functional forms of the predictors are nonlinear, the proposed model, BHAM, has a consistent performance across different dimensions and distribution settings (See Table \ref{tab:sim_gaus_var_select} for Gaussian outcomes, and Support Information Table S3 for binomial outcomes): being conservative. The symptoms of conservative variable selection are high precision and low recall, where high precision means that among all the selected variables, high percentage of them are true signals; low recall means that the model selected a small subset among all the active predictions. In other words, BHAM tends to select a smaller set of variables that are truly effective to the outcome. We want to note, the variable selection performance of BHAM is plummeted and not optimized when $p=200$. Upon further investigation, we discover it's because the generic sequence of $s_0$ used to tune the model doesn't contain the optimal value. Overall, among all the models examined, SB-GAM has the best performance, both high precision and high recall, and yields a high MCC. The performance of another Bayesian model, spikeSlabGAM deteriorates as the sparsity grows, particularly when ($p>50$), or for binomial outcomes. The variable selection performance for linear simulations matches with prediction performance: BHAM performs great among the Gaussian scenarios, while the performance of SB-GAM deteriorates.}
 
+\textcolor{red}{Among the high-dimensional methods of comparison, there are two methods that are capable to achieve bi-level selection, the proposed BHAM and spikeSlabGAM. Among the linear simulations, both methods can accurately select the linear components and have a drastically lowered probability, close to 0, to include the nonlinear component, as anticipated. Specifically, spikeSlabGAM have a smaller probability to include the nonlinear component in the model than BHAM. However, this advantage of spikeSlabGAM over BHAM is less obvious among the nonlinear simulations: spikeSlabGAM performs better than BHAM when selecting components of the functional forms that include only linear or nonlinear component, e.g. functional forms for $x_3$ and $x_4$. However, spikeSlabGAM inclines to ignore variables that have more complex function forms, e.g. function forms for $x_1$ and $x_2$. In contrast, BHAM is more likely to include them in the model. This trade-off is determined by the assumption implicitly reflected via the prior hierarchy. We defer an in-depth discussion to Section \ref{sec:concl}.}
+
+\section{Metabolomics Data Analysis}
 \label{sec:real_data}
 
-In this section, we apply the proposed models BHAM, fitted with the
-EM-CD algorithm, to analyze two real-world metabolomics datasets where
-the outcomes are binary and continuous respectively. We demonstrate the
-improved prediction performance compared to the other Bayesian
-hierarchical additive model, SB-GAM \citep{Bai2021}, while being
-computationally efficient (see Table \ref{tab:time_real_data}).
+In this section, we apply the proposed model BHAM to analyze two
+published metabolomics datasets where the outcomes are binary and
+continuous respectively. We demonstrate the improved prediction
+performance compared to the other Bayesian hierarchical additive model,
+SB-GAM \citep{Bai2021}, while being computationally efficient (see Table
+\ref{tab:time_real_data}).
+\textcolor{red}{BHAM requires roughly 10\% of the computation time of SB-GAM to fit models.}
 
-\begin{center}
-Table \ref{tab:time_real_data} here
-\end{center}
+\subsection{Emory Cardiovascular Biobank}
+\label{sec:ECB}
 
-\hypertarget{emory-cardiovascular-biobank}{%
-\subsection{Emory Cardiovascular
-Biobank}\label{emory-cardiovascular-biobank}}
-
-\label{sec:ECB} We use the proposed models BHAM to analyze a metabolic
-dataset from a recently published research \citep{Mehta2020} studying
-plasma metabolomic profile on the three-year all-cause mortality among
-patients undergoing cardiac catheterization. The dataset is publicly
-available via \textit{Dryad} \citep{Mehta2020_data}. It contains in
-total of 776 subjects from two cohorts. As there is a large number of
-non-overlapping features among the two cohorts, we use the cohort with
-larger sample size (N=454). There are initially 6796 features in the
-dataset, which is too large to be practically meaningful to analyze.
-Hence, we perform a univariate screening procedure on the features, via
-GAM implemented in \texttt{mgcv}, and choose the the top 200 features
-with smallest p-values. We use 5-knot spline additive models for binary
-outcome using two different models, the proposed BHAM and the SB-GAM.
-10-Fold CV are used to choose the optimal tuning parameters of each
-framework with respect to the default selection criterion implemented in
-the software. Out-of-bag samples are used for prediction performance
-evaluation, where deviance, AUC, Brier score defined as
+We use the proposed model BHAM to analyze a metabolic dataset from a
+recently published research \citep{Mehta2020} studying plasma
+metabolomic profile on the three-year all-cause mortality among patients
+undergoing cardiac catheterization. The dataset is publicly available
+via \textit{Dryad} \citep{Mehta2020_data}. It contains in total of 776
+subjects from two cohorts. As there is a large number of non-overlapping
+features among the two cohorts, we use the cohort with a larger sample
+size (N=454). There are initially 6796 features in the dataset, which is
+too large to be practically meaningful to analyze. Hence, we choose the
+top 200 features \textcolor{red}{with the largest variance}. We use
+5-knot spline additive models for binary outcome using two different
+models, the proposed BHAM and the SB-GAM. 10-Fold CV are used to choose
+the optimal tuning parameters of each framework with respect to the
+default selection criterion implemented in the software. Out-of-bag
+samples are used for prediction performance evaluation, where deviance,
+AUC, Brier score, defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2\), and
-misclassication error defined as
+misclassification error, defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}I(|y_i - \hat y_i|>0.5)\) are
-calculated. BHAM-CD obtains superior AUC, Brier score, and
+calculated. BHAM obtains superior AUC, Brier score, and
 misclassification error in the out-of-bag samples compared to SB-GAM
 (see Table \ref{tab:ECB_res}).
+\textcolor{red}{We plot the 33 features included in the final BHAM model in Figure \ref{fig:ECB_fig}.}
 
-\begin{center}
-Table \ref{tab:ECB_res} here
-\end{center}
+\subsection{Weight Loss Maintenance Cohort}
 
-\hypertarget{weight-loss-maintenance-cohort}{%
-\subsection{Weight Loss Maintenance
-Cohort}\label{weight-loss-maintenance-cohort}}
-
-We use the proposed models BHAM to analyze metabolomics data from a
+We use the proposed model BHAM to analyze metabolomics data from a
 recently published study \citep{Bihlmeyer2021} on the association
 between metabolic biomarkers and weight loss, where the dataset is
 publicly available \citep{Bihlmeyer2021_data}. In this analysis, we
-primarily focuse on the analysis of one of the three studies included,
+primarily focus on the analysis of one of the three studies included,
 weight loss maintenance cohort \citep{Svetkey2008}, due to the
 drastically different intervention effects. In the dataset, 765
-metaboliltes in baseline plasma collected were profiled using liquid
+metabolites in baseline plasma collected were profiled using liquid
 chromatography mass spectrometry. Quality control and natural log
-transformation are performed during metabolites data preparation. The
-outcome of interest are standardized percent change in insulin
+transformation \textcolor{red}{were previously} performed and documented
+\textcolor{red}{by the study publishing team \cite{Bihlmeyer2021}}. The
+outcome of interest is standardized percent change in insulin
 resistance, and hence modeled using a Gaussian model. After removing
 missing datapoints and addressing outliers in the data, there are
 \(p\)=237 features remaining in the analysis. 5-Knot spline additive
@@ -1031,97 +671,59 @@ samples are used for prediction performance evaluation, where deviance,
 \(\frac{1}{n}\sum\limits^{n}_{i=1}(y_i - \hat y_i)^2\), and mean
 absolute error (MAE) defined as
 \(\frac{1}{n}\sum\limits^{n}_{i=1}|y_i - \hat y_i|\) are calculated.
-BHAM-CD obtains superior \(R^2\), MSE, and MAE in the out-of-bag samples
+BHAM obtains superior \(R^2\), MSE, and MAE in the out-of-bag samples
 compared to SB-GAM (see Table \ref{tab:WLM_res}).
 
-\begin{center}
-Table \ref{tab:WLM_res} here
-\end{center}
+\section{Discussion}
+\label{sec:concl}
 
-\hypertarget{discussion}{%
-\section{Discussion}\label{discussion}}
+\textcolor{red}{In the paper, we described a novel high-dimensional generalized additive model with Bayesian hierarchical prior for the purpose of predictive modeing. In particular, we introduce a two-part spike-and-slab LASSO prior for reparameterized smoothing functions and derive a scalable EM-CD algorithm for model fitting. The proposed model provides a new angle to address the excess shrinkage of smoothing functions that is commonly vulnerable to previous regularized high-dimensional GAMs, and hence improves the predictive performance. Th EM-CD algorithm, extended from previous spike-and-slab LASSO models, provides a computationally efficient alternative to the computational prohibitive MCMC algorithms, enhancing the scalability of spike-and-slab models. In addition, the two-part prior motivates the bi-level selection of predictors, selection of linear and nonlinear components. In the simulation study and real-data analyses, the proposed model demonstrates improvement in prediction and computational advantage when compared to the state-of-the-art models. When serving the purpose of variable selection, trade-offs exist among methods of comparison.}
+We implement the proposed model in an open-source R package
+\texttt{BHAM}, deposited at \url{https://github.com/boyiguo1/BHAM}. To
+maximize the flexibility of smoothing function specification, we deploy
+the same programming grammar as in the state-of-the-art package
+\texttt{mgcv}, in contrast to previous tools where smoothing functions
+are limited to the default ones. Ancillary functions are provided for
+model specification in high-dimensional settings, curve plotting and
+functional selection.
 
-\label{sec:concl} In the paper, we described a novel generalized
-additive model using Bayesian hierarchical priors, particularly the
-proposed spike-and-slab spline prior for bi-level functional selection.
-Meanwhile, we introduced two optimization based algorithms for model
-fitting. The algorithms can be easily scale up to address
-high-dimensional data analysis in a computational efficient manner. Via
-simulations, we demonstrated that the proposed model provides as good,
-if not better, prediction performance compared to some state-of-the-art
-non-linear modeling devices.
+The proposed model shares many commonalities with the SB-GAM
+\citep{Bai2021}, which is independently developed around the same time
+as the proposed work. Both frameworks emphasize computational efficiency
+by deploying group spike-and-slab LASSO type priors and
+optimization-based scalable algorithms. Bai provides the theoretical
+proof for the consistency of variable selection using group
+spike-and-slab LASSO prior.
+\textcolor{red}{The proposed model focuses on improving prediction performance for high-dimensional GAM, with the capability of bi-level selection. Moreover, the proposed model can easily generalize to other families of priors and smoothing functions if desired. Not focused in this manuscript, the generalization is described in the Supporting Information.}
 
-The proposed model shares many commonality with an high-dimensional
-Bayesian GAM, SB-GAM \citep{Bai2021}, independently developed around the
-same time of this work. Both frameworks emphasize computational
-efficiency by deploying group spike-and-slab lasso type of priors and
-optimization-based fast and scalable algorithms. Bai provided the
-theoretical proof for the consistency of variable selection using group
-spike-and-slab lasso prior. Nevertheless, SB-GAM fails to address the
-bi-level functional selection and the model inference. The proposed
-model provides solutions to these remaining questions while maintaining
-the same level of prediction accuracy. Moreover, the proposed model
-renders additional flexibility to model specification, allowing various
-choices of smoothing functions and degrees of freedom.
+\textcolor{red}{During designing and analyzing the simulation study, we made couple of interesting observations. First of all, variable selection is a delicate topic in the context of predictive modeling. When prediction performance is used to tune a model, the model could possibly include noise variables in models, for example LASSO and LASSO-based models. \cite{Wu2019} Moreover, bi-level selection is a more complex problem than variable selection. The complexity shows on the validity of the effect hierarchy principle. While most functional forms follow that the linear component exists in the nonlinear function, there are functions that don't follow it, e.g. $x^2$. The proposed prior and spikeSlabGAM employ different structures: the proposed prior imposes effect hierarchy while spikeSlabGAM treats the selection of linear and nonlinear components independent. The different prior setups lead to trade-offs for the purpose of bi-level selection. We recommend to use more judgment in bi-level selection, either relying on heuristic knowledge to choose appropriate prior or exploring multiple models when heuristic knowledge doesn't exist. Secondly, we find the performance of the proposed model is more sensitive to the granularity of $s_0$ sequence in the high-dimensional settings than in the lower dimension settings. Even though the current default sequence of $s_0$ can result in reasonable performance shown in the simulation studies, we recommend fine-tuning the model with a granular sequence of $s_0$ for performance improvement.}
 
-For translational science purpose, we implemented the proposed model in
-a R package \texttt{BHAM}, deposited at
-\url{https://github.com/boyiguo1/BHAM}. To maximize the flexibility of
-smoothing function specification, we deploy the same programming grammar
-as in the state-of-the-art package \texttt{mgcv}, in contrast to
-previous tools where smoothing functions are limited to the default
-ones. Ancillary functions are provided for model specification in
-high-dimensional settings, curve plotting and functional selection. In
-addition, in \texttt{BHAM}, we streamline the model fitting algorithms
-to support other popular Bayesian hierarchical prior for the smoothing
-functions, such as Student's T distribution, double exponential
-distribution, mixture normal and T distribution's. These priors could be
-helpful when the sparse assumption is weak or not necessary.,
-
-There are some improvements possible for the proposed models. First of
-all, the proposed model achieves a bi-level selection via the two-part
-spike-and-slab spline prior. Nevertheless, this set-up could result in a
-situation that is not theoretically sound: the non-linear component is
-selected, but the linear component is not. We currently address it
-analytically by including the linear component in the model when
-non-linear component is selected. Another possible solution is to impose
-a dependent structure of \(\gamma_{j}^*\) on \(\gamma_{j^{0}}\),
-i.e.~\(\gamma_j^*|\gamma_{j}^{0}, \theta_j\). Secondly, the
-computational time for fitting a BHAM model with EM-IWLS algorithms can
-be improved. Current implementation of the EM-IWLS algorithm jointly
-updates all coefficients in each iteration, which requires a lot
-computation resources. This jointly updating procedure can be enhanced
-by adapting a backfitting step \citep{Hastie1987} where each smoothing
-function are updated individually. Thirdly, when using the proposed
-model in real data analysis where a screening procedure is implemented
-before joint predictive modeling. we recommend to include the screening
-procedure in the cross-validation during model selection.
-\citep{Friedman2017} For the sake of model comparison, we fit the models
-using the same pool of predictors in Section \ref{sec:ECB}.
-
-Our future efforts direct to modeling survival outcomes and integrative
-analysis. While the proposed model addresses a great deal of analytic
-problem, analyzing the time-to-event outcome remains unsolved. An naive
-approach would be convert a time-to-event outcome to a Poisson outcome
-following Whitehead \citep{Whitehead1980}. However, it would be more
-efficient to directly fit Cox models via penalized pseudo likelihood
-function \citep{Simon2011}. Meanwhile, with growing understanding of
+Our future efforts are direct to
+\textcolor{red}{uncertainty inference of the proposed model}, survival
+analysis and integrative analysis.
+\textcolor{red}{Using EM-CD algorithm to fit the proposed BHAM is incapable of conducting uncertainty inference. We derive the EM-Iterative Weighted Least Square algorithm (EM-IWLS, see the Supporting Information) as an alternative. Instead of the Coordinate Descent algorithm, we use the Iterative Weighted Least Square algorithm in the EM procedure. The EM-IWLS algorithm is previously used to fit Bayesian high-dimensional generalized linear models \cite{Yi2012}, and deliver estimates of the coefficient variance-covariance matrix. Due to the space limit, technical details will be explained in a future manuscript.}
+While the proposed model addresses a great deal of analytic problems,
+analyzing the time-to-event outcome remains unsolved. A naive approach
+would be convert a time-to-event outcome to a Poisson outcome following
+Whitehead \citep{Whitehead1980}. However, it would be more efficient to
+directly fit Cox models via penalized pseudo likelihood function
+\citep{Simon2011}. Meanwhile, with the growing understanding of
 biological structure within -omics field, it is appealing to integrate
 external biology information in the modeling process. The main
 motivation for integrative models is that biologically informed grouping
 of weak effects increases the power of detecting true associations
 between features and the outcome \citep{Peterson2016}, and stabilizes
-the analysis results for reproducibility purpose. Such integration can
+the analysis results for reproducibility purposes. Such integration can
 be achieved by setting up a structural hyperprior on the inclusion
 indicator of the smoothing function null space
-\(\boldsymbol{\gamma}^0\). The similar strategy has been used in Ferrari
+\(\boldsymbol{\gamma}^0\). A similar strategy has been used in Ferrari
 and Dunson \citep{Ferrari2020}.
 
-\newpage
+\clearpage
 
 \bibliography{bibfile.bib}
 
-\newpage
+\clearpage
 
 \begin{figure}
 \centering
@@ -1138,7 +740,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
   \node (linearBeta) [outCome] { $\beta_j \sim DE(0,(1-\gamma_{j}) s_0 + \gamma_{j} s_1)$};\\
 };
 \matrix (penPrior) [right = 2cm of linearPrior, matrix of nodes, column sep = 0mm, row sep = 0.7cm] {
-  \node (penGamma) [outCome] { $\gamma_{j}^*\sim Bin(1, \theta_j)$ };\\
+  \node (penGamma) [outCome] { $\gamma_{j}^*\sim Bin(1, \textcolor{red}{\gamma_{j}}\theta_j)$ };\\
   \node (penBeta) [outCome] { $\beta_{jk}^*\sim  DE(0,(1-\gamma^*_{j}) s_0 + \gamma^*_{j} s_1)$};\\
 };
 
@@ -1153,6 +755,7 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \draw[->] (Theta) -- (penGamma);
 \draw[->] (linearGamma) -- (linearBeta) ;
 \draw[->] (penGamma) -- (penBeta);
+\draw[->, draw = red] (linearGamma) -- (penGamma);
 \draw[->] (ab) -- (Theta);
 \draw[->] (s) -- (linearBeta) ;
 \draw[->] (s) -- (penBeta);
@@ -1176,67 +779,18 @@ background/.style={rectangle, fill=gray!10,inner sep=0.2cm, rounded corners=5mm}
 \label{fig:SSprior}
 \end{figure}
 
-\newpage
+\clearpage
+\input{Tabs/sim_gaus_tab.tex}
+\clearpage
+\input{Tabs/sim_binom_tab.tex}
+\clearpage
+\input{Tabs/sim_time_tab.tex}
+\clearpage
+\input{Tabs/sim_gaus_var_slct_tab.tex}
 
-\begin{table}[ht]
-\centering
-\begin{tabular}{ccccccc}
-  \hline
-P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\ 
-  \hline
-  4 & 0.90 (0.01) & 0.90 (0.01) & 0.75 (0.03) & 0.71 (0.13) & 0.90 (0.01) & 0.82 (0.04) \\ 
-   10 & 0.90 (0.01) & 0.88 (0.01) & 0.67 (0.15) & 0.76 (0.03) & 0.90 (0.01) & 0.82 (0.04) \\ 
-   50 & 0.88 (0.01) & 0.80 (0.04) & 0.43 (0.17) & 0.57 (0.19) & 0.86 (0.02) & 0.82 (0.04) \\ 
-  100 & 0.80 (0.07) & 0.73 (0.06) & 0.41 (0.19) & 0.51 (0.22) & - & 0.81 (0.04) \\ 
-  200 & 0.72 (0.10) & 0.77 (0.02) & 0.33 (0.15) & 0.44 (0.19) & - & 0.82 (0.04) \\ 
-   \hline
-\end{tabular}
-\caption{The average and standard deviation of the out-of-sample $R^2$ measure for Gaussian outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.} 
-\label{tab:gaus}
-\end{table}
+\clearpage
 
-\begin{table}[ht]
-\centering
-\begin{tabular}{rllllll}
-  \hline
-P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\ 
-  \hline
-  4 & 0.94 (0.01) & 0.94 (0.02) & 0.90 (0.02) & 0.90 (0.01) & 0.94 (0.01) & 0.93 (0.01) \\ 
-   10 & 0.93 (0.01) & 0.89 (0.02) & 0.85 (0.04) & 0.86 (0.03) & 0.92 (0.04) & 0.92 (0.01) \\ 
-   50 & 0.92 (0.01) & 0.89 (0.01) & 0.83 (0.02) & 0.83 (0.02) & 0.76 (0.04) & 0.92 (0.01) \\ 
-  100 & 0.89 (0.02) & 0.86 (0.02) & 0.83 (0.02) & 0.84 (0.02) & - & 0.92 (0.01) \\ 
-  200 & 0.88 (0.01) & 0.86 (0.02) & 0.82 (0.05) & 0.81 (0.08) & - & 0.92 (0.01) \\ 
-   \hline
-\end{tabular}
-\caption{The average and standard deviation of the out-of-sample area under the curve measures for binomial outcomes over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.} 
-\label{tab:bin_auc}
-\end{table}
-
-\newpage
-
-\begin{sidewaystable}[!h]
-\centering
-\begin{tabular}{lrllllll}
-  \hline
-Distribution & P & BHAM-IWLS & BHAM-CD & COSSO & Adaptive COSSO & mgcv & SB-GAM \\ 
-  \hline
-Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (0.04) & 343.24 (88.37) \\ 
-  Binomial & 10.00 & 14.01 (1.86) & 7.65 (1.25) & 7.95 (2.70) & 10.01 (3.56) & 3.51 (12.03) & 543.13 (133.51) \\ 
-  Binomial & 50.00 & 185.26 (17.44) & 53.83 (6.26) & 109.72 (24.31) & 128.13 (23.26) & 670.01 (151.28) & 1630.42 (193.61) \\ 
-  Binomial & 100.00 & 1106.93 (356.73) & 48.41 (5.84) & 715.15 (170.55) & 718.63 (193.53) & - & 2783.99 (235.31) \\ 
-  Binomial & 200.00 & 6923.62 (1911.59) & 99.98 (7.05) & 5572.51 (1295.18) & 4958.69 (1970.46) & - & 4780.10 (488.66) \\ 
-  Gaussian & 4.00 & 4.22 (1.51) & 2.51 (0.20) & 0.79 (0.11) & 0.67 (0.07) & 0.05 (0.00) & 36.02 (3.02) \\ 
-  Gaussian & 10.00 & 17.59 (5.77) & 33.32 (3.50) & 3.49 (0.70) & 3.47 (0.71) & 0.32 (0.34) & 72.93 (9.52) \\ 
-  Gaussian & 50.00 & 329.83 (44.57) & 334.53 (22.33) & 35.54 (9.15) & 35.44 (9.02) & 73.33 (71.24) & 373.42 (34.93) \\ 
-  Gaussian & 100.00 & 1706.19 (225.92) & 446.98 (79.31) & 150.58 (46.72) & 152.82 (45.07) & - & 684.05 (67.80) \\ 
-  Gaussian & 200.00 & 16379.27 (4825.56) & 303.73 (87.27) & 591.11 (147.88) & 569.92 (107.45) & - & 1314.12 (137.85) \\ 
-   \hline
-\end{tabular}
-\caption{The average and standard deviation of computation time in seconds, including cross-validation and final model fitting, over 50 iterations. The models of comparison include the proposed Bayesian hierarchical additive model (BHAM) fitted with Iterative Weighted Least Square (BHAM-IWLS) and Coordinate Descent (BHAM-CD) algorithms, component selection and smoothing operator (COSSO), adaptive COSSO, mgcv and sparse Bayesian generalized additive model (SB-GAM). mgcv doesn't provide estimation whe number of parameters exceeds sample size i.e. p = 100, 200.} 
-\label{tab:time_sim}
-\end{sidewaystable}
-
-\newpage
+\clearpage
 
 \providecommand{\docline}[3]{\noalign{\global\setlength{\arrayrulewidth}{#1}}\arrayrulecolor[HTML]{#2}\cline{#3}}
 
@@ -1246,12 +800,12 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
 
 \begin{longtable}[c]{|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}|p{0.75in}}
 
-\caption{Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM with EM-CD algorithm (BHAM-CD) and the model of comparison SB-GAM.\textbackslash{}label\{tab:time\_real\_data\}
+\caption{Model fitting time in seconds for two metabolomics data analyses, from Emory Cardiovascular Biobank (ECB) and Weight Loss Maintenance Cohort (WLM). It tabulates the computation time for cross-validation step (CV) and optimal model fitting step (Final), and total computation time (Total) for the proposed model BHAM and the model of comparison SB-GAM.
 }\\
 
 \hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}-}
 
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{3}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 2.25in+4\tabcolsep+2\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{BHAM-CD}}} & \multicolumn{3}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 2.25in+4\tabcolsep+2\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{SB-GAM}}} \\
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{3}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 2.25in+4\tabcolsep+2\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{BHAM}}} & \multicolumn{3}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 2.25in+4\tabcolsep+2\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{SB-GAM}}} \\
 
 \hhline{~>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
 
@@ -1263,7 +817,7 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
 
 \hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}-}
 
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{3}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 2.25in+4\tabcolsep+2\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{BHAM-CD}}} & \multicolumn{3}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 2.25in+4\tabcolsep+2\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{SB-GAM}}} \\
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{} & \multicolumn{3}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 2.25in+4\tabcolsep+2\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{BHAM}}} & \multicolumn{3}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 2.25in+4\tabcolsep+2\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{SB-GAM}}} \\
 
 \hhline{~>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
 
@@ -1275,13 +829,13 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
 
 
 
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{ECB}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{225.2}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{228.2}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,506.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{34.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,540.7}}} \\
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{ECB}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{100.8}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3.5}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{104.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{2,659.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{20.9}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{2,679.9}}} \\
 
 
 
 
 
-\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{WLM}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{483.1}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{7.6}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{490.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,116.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{32.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,148.7}}} \\
+\multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{WLM}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{365.4}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{6.8}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{372.2}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,116.0}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{32.7}}} & \multicolumn{1}{!{\color[HTML]{000000}\vrule width 0pt}>{\centering}p{\dimexpr 0.75in+0\tabcolsep+0\arrayrulewidth}!{\color[HTML]{000000}\vrule width 0pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{000000}{3,148.7}}} \\
 
 \hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=2pt}-}
 
@@ -1289,7 +843,9 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
 
 \end{longtable}
 
-\newpage
+\label{tab:time_real_data}
+
+\clearpage
 
 \begin{table}[ht]
 \centering
@@ -1297,15 +853,15 @@ Binomial & 4.00 & 5.88 (1.01) & 6.96 (1.76) & 2.97 (0.82) & 4.60 (2.32) & 0.18 (
   \hline
 Methods & Deviance & AUC & Brier & Misclass \\ 
   \hline
-BHAM-CD & 455.69 & 0.74 & 0.16 & 0.21 \\ 
-  SB-GAM & 1230.06 & 0.71 & 0.21 & 0.24 \\ 
+BHAM & 510.99 & 0.61 & 0.19 & 0.24 \\ 
+  SB-GAM & 636.56 & 0.56 & 0.22 & 0.30 \\ 
    \hline
 \end{tabular}
-\caption{Prediction performance of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.} 
+\caption{Prediction performance of BHAM fitted with Coordinate Descent algorithm (BHAM) and SB-GAM models for Emory Cardiovascular Biobank by 10-fold cross-validation, including deviance, area under the curve (AUC), Brier score, and misclassification error (Misclass) where class labels are defined using threshold = 0.5.} 
 \label{tab:ECB_res}
 \end{table}
 
-\newpage
+\clearpage
 
 \begin{table}[ht]
 \centering
@@ -1313,13 +869,20 @@ BHAM-CD & 455.69 & 0.74 & 0.16 & 0.21 \\
   \hline
 Methods & Deviance & $R^2$ & MSE & MAE \\ 
   \hline
-BHAM-CD & 665.63 & 0.07 & 0.94 & 0.75 \\ 
+BHAM & 668.01 & 0.07 & 0.93 & 0.76 \\ 
   SB-GAM & 666.83 & 0.03 & 0.98 & 0.77 \\ 
    \hline
 \end{tabular}
-\caption{Prediction performance of of BHAM fitted with Cooridnate Descent algorithm (BHAM-CD)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).} 
+\caption{Prediction performance of BHAM fitted with Coordinate Descent algorithm (BHAM)  and SB-GAM models for Weight Loss Maintenance Cohort by 10-fold cross-validation, including deviance, $R^2$,  mean squared error (MSE), and mean absolute error (MAE).} 
 \label{tab:WLM_res}
 \end{table}
+
+\clearpage
+\begin{figure}[h] 
+\includegraphics{Figs/ECB_plot}
+\caption{Plots of the functions for the 33 metablites selected by BHAM in the Emory Cardiovascular Biobank data analysis}
+\label{fig:ECB_fig}
+\end{figure}
 
 
 

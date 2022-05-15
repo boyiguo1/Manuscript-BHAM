@@ -5,70 +5,36 @@
 #'
 #' @return
 #'
-gam_screen <- function(dat, nrow = 200){
+var_screen <- function(dat, nrow = 200){
   dat %>% 
     select(starts_with("mz")) %>% 
-    names() %>% 
-    map_dfr(#feature_name[1:2],
-      .f = function(name, .dat){
-        # name <- feature_name[1]
-        y <- .dat %>% pull(death3yr)
-        x <- .dat %>% pull({{name}})
-        mgcv::gam(y ~ s(x, bs = "cr", k = 10), family = binomial(),
-                  data = data.frame(x, y)) %>% 
-          tidy() %>% 
-          filter(term == "s(x)") %>% 
-          select(p.value) %>% 
-          mutate(var = name,
-                 p.value)
-        
-      },
-      .dat = dat) %>% data.frame(
-        .,
-        p.adj = p.adjust(.$p.value, "fdr")
-      ) %>% arrange(p.adj) %>% #filter(p.adj<0.2)
-    head(nrow)
-}
-
-
-create_success_rate_table <- function(path_list){
-
-  # sims <- list.files(path,full.names =TRUE)
+    apply(,MARGIN = 2, FUN = var) %>% 
+    sort(decreasing = TRUE) %>% 
+    head(nrow) %>% 
+    names
   # browser()
-  unglue_data(path_list[str_ends(path_list, ".rds")],
-              "{path}/it_{}") %>% 
-    group_by(path) %>% 
-    summarize(n_success = n()) %>% 
-    unglue_unnest(
-      col = path,
-      patterns = "{}/bgam_{study}_-dis_{dist}-p_{p}",
-      remove = FALSE
-    ) %>% 
-    mutate( p = as.numeric(p)) %>% 
-    arrange(dist, p) %>% 
-    select(dist, p, n_success, path)
-  #   head()
-  # 
-  # 
-  # success_rate <- map_dfr(path_list, 
-  #                         .f = function(sim_file){
-  #                           browser()
-  #   sim.df <- unglue_data(sim_file, 
-  #                         "{}/bgam_{study}_-dis_{dist}-p_{p}/{}", 
-  #                         kee) %>% 
-  #     mutate( p = as.numeric(p)) %>% 
-  #     group_by(dist)
-  #     summarize()
-  #   fls <- list.files(sim_file, full.names = TRUE) 
-  #   fls <- fls[grep(".rds", x=fls)]
-  #   n <- length(fls)
-  #   
-  #   data.frame(sim.df, n_success = n, path = sim)
-  # }) %>% 
-  #   arrange(p) 
-
-  # return(success_rate)  
+    # names() %>% 
+    # map_dfr(#feature_name[1:2],
+    #   .f = function(name, .dat){
+    #     # name <- feature_name[1]
+    #     y <- .dat %>% pull(death3yr)
+    #     x <- .dat %>% pull({{name}})
+    #     mgcv::gam(y ~ s(x, bs = "cr", k = 10), family = binomial(),
+    #               data = data.frame(x, y)) %>% 
+    #       tidy() %>% 
+    #       filter(term == "s(x)") %>% 
+    #       select(p.value) %>% 
+    #       mutate(var = name,
+    #              p.value)
+    #     
+    #   },
+    #   .dat = dat) %>% data.frame(
+    #     .,
+    #     p.adj = p.adjust(.$p.value, "fdr")
+    #   ) %>% arrange(p.adj) %>% #filter(p.adj<0.2)
+    # head(nrow)
 }
+
 
 
 make_sim_main_plots <- function(success_rate, dist, measures){
@@ -78,7 +44,7 @@ make_sim_main_plots <- function(success_rate, dist, measures){
     pull(path) %>% 
     map_dfr( .f = function(sim){
       sim.df <- unglue_data(sim, 
-                            "{}/bgam_{study}_-dis_{dist}-p_{p}") %>% 
+                            "{}/{}_-dis_{dist}-p_{p}") %>% 
         mutate( p = as.numeric(p))
       fls <- list.files(sim, full.names = TRUE) 
       fls <- fls[grep(".rds", x=fls)]
