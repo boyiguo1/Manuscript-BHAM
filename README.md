@@ -10,7 +10,8 @@ This is the repository for the manuscript *Spike-and-Slab Generalized Additive M
 
 ## Remarks
 
--   The repo contains the raw results for the simulations described in the manuscript. The simulation computation was conducted separately on [a high-performance super computer](https://www.uab.edu/it/home/research-computing/cheaha), and hence not included in the current workflow. You can find the code to replicate the simulation process in the folder [`Simulation\Code`](https://github.com/boyiguo1/Manuscript-Spike_Slab_HD_GAM/tree/main/Simulation/Code).
+-   The raw/unaggregated the simulation results can be accessed [here](https://www.dropbox.com/sh/9f8kvnduuqxwj7o/AADSULXkTpO5-DskQo0CaHMia?dl=0). The simulation computation was conducted separately on [a high-performance super computer](https://www.uab.edu/it/home/research-computing/cheaha), and hence not included in the current workflow. You can find the code to replicate the simulation process in the folder [`Simulation\Code`](https://github.com/boyiguo1/Manuscript-Spike_Slab_HD_GAM/tree/main/Simulation/Code) and the instruction to deploy the simulation on a cluster with the Slurm scheduling system via the repo [`boyiguo1/
+Tutorial-Sim_Cluster_Composer`](https://github.com/boyiguo1/Tutorial-Sim_Cluster_Composer).
 
 -   The two datasets used for real data analyses are included in the repo for reproducibility purpose (placed in the folder [`Real_Data`](https://github.com/boyiguo1/Manuscript-Spike_Slab_HD_GAM/tree/main/Real_Data)). The owner of this repository does not own the datasets, and suggest readers to check out the datasets on [Dryad](https://datadryad.org/stash/) and [Zendo](https://zenodo.org/)
 
