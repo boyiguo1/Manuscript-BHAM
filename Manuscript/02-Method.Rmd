@@ -12,11 +12,11 @@ f(\bs Y = \bs y| \bs \beta, \phi) = \prod\limits^n_{i=1}f( Y = y_i|\bs \beta, \p
 
 The basis function matrix, i.e. the design matrix derived from the smooth function $B_j(x_j)$, is denoted $\bs X_j$ for the variable $x_j$. The dimension of the design matrix depends on the choice of the smooth function, and is denoted as $K_j$ for $x_j$.  $\bs \beta_j$ denotes the basis function coefficients for the $j$th variable such that $B_j(x_j) = \bs \beta_j^T \bs X_j$. With slight abuse of notation, we denote vectors and matrices in bold fonts $\bs \beta, \bs X$ with conformable dimensions, where scalar and random variables are denoted in unbold fonts $\beta, X$. The matrix transposing operation is denoted with a superscript $^T$. \bg{To note, the proposed model can include parametric forms of variables in the model, and hence considers general linear models and semiparametric regression models as special cases.}
 
-\subsection{smooth function Reparameterization} 
+\subsection{Smooth Function Reparameterization} 
 
 To encourage proper smoothing of each additive function, we adopt the smoothing penalty from smoothing spline models[@Wood2017]. A smoothing penalty is the quadratic norm of the basis coefficients and allows different shrinkage on different bases, mathematically
 \begin{equation}
-  \text{pen}\left[B_j(x)\right] = \lambda_j \int B^{\prime\prime}_j(x)dx = \lambda_j \bs \beta_j^T \bs S_j \bs \beta_j ,\nonumber
+  \text{pen}\left[B_j(x)\right] = \lambda_j \int B^{\prime\prime}_j(x)^2dx = \lambda_j \bs \beta_j^T \bs S_j \bs \beta_j ,\nonumber
 \end{equation}
 where $\bs S_j$ is a known smoothing penalty matrix and $\lambda_j$ denotes a smoothing parameter. A linear function can be modeled as $B_j(x_j) = x_j$ with the smoothing penalty matrix $\bs S_j = \begin{bmatrix}0\end{bmatrix}$. \bg{Unlike previous regularized methods that either ignore the smoothing penalty completely or restrain the smoothing penalty as a component of sparse penalty which leads to a more restrictive solution, we consider an additional mechanism in pair with the proposed prior (described in Section \ref{sec:method_prior}) to address the smoothness and sparsity in signals such that the locally adaptive nature of the smoothing penalty retains.}
 

@@ -206,14 +206,14 @@ where scalar and random variables are denoted in unbold fonts
 superscript \(^T\).
 \textcolor{red}{To note, the proposed model can include parametric forms of variables in the model, and hence considers general linear models and semiparametric regression models as special cases.}
 
-\subsection{smooth function Reparameterization}
+\subsection{Smooth Function Reparameterization}
 
 To encourage proper smoothing of each additive function, we adopt the
 smoothing penalty from smoothing spline models\citep{Wood2017}. A
 smoothing penalty is the quadratic norm of the basis coefficients and
 allows different shrinkage on different bases, mathematically
 \begin{equation}
-  \text{pen}\left[B_j(x)\right] = \lambda_j \int B^{\prime\prime}_j(x)dx = \lambda_j \boldsymbol{\beta}_j^T \boldsymbol{S}_j \boldsymbol{\beta}_j ,\nonumber
+  \text{pen}\left[B_j(x)\right] = \lambda_j \int B^{\prime\prime}_j(x)^2dx = \lambda_j \boldsymbol{\beta}_j^T \boldsymbol{S}_j \boldsymbol{\beta}_j ,\nonumber
 \end{equation} where \(\boldsymbol{S}_j\) is a known smoothing penalty
 matrix and \(\lambda_j\) denotes a smoothing parameter. A linear
 function can be modeled as \(B_j(x_j) = x_j\) with the smoothing penalty
